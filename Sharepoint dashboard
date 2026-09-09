@@ -1,0 +1,970 @@
+I already have a working web application called:
+
+“HR Data & Insights – SharePoint Inventory”
+
+The application connects to / analyses our HR SharePoint estate and currently contains three working tabs:
+
+1. Overview
+2. File Explorer
+3. Analysis
+
+IMPORTANT:
+Do NOT rebuild the application from scratch.
+Do NOT remove or break any existing functionality, SharePoint retrieval logic, search, filtering, refresh buttons, file explorer functionality, existing calculations or styling.
+
+Enhance the existing application so that it evolves from a simple SharePoint inventory into an:
+
+HR INFORMATION GOVERNANCE & REPOSITORY HEALTH TOOL
+
+The app should answer four management questions:
+
+1. What information do we have?
+2. Is the repository healthy and well governed?
+3. Where are the risks, inefficiencies and opportunities?
+4. What action should the HR Data & Insights team take?
+
+--------------------------------------------------
+DESIGN PRINCIPLES
+--------------------------------------------------
+
+Maintain the current clean, professional corporate design.
+
+Use:
+- White / very light grey backgrounds
+- Existing dark navy/black navigation
+- Existing blue/purple accent colour
+- Rounded cards
+- Minimal borders
+- Clear typography
+- Compact management dashboard layout
+- Interactive charts
+- Tooltips where useful
+- Drill-through into File Explorer wherever possible
+
+Do not make the interface excessively colourful.
+
+Use status colours sparingly:
+- Green = healthy / low risk
+- Amber = attention
+- Red = high risk / action required
+- Grey = unavailable / informational
+
+The application should look appropriate to demonstrate to:
+- HR leadership
+- Chief People Officer
+- HR Operations
+- Information Governance
+- Risk / Security
+- Data leadership
+
+Add explanatory tooltips so metrics are understandable without technical knowledge.
+
+--------------------------------------------------
+NEW NAVIGATION STRUCTURE
+--------------------------------------------------
+
+Change the application navigation to:
+
+1. Executive Overview
+2. File Explorer
+3. Repository Analysis
+4. Governance & Risk
+5. Optimisation
+6. Actions
+
+Existing functionality should be mapped into these tabs rather than removed.
+
+==================================================
+1. EXECUTIVE OVERVIEW
+==================================================
+
+Upgrade the existing Overview page into a senior-management dashboard.
+
+TOP KPI ROW
+
+Include cards for:
+
+- Indexed documents
+- Unique files
+- Number of document libraries
+- Total storage
+- Modified in last 30 days
+- Files older than 2 years
+- Duplicate file/name groups
+- Sensitive-name/path indicators
+
+Where possible show:
+- Count
+- Percentage of total
+- Change since previous snapshot
+
+Example:
+
+Older than 2 years
+7,251
+68.2% of repository
+
+------------------------------------
+REPOSITORY HEALTH SCORE
+------------------------------------
+
+Create an overall:
+
+“Repository Health Score”
+
+Display as 0–100.
+
+The score should be transparent and based on measurable indicators such as:
+
+- stale content
+- duplicate content
+- sensitive-risk indicators
+- ownership
+- naming quality
+- folder quality
+- repository growth
+- governance exceptions
+
+Do NOT invent metrics if the required data is unavailable.
+
+Show the contributing components beneath the score.
+
+Example:
+
+Repository Health
+67 / 100
+
+Stale content        48/100
+Duplicates           73/100
+Naming quality       84/100
+Ownership            71/100
+Sensitive risk       55/100
+
+Include a tooltip explaining how the score is calculated.
+
+------------------------------------
+MANAGEMENT ATTENTION
+------------------------------------
+
+Automatically generate a card called:
+
+“Management Attention”
+
+Surface the 3–5 most important insights from the repository.
+
+Examples:
+
+• 68% of documents have not been modified for more than two years.
+• 657 potential duplicate file groups have been identified.
+• 3,319 files contain sensitive filename/path indicators.
+• 62% of repository storage is concentrated within one library.
+• 287 files have no identifiable current owner.
+
+Generate these dynamically from the actual data.
+
+Do not hardcode numbers.
+
+------------------------------------
+DOCUMENTS BY LIBRARY
+------------------------------------
+
+Keep and enhance the existing visual.
+
+Allow clicking a library to:
+- filter the page
+OR
+- open the relevant files in File Explorer.
+
+Show:
+- document count
+- % of repository
+- storage
+- age profile where possible
+
+------------------------------------
+STORAGE BY LIBRARY
+------------------------------------
+
+Keep the existing analysis.
+
+Also calculate:
+
+% of total SharePoint storage.
+
+Highlight unusually large libraries.
+
+------------------------------------
+FILE TYPES
+------------------------------------
+
+Keep existing file type chart.
+
+Show:
+- count
+- percentage
+- storage where available
+
+Allow drill-through.
+
+------------------------------------
+REPOSITORY TREND
+------------------------------------
+
+If historical snapshots exist, add:
+
+Repository Growth
+
+Show over time:
+- total files
+- storage
+- stale files
+- duplicate groups
+- sensitive-risk indicators
+
+Include:
+- month-on-month %
+- year-on-year % where enough history exists
+
+If historical data does not currently exist, create the architecture to begin storing snapshot history each time SharePoint data is refreshed.
+
+Do not fabricate historical data.
+
+==================================================
+2. FILE EXPLORER
+==================================================
+
+Retain all existing File Explorer functionality.
+
+Maintain:
+- search
+- library filtering
+- file type filtering
+- modified date filtering
+- sort
+- file name
+- folder / library
+- type
+- size
+- modified date
+- modified by
+
+Improve it with optional additional filters:
+
+- Age bucket
+- Sensitive indicator
+- Duplicate indicator
+- Naming-quality issue
+- Potential cleanup candidate
+- Owner
+- Risk level
+- Process/category
+
+Allow filters from all dashboard pages to deep-link into File Explorer.
+
+Example:
+
+Clicking:
+“412 stale sensitive files”
+
+should open File Explorer showing those 412 files.
+
+Add a button:
+
+“Export current results”
+
+If safe and supported.
+
+==================================================
+3. REPOSITORY ANALYSIS
+==================================================
+
+Retain the existing Analysis functionality and expand it.
+
+------------------------------------
+AGE PROFILE
+------------------------------------
+
+Replace the simple age analysis with:
+
+0–30 days
+31–90 days
+3–6 months
+6–12 months
+1–2 years
+2–3 years
+3–5 years
+5+ years
+
+Show:
+- file count
+- %
+- storage
+
+Allow filtering by library.
+
+------------------------------------
+LIBRARY PROFILE
+------------------------------------
+
+Selecting a library should show:
+
+- Files
+- Storage
+- Average file size
+- Age distribution
+- File types
+- Contributors
+- Sensitive indicators
+- Duplicate groups
+- Naming issues
+- Cleanup candidates
+
+------------------------------------
+CONTRIBUTOR ANALYSIS
+------------------------------------
+
+Separate:
+
+Historical Contributors
+
+from:
+
+Active Contributors
+
+Provide:
+- all-time / snapshot contribution
+- last 30 days
+- last 90 days
+- latest activity
+
+Avoid implying that “Modified By” means true ownership.
+
+Clearly label limitations.
+
+------------------------------------
+ACTIVITY ANALYSIS
+------------------------------------
+
+Identify:
+
+- Most active libraries
+- Least active libraries
+- Libraries with no activity for 6 / 12 / 24 months
+- High-change repositories
+
+Example:
+
+Salary Review
+427 files modified in last 30 days
+
+------------------------------------
+FOLDER STRUCTURE ANALYSIS
+------------------------------------
+
+Analyse:
+
+- average folder depth
+- maximum folder depth
+- files deeper than configurable threshold
+- largest folders
+- empty folders if available
+- root-level files
+- similarly named folders
+
+Highlight unnecessarily complex structures.
+
+==================================================
+4. GOVERNANCE & RISK
+==================================================
+
+Create a dedicated governance page.
+
+------------------------------------
+RISK SUMMARY
+------------------------------------
+
+Top cards:
+
+Sensitive indicators
+Stale sensitive files
+Duplicate sensitive files
+Potential permission risks
+Potential owner gaps
+Potential retention issues
+
+------------------------------------
+SENSITIVE INFORMATION
+------------------------------------
+
+Use filename/path indicators as a RISK SIGNAL only.
+
+Clearly label:
+
+“Filename/path signal only – this does not confirm that the document contains sensitive information.”
+
+Allow keyword categories such as:
+
+- Salary / Pay / Bonus / Remuneration
+- Payroll
+- Performance
+- Medical / Health
+- Employee Relations
+- Grievance
+- Disciplinary
+- Personal
+- Bank
+- NI / National Insurance
+- Passport
+- Visa
+- Diversity
+- Gender pay
+- redundancy
+
+Create configurable sensitive-keyword rules.
+
+Show:
+
+Sensitive files by library
+Sensitive files by age
+Sensitive files by contributor
+Sensitive + duplicate
+Sensitive + stale
+Sensitive + poorly named
+
+------------------------------------
+RISK MATRIX
+------------------------------------
+
+Create a matrix using:
+
+CONTENT RISK
+vs
+AGE / ACTIVITY
+
+Example:
+
+                    Recent     1–2 yrs     2+ yrs
+Normal              Low        Low         Medium
+Duplicate           Low        Medium      High
+Sensitive           Medium     High        Critical
+Sensitive+Duplicate High       Critical    Critical
+
+Where possible allow clicking each cell.
+
+------------------------------------
+OWNERSHIP / KEY-PERSON RISK
+------------------------------------
+
+Where suitable metadata exists, analyse repository dependency.
+
+For each library calculate how concentrated modifications are.
+
+Example rules:
+
+>70% activity from one person = High dependency
+40–70% = Medium dependency
+<40% = Distributed
+
+Call this:
+
+“Contributor Dependency”
+
+Do not call Modified By true ownership unless ownership metadata exists.
+
+Show:
+
+- libraries with high dependency
+- top contributor %
+- number of active contributors
+- last active contributor
+
+------------------------------------
+PERMISSIONS / SHARING
+------------------------------------
+
+ONLY implement this if the SharePoint data/API provides permission information.
+
+If permissions are available, analyse:
+
+- external sharing
+- anonymous links
+- broad organisation-wide sharing
+- unusual membership
+- broken inheritance
+- restricted content in broadly accessible libraries
+
+If this information is NOT available, show a grey card:
+
+“Permission analysis requires additional SharePoint permission data.”
+
+Do not fabricate permissions.
+
+------------------------------------
+LEAVER / ORPHANED CONTENT
+------------------------------------
+
+If employee status information becomes available:
+
+flag files/libraries heavily dependent on people who have left the organisation.
+
+If employee status is unavailable, prepare the component but mark it:
+
+“Employee-status integration required.”
+
+==================================================
+5. OPTIMISATION
+==================================================
+
+Create a page focused on efficiency and repository improvement.
+
+------------------------------------
+CLEANUP OPPORTUNITIES
+------------------------------------
+
+Create dynamic categories:
+
+Potential Archive
+Potential Retention Review
+Potential Duplicate Cleanup
+Poor Naming
+Old Sensitive Content
+Unused / Dormant Content
+
+Example rules should be configurable.
+
+Potential Archive example:
+- >2 years old
+- no recent modification
+- not excluded
+
+Retention Review example:
+- >5 years old
+- stale
+- sensitive or duplicate
+
+Do NOT automatically delete anything.
+
+Only identify candidates.
+
+Show:
+
+Potential cleanup
+3,842 files
+4.1 GB
+36% of repository
+
+Numbers must calculate dynamically.
+
+------------------------------------
+DUPLICATE ANALYSIS
+------------------------------------
+
+Expand duplicate analysis beyond the existing count.
+
+Support:
+
+1. Exact same filename
+2. Similar filename
+3. Version-style proliferation
+4. Exact-content duplicate IF file hash/content information is available
+
+Recognise common filename patterns such as:
+
+Final
+FINAL
+Final v2
+Copy
+Copy of
+(1)
+Old
+New
+Latest
+Working
+Draft
+
+Example grouping:
+
+Salary Review 2026.xlsx
+Salary Review 2026 Final.xlsx
+Salary Review 2026 Final v2.xlsx
+Salary Review 2026 Copy.xlsx
+
+Group as potential “file family”.
+
+Display:
+
+File family
+Copies
+Libraries
+Storage
+Latest modified
+Oldest copy
+Potential saving
+
+Allow drill-through.
+
+Do NOT claim files are identical unless content/hash comparison confirms it.
+
+------------------------------------
+NAMING QUALITY
+------------------------------------
+
+Detect poor naming patterns such as:
+
+Copy of
+Final Final
+New Microsoft Excel Worksheet
+Book1
+Test
+Untitled
+Old
+New
+Version
+v2/v3/v4
+Personal-name-only filenames
+Very long names
+Very long paths
+
+Create:
+
+Naming Quality Score
+
+Show:
+
+Poor filename count
+% compliant
+Top naming issues
+Libraries with worst naming quality
+
+Rules should be configurable.
+
+------------------------------------
+PROCESS IDENTIFICATION
+------------------------------------
+
+Create configurable logical HR process categories.
+
+Possible categories:
+
+Salary Review
+Partner Remuneration / Partner Performance
+Promotions
+Payroll
+Gender Pay
+HR Reporting
+Recruitment
+Learning
+Surveys
+Performance
+Employee Relations
+Reward
+Workforce Planning
+
+Classification can initially use:
+- library
+- folder
+- filename keywords
+
+For every identified process show:
+
+Files
+Storage
+Age
+Duplicates
+Sensitive indicators
+Contributors
+File types
+Latest activity
+
+Example:
+
+Salary Review
+
+892 files
+1.1 GB
+481 stale
+37 duplicate groups
+566 sensitive indicators
+7 active contributors
+
+------------------------------------
+AUTOMATION OPPORTUNITY ANALYSIS
+------------------------------------
+
+Identify potential repetitive/manual processes from repository patterns.
+
+Look for:
+
+- monthly Excel exports
+- weekly Excel exports
+- repeated CSV extracts
+- recurring filenames with dates
+- repeated report exports
+- multiple versions generated each reporting period
+- repeated manual datasets
+- recurring activity from same person
+- Excel/CSV extracts that may represent data available from a system/DWH
+
+Examples:
+
+Headcount Jan.xlsx
+Headcount Feb.xlsx
+Headcount Mar.xlsx
+
+Potential insight:
+
+“Recurring monthly dataset detected – 26 similarly structured exports.”
+
+Potential recommendation:
+
+“Investigate replacing recurring manual extracts with a direct Workday / DWH / automated data feed.”
+
+Do NOT automatically assume something can be automated.
+
+Call these:
+
+“Potential Automation Opportunities”
+
+Provide:
+- process/pattern
+- evidence
+- file count
+- frequency
+- responsible contributor where available
+- suggested investigation
+
+==================================================
+6. ACTIONS
+==================================================
+
+Create an actionable management page called:
+
+“Actions”
+
+This should convert analysis into work.
+
+Create a prioritised table:
+
+Priority
+Issue
+Category
+Files affected
+Storage affected
+Library/process
+Reason
+Recommendation
+Suggested owner
+Status
+
+Example:
+
+CRITICAL
+412 stale sensitive files
+Governance
+Review retention and business requirement
+
+HIGH
+78 duplicate payroll files
+Data quality
+Confirm authoritative/master version
+
+MEDIUM
+1,820 files >5 years old
+Lifecycle
+Review archive/retention requirement
+
+LOW
+164 poor filenames
+Housekeeping
+Apply naming standard
+
+------------------------------------
+PRIORITY LOGIC
+------------------------------------
+
+Use transparent configurable rules.
+
+Example:
+
+CRITICAL
+Sensitive + stale + duplicate / permission issue
+
+HIGH
+Sensitive + stale
+or severe ownership risk
+
+MEDIUM
+Duplicate / old / poor structural quality
+
+LOW
+Naming / housekeeping
+
+Do not hide why something received its priority.
+
+------------------------------------
+ACTION INTERACTIONS
+------------------------------------
+
+Where technically feasible add:
+
+View files
+Export
+Mark reviewed
+Exclude
+Add note
+Assign owner
+Change status
+
+Statuses:
+
+New
+Reviewing
+Action Required
+Accepted Risk
+Completed
+Excluded
+
+Do NOT make destructive SharePoint changes directly from this page unless explicitly enabled later.
+
+==================================================
+GLOBAL FILTERS
+==================================================
+
+Where relevant allow filtering by:
+
+Library
+Folder
+File type
+Age
+Modified by
+Modified date
+Process
+Risk level
+Sensitive indicator
+Duplicate status
+Naming issue
+Action status
+
+Filters should persist sensibly while navigating between analytical pages.
+
+==================================================
+DATA INTEGRITY / IMPORTANT RULE
+==================================================
+
+The app must distinguish clearly between:
+
+OBSERVED FACT
+DERIVED INDICATOR
+POTENTIAL RISK
+RECOMMENDATION
+
+Never make a governance assertion that the underlying data cannot support.
+
+Examples:
+
+Correct:
+“3,319 files match sensitive filename/path indicators.”
+
+Incorrect:
+“3,319 files contain sensitive personal information.”
+
+Correct:
+“Joshua is the recorded Modified By user for 6,354 files.”
+
+Incorrect:
+“Joshua owns 6,354 files.”
+
+Correct:
+“Potential duplicate filename.”
+
+Incorrect:
+“Identical document.”
+
+unless file hashes/content prove it.
+
+Where additional data is required, show:
+
+“Additional data source required”
+
+rather than manufacturing a value.
+
+==================================================
+SNAPSHOT HISTORY
+==================================================
+
+Every successful “Refresh SharePoint Data” should ideally create a lightweight repository snapshot.
+
+Capture:
+
+Timestamp
+Total files
+Libraries
+Storage
+Modified last 30 days
+Age buckets
+Duplicate groups
+Sensitive indicators
+File types
+Files by library
+Storage by library
+Naming issues
+Cleanup candidates
+
+Use this to build trend reporting over time.
+
+Ensure snapshots do not duplicate the entire document dataset unnecessarily if summary statistics are enough.
+
+==================================================
+DRILL THROUGH
+==================================================
+
+Charts and metrics should be interactive.
+
+Examples:
+
+Click:
+“Older than 5 years – 2,084”
+
+→ Open File Explorer pre-filtered to those files.
+
+Click:
+“Sensitive + duplicate – 138”
+
+→ show those documents.
+
+Click:
+“Salary Review”
+
+→ show Salary Review repository/process profile.
+
+This interaction should be consistent throughout the application.
+
+==================================================
+FINAL UX OBJECTIVE
+==================================================
+
+The application should no longer feel like:
+
+“A dashboard showing SharePoint files.”
+
+It should feel like:
+
+“An HR Information Governance, Repository Health and Optimisation platform.”
+
+A senior HR/Data leader should be able to open the application and understand within 30 seconds:
+
+- how large the HR information estate is
+- whether it is healthy
+- what the biggest risks are
+- where unnecessary content exists
+- where key-person dependency exists
+- where manual processes may exist
+- what the team should prioritise next
+
+Preserve all existing functionality first.
+
+Implement changes incrementally and reuse existing components, styles, SharePoint data structures and filtering logic wherever possible.
+
+Before introducing a metric, confirm that the underlying dataset can support it.
+
+If not, create the component architecture and clearly identify the additional field/API/data source that would be required.
