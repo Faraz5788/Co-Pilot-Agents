@@ -1,10 +1,11 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Loader2, Plus, Tag } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
+import { useSyncedState } from '@/lib/hooks/use-synced-state'
 import type { SourceRow } from '@/types/admin'
 
 const CATEGORY_OPTIONS = [
@@ -38,7 +39,7 @@ interface SourceManagementPageProps {
 
 export function SourceManagementPage({ sources: initialSources }: SourceManagementPageProps) {
   const router = useRouter()
-  const [sources, setSources] = useState(initialSources)
+  const [sources, setSources] = useSyncedState(initialSources)
   const [busyId, setBusyId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
 
@@ -46,8 +47,6 @@ export function SourceManagementPage({ sources: initialSources }: SourceManageme
   const [name, setName] = useState('')
   const [category, setCategory] = useState('job_board')
   const [creating, setCreating] = useState(false)
-
-  useEffect(() => setSources(initialSources), [initialSources])
 
   async function createSource() {
     if (!name.trim()) {

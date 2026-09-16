@@ -1,10 +1,11 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Loader2, Plus, XCircle } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
+import { useSyncedState } from '@/lib/hooks/use-synced-state'
 import type { RejectionReasonRow } from '@/types/admin'
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -26,7 +27,7 @@ interface RejectionReasonPageProps {
 
 export function RejectionReasonPage({ reasons: initialReasons }: RejectionReasonPageProps) {
   const router = useRouter()
-  const [reasons, setReasons] = useState(initialReasons)
+  const [reasons, setReasons] = useSyncedState(initialReasons)
   const [busyId, setBusyId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
 
@@ -34,8 +35,6 @@ export function RejectionReasonPage({ reasons: initialReasons }: RejectionReason
   const [name, setName] = useState('')
   const [category, setCategory] = useState('')
   const [creating, setCreating] = useState(false)
-
-  useEffect(() => setReasons(initialReasons), [initialReasons])
 
   async function createReason() {
     if (!name.trim()) {

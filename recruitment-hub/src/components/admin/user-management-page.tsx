@@ -1,10 +1,11 @@
 'use client'
 
-import { Fragment, useEffect, useMemo, useState } from 'react'
+import { Fragment, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { ChevronDown, ChevronRight, Info, Loader2, Save, UserPlus, X } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
+import { useSyncedState } from '@/lib/hooks/use-synced-state'
 import type { AdminUserRow, RoleRow } from '@/types/admin'
 
 const ROLE_BADGE_COLORS: Record<string, string> = {
@@ -64,14 +65,12 @@ interface UserManagementPageProps {
 
 export function UserManagementPage({ users: initialUsers, roles }: UserManagementPageProps) {
   const router = useRouter()
-  const [users, setUsers] = useState(initialUsers)
+  const [users, setUsers] = useSyncedState(initialUsers)
   const [expandedUserId, setExpandedUserId] = useState<string | null>(null)
   const [selectedRoleIds, setSelectedRoleIds] = useState<Set<string>>(new Set())
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [showInviteNote, setShowInviteNote] = useState(false)
-
-  useEffect(() => setUsers(initialUsers), [initialUsers])
 
   const sortedRoles = useMemo(() => [...roles].sort((a, b) => a.name.localeCompare(b.name)), [roles])
 

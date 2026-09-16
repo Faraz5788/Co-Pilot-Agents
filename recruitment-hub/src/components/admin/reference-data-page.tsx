@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState, type ReactNode } from 'react'
+import { useMemo, useState, type ReactNode } from 'react'
 import { useRouter } from 'next/navigation'
 import {
   Award,
@@ -16,6 +16,7 @@ import {
 } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
+import { useSyncedState } from '@/lib/hooks/use-synced-state'
 import type {
   CompetencyRow,
   CostCentreRow,
@@ -90,21 +91,13 @@ export function ReferenceDataPage({
 }: ReferenceDataPageProps) {
   const router = useRouter()
 
-  const [departments, setDepartments] = useState<GenericRow[]>(initialDepartments as unknown as GenericRow[])
-  const [locations, setLocations] = useState<GenericRow[]>(initialLocations as unknown as GenericRow[])
-  const [costCentres, setCostCentres] = useState<GenericRow[]>(initialCostCentres as unknown as GenericRow[])
-  const [jobProfiles, setJobProfiles] = useState<GenericRow[]>(initialJobProfiles as unknown as GenericRow[])
-  const [positions, setPositions] = useState<GenericRow[]>(initialPositions as unknown as GenericRow[])
-  const [grades, setGrades] = useState<GenericRow[]>(initialGrades as unknown as GenericRow[])
-  const [competencies, setCompetencies] = useState<GenericRow[]>(initialCompetencies as unknown as GenericRow[])
-
-  useEffect(() => setDepartments(initialDepartments as unknown as GenericRow[]), [initialDepartments])
-  useEffect(() => setLocations(initialLocations as unknown as GenericRow[]), [initialLocations])
-  useEffect(() => setCostCentres(initialCostCentres as unknown as GenericRow[]), [initialCostCentres])
-  useEffect(() => setJobProfiles(initialJobProfiles as unknown as GenericRow[]), [initialJobProfiles])
-  useEffect(() => setPositions(initialPositions as unknown as GenericRow[]), [initialPositions])
-  useEffect(() => setGrades(initialGrades as unknown as GenericRow[]), [initialGrades])
-  useEffect(() => setCompetencies(initialCompetencies as unknown as GenericRow[]), [initialCompetencies])
+  const [departments, setDepartments] = useSyncedState<GenericRow[]>(initialDepartments as unknown as GenericRow[])
+  const [locations, setLocations] = useSyncedState<GenericRow[]>(initialLocations as unknown as GenericRow[])
+  const [costCentres, setCostCentres] = useSyncedState<GenericRow[]>(initialCostCentres as unknown as GenericRow[])
+  const [jobProfiles, setJobProfiles] = useSyncedState<GenericRow[]>(initialJobProfiles as unknown as GenericRow[])
+  const [positions, setPositions] = useSyncedState<GenericRow[]>(initialPositions as unknown as GenericRow[])
+  const [grades, setGrades] = useSyncedState<GenericRow[]>(initialGrades as unknown as GenericRow[])
+  const [competencies, setCompetencies] = useSyncedState<GenericRow[]>(initialCompetencies as unknown as GenericRow[])
 
   const dataByEntity: Record<EntityKey, GenericRow[]> = {
     departments,

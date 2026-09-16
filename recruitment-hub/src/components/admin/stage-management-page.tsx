@@ -1,10 +1,11 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { ArrowDown, ArrowUp, Check, Loader2, Pencil, Plus, X } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
+import { useSyncedState } from '@/lib/hooks/use-synced-state'
 import type { PipelineStageRow, StageType } from '@/types/admin'
 
 const STAGE_TYPES: StageType[] = [
@@ -59,9 +60,11 @@ interface StageManagementPageProps {
 
 export function StageManagementPage({ stages: initialStages }: StageManagementPageProps) {
   const router = useRouter()
-  const [stages, setStages] = useState(
-    [...initialStages].sort((a, b) => a.display_order - b.display_order)
+  const sortedInitialStages = useMemo(
+    () => [...initialStages].sort((a, b) => a.display_order - b.display_order),
+    [initialStages]
   )
+  const [stages, setStages] = useSyncedState(sortedInitialStages)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editName, setEditName] = useState('')
   const [editType, setEditType] = useState<StageType>('screening')
@@ -74,10 +77,10 @@ export function StageManagementPage({ stages: initialStages }: StageManagementPa
   const [newOrder, setNewOrder] = useState<number>(initialStages.length + 1)
   const [creating, setCreating] = useState(false)
 
-  useEffect(() => {
-    setStages([...initialStages].sort((a, b) => a.display_order - b.display_order))
-    setNewOrder(initialStages.length + 1)
-  }, [initialStages])
+  function openAddForm() {
+    setNewOrder(stages.length + 1)
+    setShowAddForm(true)
+  }
 
   function startEdit(stage: PipelineStageRow) {
     setError(null)
@@ -195,7 +198,7 @@ export function StageManagementPage({ stages: initialStages }: StageManagementPa
         </div>
         <button
           type="button"
-          onClick={() => setShowAddForm((v) => !v)}
+          onClick={() => (showAddForm ? setShowAddForm(false) : openAddForm())}
           className="inline-flex items-center justify-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
         >
           <Plus className="h-4 w-4" />
