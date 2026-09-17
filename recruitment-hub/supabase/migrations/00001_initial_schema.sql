@@ -720,6 +720,17 @@ returns boolean as $$
   select public.has_any_role(array['admin', 'rec_admin']);
 $$ language sql security definer stable;
 
+-- Check interviewer assignment without going through RLS (breaks the
+-- interviews ↔ interviewers policy cycle that would otherwise cause
+-- "infinite recursion detected in policy" errors).
+create or replace function public.user_is_interviewer(p_interview_id uuid, p_user_id uuid)
+returns boolean as $$
+  select exists (
+    select 1 from interviewers
+    where interview_id = p_interview_id and user_id = p_user_id
+  );
+$$ language sql security definer stable;
+
 
 -- ----------------------------------------------------------------------------
 -- 7.2 Enable RLS on every table
@@ -1020,10 +1031,7 @@ create policy "interviews_select_participants" on interviews
   for select using (
     public.is_admin()
     or created_by = auth.uid()
-    or exists (
-      select 1 from interviewers i
-      where i.interview_id = interviews.id and i.user_id = auth.uid()
-    )
+    or public.user_is_interviewer(id, auth.uid())
     or exists (
       select 1 from applications a
       where a.id = interviews.application_id
@@ -1084,10 +1092,7 @@ create policy "interview_scorecards_select_participants" on interview_scorecards
   for select using (
     public.is_admin()
     or reviewer_id = auth.uid()
-    or exists (
-      select 1 from interviewers i
-      where i.interview_id = interview_scorecards.interview_id and i.user_id = auth.uid()
-    )
+    or public.user_is_interviewer(interview_id, auth.uid())
   );
 
 create policy "interview_scorecards_insert_reviewer" on interview_scorecards
@@ -1115,10 +1120,7 @@ create policy "interview_feedback_select" on interview_feedback
       where sc.id = interview_feedback.scorecard_id
         and (
           sc.reviewer_id = auth.uid()
-          or exists (
-            select 1 from interviewers i
-            where i.interview_id = sc.interview_id and i.user_id = auth.uid()
-          )
+          or public.user_is_interviewer(sc.interview_id, auth.uid())
         )
     )
   );
