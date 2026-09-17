@@ -1157,7 +1157,7 @@ create policy "interview_feedback_update_own_scorecard" on interview_feedback
 create policy "offers_select_admin_recruiter_reward" on offers
   for select using (
     public.is_admin()
-    or public.has_role('reward')
+    or public.has_role('hr_reward')
     or exists (
       select 1 from applications a
       where a.id = offers.application_id and a.assigned_recruiter_id = auth.uid()
@@ -1166,20 +1166,20 @@ create policy "offers_select_admin_recruiter_reward" on offers
 
 create policy "offers_insert_admin_recruiter_reward" on offers
   for insert with check (
-    public.is_admin() or public.has_role('recruiter') or public.has_role('reward')
+    public.is_admin() or public.has_role('recruiter') or public.has_role('hr_reward')
   );
 
 create policy "offers_update_admin_recruiter_reward" on offers
   for update using (
     public.is_admin()
-    or public.has_role('reward')
+    or public.has_role('hr_reward')
     or exists (
       select 1 from applications a
       where a.id = offers.application_id and a.assigned_recruiter_id = auth.uid()
     )
   ) with check (
     public.is_admin()
-    or public.has_role('reward')
+    or public.has_role('hr_reward')
     or exists (
       select 1 from applications a
       where a.id = offers.application_id and a.assigned_recruiter_id = auth.uid()
