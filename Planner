@@ -1,0 +1,825 @@
+Build a Microsoft Planner Capacity & Workload Dashboard
+
+I want to build a live capacity and workload dashboard using Microsoft Planner as the primary data source.
+
+The purpose is not simply to report how many Planner tasks exist. I want the dashboard to help a manager understand:
+
+* What work the team currently has
+* What work is coming
+* Who is carrying the workload
+* How much estimated effort has been committed
+* When the team or an individual is becoming stretched
+* Which pieces of work are creating that pressure
+* What additional work is sitting in the pipeline
+* Whether new work can realistically be moved into Planning
+
+For V1, use Microsoft Planner data only plus any small supporting table required for estimated effort or capacity assumptions.
+
+Do NOT include annual leave, sickness, holidays or other absence calculations in V1. Design the data model so these can be added later in V2.
+
+⸻
+
+1. Current Planner Structure
+
+The Planner currently contains the following buckets:
+
+Wishlist
+
+Work that has been requested or identified but has not yet been committed.
+
+Wishlist work should NOT consume current capacity.
+
+Cyclical
+
+Recurring work that happens monthly, quarterly, annually or on another repeated schedule.
+
+Examples might include:
+
+* Monthly reporting
+* Quarterly reporting
+* Regular data extracts
+* Recurring dashboards
+* Routine data quality checks
+* Annual processes
+
+Cyclical work SHOULD consume capacity because it represents known committed workload.
+
+Planning
+
+Work that has been scoped, started or committed for delivery.
+
+Planning work SHOULD consume capacity.
+
+Moving something from Wishlist into Planning should effectively mean:
+
+“We are now committing team capacity to this.”
+
+On Hold
+
+Work that has been paused.
+
+On Hold work should normally NOT consume current capacity, but it should remain visible as outstanding demand.
+
+Completed
+
+Finished work.
+
+Completed work should not consume current capacity but should be used for historical delivery metrics.
+
+⸻
+
+2. Core Capacity Concept
+
+The dashboard should calculate workload at:
+
+Person × Week
+
+Weekly capacity should be the main level of analysis.
+
+Monthly, 4-week, 8-week and 12-week views can then be calculated from weekly capacity.
+
+Do not rely primarily on task count.
+
+The dashboard needs to consider the estimated amount of work associated with each Planner task.
+
+For example:
+
+Three tasks estimated at:
+
+* 0.5 day
+* 1 day
+* 1 day
+
+should not be treated as equivalent to three tasks estimated at:
+
+* 5 days
+* 8 days
+* 10 days.
+
+⸻
+
+3. Estimated Effort
+
+Add an Estimated Effort concept.
+
+For V1, allow effort to be entered either as:
+
+Option A – T-shirt sizing
+
+Size	Effort
+XS	0.5 day
+S	1 day
+M	3 days
+L	5 days
+XL	10 days
+
+OR
+
+Option B – Estimated Days
+
+Allow a numeric estimate such as:
+
+* 0.5
+* 1
+* 2
+* 3
+* 5
+* 7.5
+* 10
+
+Prefer Estimated Days internally because it will make capacity calculations easier.
+
+If Planner does not provide an appropriate native field, create a small supporting data table using the Planner Task ID as the key.
+
+Example:
+
+PlannerTaskID	EstimatedDays	WorkType
+ABC123	3	Project
+DEF456	1	Cyclical
+XYZ789	5	Project
+
+⸻
+
+4. Team Capacity Table
+
+Create a small configurable Team Capacity table.
+
+Example:
+
+Person	WorkingDaysPerWeek	PlanningFactor
+Person A	5	0.75
+Person B	5	0.75
+Person C	5	0.75
+
+PlanningFactor represents how much of someone’s working week can realistically be allocated to planned delivery.
+
+For example:
+
+5 working days × 75% = 3.75 plannable days per week.
+
+The PlanningFactor MUST be configurable and should not be hard-coded.
+
+This allows normal activity such as:
+
+* Meetings
+* Emails
+* Team management
+* Administration
+* Ad hoc support
+* General BAU
+
+to be recognised without having to create Planner tasks for every small activity.
+
+⸻
+
+5. Capacity Calculation
+
+For each person and each week calculate:
+
+Weekly Planning Capacity
+
+Working Days Per Week × Planning Factor
+
+Then calculate:
+
+Committed Work
+
+Estimated effort from:
+
+* Planning
+* Cyclical
+
+Do not include:
+
+* Wishlist
+* On Hold
+* Completed
+
+Then calculate:
+
+Remaining Capacity
+
+Planning Capacity − Committed Effort
+
+And:
+
+Capacity Utilisation %
+
+Committed Effort ÷ Planning Capacity × 100
+
+⸻
+
+6. Capacity Status Rules
+
+Create configurable capacity thresholds.
+
+Initial suggested thresholds:
+
+Green – Capacity Available
+
+Below 80%
+
+Amber – Filling Up
+
+80% to below 95%
+
+Orange – Stretched
+
+95% to 105%
+
+Red – Over Capacity
+
+Above 105%
+
+Do not hard-code these thresholds deep inside the solution.
+
+Create a settings/configuration table so they can easily be changed.
+
+⸻
+
+7. Allocation Across Weeks
+
+A task may span multiple weeks.
+
+Example:
+
+Task:
+
+Estimated effort = 8 days
+Start = 5 October
+Due = 16 October
+
+The dashboard should allocate the estimated effort across the working weeks between Start Date and Due Date.
+
+For V1, use a simple logical allocation method.
+
+For example:
+
+If a task has:
+
+8 estimated days
+2 working weeks available
+
+allocate:
+
+4 days Week 1
+4 days Week 2
+
+Where appropriate, distribute the effort proportionally across available working days.
+
+Avoid allocating the entire estimated effort to the Due Date.
+
+⸻
+
+8. Dashboard Landing Page
+
+Create a clean management dashboard.
+
+The most important message should be:
+
+Are we OK, filling up, stretched, or over capacity?
+
+At the top show KPI cards for:
+
+Team Capacity – Next 4 Weeks
+
+Show:
+
+* Total planning capacity
+* Total committed effort
+* Remaining capacity
+* Capacity utilisation %
+* Number of people over capacity
+* Number of people stretched
+* Active Planning work
+* Cyclical workload
+* Wishlist demand
+
+Example:
+
+TEAM CAPACITY – NEXT 4 WEEKS
+
+Capacity: 45 days
+Committed: 39 days
+Remaining: 6 days
+Utilisation: 87%
+
+Status: FILLING UP
+
+2 people stretched
+1 person over capacity
+
+⸻
+
+9. Weekly Capacity Forecast
+
+Create a weekly capacity forecast.
+
+Example:
+
+Week	Capacity	Committed	Utilisation	Status
+28 Sep	12	8.5	71%	Available
+5 Oct	12	10.1	84%	Filling Up
+12 Oct	12	12.4	103%	Stretched
+19 Oct	12	13.8	115%	Over Capacity
+26 Oct	12	9.2	77%	Available
+
+Display this visually so upcoming pressure is immediately obvious.
+
+The visual should allow management to identify capacity problems BEFORE the week arrives.
+
+⸻
+
+10. Capacity by Person
+
+Create a visual for every team member.
+
+Example:
+
+Person A – 117% – OVER CAPACITY
+Person B – 86% – FILLING UP
+Person C – 72% – CAPACITY AVAILABLE
+
+Show:
+
+* Weekly capacity
+* Planning workload
+* Cyclical workload
+* Total committed
+* Remaining capacity
+* Utilisation %
+* Capacity status
+
+Allow the dashboard to filter by:
+
+* Person
+* Week
+* Month
+* Work type
+* Bucket
+* Priority
+
+⸻
+
+11. Explain What Is Causing Capacity Pressure
+
+Do not only show that someone is over capacity.
+
+Show WHY.
+
+If Person A is at 118%, allow the user to click or drill through and see:
+
+Capacity Drivers
+
+Cyclical reporting – 2 days
+Salary Review Dashboard – 5 days
+Recruitment Dashboard – 3 days
+Partner Analytics – 2 days
+
+Total demand = 12 days
+
+Available planning capacity = 10 days
+
+Over capacity = 2 days
+
+The manager should immediately understand what work is creating the pressure.
+
+⸻
+
+12. Pipeline / Demand View
+
+Create a pipeline visual showing:
+
+Wishlist
+Planning
+Cyclical
+On Hold
+Completed
+
+For each bucket show:
+
+* Number of tasks
+* Estimated effort
+* Percentage of total outstanding effort
+
+Example:
+
+Bucket	Tasks	Estimated Effort
+Wishlist	14	42 days
+Planning	8	29 days
+Cyclical	11	18 days
+On Hold	4	12 days
+Completed	21	48 days
+
+Emphasise effort more than task count.
+
+⸻
+
+13. Wishlist Demand
+
+Wishlist work should not count against current capacity.
+
+However, show:
+
+Wishlist Demand
+
+Total Wishlist effort = X days
+
+Break it down by:
+
+* Priority
+* Owner if assigned
+* Requested date
+* Estimated effort
+* Age of request
+
+The purpose is to show how much potential demand exists behind the committed workload.
+
+⸻
+
+14. Capacity Risk / Exceptions Panel
+
+Create an exception panel showing only areas that need attention.
+
+Examples:
+
+Capacity Risks
+
+Person A is at 118% next week
+
+Person B reaches 106% in three weeks
+
+Team capacity reaches 102% in Week 42
+
+Three Planning tasks have no effort estimate
+
+Two Planning tasks have no owner
+
+Four tasks are overdue
+
+Two tasks have a Due Date but no Start Date
+
+This should become the manager’s “what needs attention?” panel.
+
+⸻
+
+15. Data Quality KPIs
+
+Because capacity calculations depend on good Planner data, include data quality measures.
+
+Show:
+
+* Planning tasks without owners
+* Planning tasks without Start Dates
+* Planning tasks without Due Dates
+* Tasks without effort estimates
+* Tasks with Due Date before Start Date
+* Tasks with multiple owners
+* Overdue tasks
+* Long-running On Hold tasks
+
+Create a simple:
+
+Planner Data Quality Score
+
+Example:
+
+93% of active tasks contain the required planning information.
+
+⸻
+
+16. What Happens When Work Moves Into Planning
+
+This is a core requirement.
+
+When a task moves from Wishlist into Planning:
+
+1. Detect the change.
+2. Identify the owner.
+3. Read Start Date.
+4. Read Due Date.
+5. Read Estimated Effort.
+6. Allocate the effort across the appropriate weeks.
+7. Recalculate that person’s utilisation.
+8. Recalculate team utilisation.
+9. Determine whether any week crosses a capacity threshold.
+10. Update the dashboard.
+
+If the new work causes someone to move into:
+
+STRETCHED
+
+or
+
+OVER CAPACITY
+
+flag this prominently.
+
+Example:
+
+Capacity Warning
+
+Recruitment Dashboard has been added to Planning.
+
+Person A’s utilisation for week commencing 12 October changes:
+
+Before: 89%
+After: 112%
+
+Status: OVER CAPACITY
+
+Additional demand: 3 days
+
+The dashboard should clearly identify the newly added piece of work as the cause.
+
+⸻
+
+17. Alerts
+
+Design the architecture so Power Automate can later send alerts.
+
+For example:
+
+Capacity warning: Person A has exceeded 105% planned capacity for week commencing 12 October after “Recruitment Dashboard” was added to Planning.
+
+For V1, dashboard alerts are sufficient.
+
+If easy to implement, also include a Teams notification.
+
+Do not make Teams alerts essential for the first working version.
+
+⸻
+
+18. Historical Delivery
+
+Use Completed tasks to provide basic delivery information.
+
+Show:
+
+* Tasks completed this month
+* Tasks completed this quarter
+* Estimated effort completed
+* Average time from Start to Completion
+* Tasks completed late
+* Tasks completed on time
+* Completion trend
+
+Keep this secondary to capacity management.
+
+The dashboard’s primary purpose is forward-looking workload management, not retrospective productivity measurement.
+
+⸻
+
+19. Dashboard Pages
+
+Create these pages.
+
+Page 1 – Capacity Overview
+
+Executive / management view.
+
+Show:
+
+* Team capacity status
+* Current utilisation
+* Next 4-week forecast
+* People stretched
+* People over capacity
+* Capacity by person
+* Capacity risk alerts
+* Work pipeline
+
+Page 2 – Team Capacity
+
+Person-level analysis.
+
+Show:
+
+Person
+Week
+Capacity
+Planning workload
+Cyclical workload
+Remaining capacity
+Utilisation
+Status
+
+Include drill-down into the tasks creating the workload.
+
+Page 3 – Work Pipeline
+
+Show:
+
+Wishlist → Planning → Completed
+
+Also show:
+
+Cyclical
+On Hold
+
+Analyse:
+
+* Number of tasks
+* Effort
+* Priority
+* Owner
+* Age
+* Due dates
+
+Page 4 – Forward Forecast
+
+Show capacity for:
+
+* Next 4 weeks
+* Next 8 weeks
+* Next 12 weeks
+
+Highlight upcoming capacity peaks.
+
+Page 5 – Data Quality
+
+Show missing or invalid Planner information that prevents accurate capacity calculations.
+
+⸻
+
+20. Dashboard UX
+
+The dashboard should look modern, simple and executive-friendly.
+
+Avoid excessive charts.
+
+Prioritise:
+
+1. Capacity status
+2. Where capacity pressure occurs
+3. Who is affected
+4. What work causes it
+5. What future demand exists
+
+Use strong visual hierarchy.
+
+Use status indicators consistently:
+
+Green = Capacity available
+Amber = Filling up
+Orange = Stretched
+Red = Over capacity
+
+Users should be able to understand the overall team position within approximately 10 seconds of opening the dashboard.
+
+⸻
+
+21. Live / Refresh Architecture
+
+The solution should behave as close to live as reasonably possible.
+
+Microsoft Planner should remain the system where users manage their work.
+
+The dashboard should automatically ingest changes to:
+
+* Task
+* Bucket
+* Owner
+* Start Date
+* Due Date
+* Completion
+* Priority
+* Estimated effort
+
+Where true event-based updates are not available, use a scheduled refresh/synchronisation.
+
+Design this so refresh frequency can later be adjusted without rebuilding the solution.
+
+⸻
+
+22. V1 Data Architecture
+
+Prefer a simple architecture such as:
+
+Microsoft Planner
+↓
+Power Automate / Microsoft Graph / appropriate Microsoft connector
+↓
+Supporting task/capacity tables if required
+↓
+Power BI / Fabric semantic model
+↓
+Capacity Dashboard
+
+Avoid unnecessary complexity.
+
+Use Planner as the main operational interface.
+
+Do not require team members to maintain the same information in multiple systems.
+
+⸻
+
+23. Data Tables Required
+
+Design at minimum:
+
+PlannerTasks
+
+TaskID
+TaskName
+BucketID
+BucketName
+AssignedPerson
+StartDate
+DueDate
+CreatedDate
+CompletedDate
+PercentComplete
+Priority
+EstimatedDays
+WorkType
+CurrentStatus
+
+TeamCapacity
+
+PersonID
+PersonName
+WorkingDaysPerWeek
+PlanningFactor
+WeeklyPlanningCapacity
+
+Calendar
+
+Date
+WeekCommencing
+WeekNumber
+Month
+Quarter
+Year
+WorkingDayFlag
+
+CapacityAllocation
+
+TaskID
+Person
+WeekCommencing
+AllocatedEffort
+Bucket
+WorkType
+
+CapacityThresholds
+
+Status
+LowerThreshold
+UpperThreshold
+
+⸻
+
+24. Important Design Principle
+
+Do NOT calculate capacity simply as:
+
+Number of Tasks Per Person.
+
+The fundamental capacity measure must be:
+
+Estimated effort compared with available planning capacity.
+
+Task count can still be displayed as supporting information.
+
+⸻
+
+25. V2 – Do Not Build Yet
+
+Prepare the architecture so these can later be added, but DO NOT implement them in V1:
+
+* Annual leave
+* Sickness
+* Bank holidays
+* Training days
+* Part-time schedules
+* Workday integration
+* Scenario planning
+* Dragging Wishlist work into hypothetical future capacity
+* AI recommendations
+* Automatic rescheduling suggestions
+* Skills-based work allocation
+* Capacity alerts before accepting new work
+
+V1 should prove the basic Planner → workload → capacity → warning concept first.
+
+⸻
+
+26. V1 Success Criteria
+
+V1 is successful if I can open the dashboard and immediately answer:
+
+1. How stretched is the team right now?
+2. Who is stretched?
+3. When will we next become over capacity?
+4. Which tasks are creating the problem?
+5. How much capacity remains?
+6. How much work is in Planning?
+7. How much recurring Cyclical workload do we have?
+8. How much potential demand sits in Wishlist?
+9. What happens to capacity when new work is moved into Planning?
+10. Is the Planner data good enough to trust the capacity calculation?
+
+Build the solution around these questions.
+
+Before adding advanced functionality, get the V1 data model, capacity calculation and dashboard working correctly.
