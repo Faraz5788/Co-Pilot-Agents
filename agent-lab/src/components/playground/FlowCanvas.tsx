@@ -143,7 +143,6 @@ export function FlowCanvas({
       maxZoom={1.8}
       deleteKeyCode={readOnly ? null : ['Backspace', 'Delete']}
       nodesConnectable={!readOnly}
-      proOptions={{ hideAttribution: true }}
     >
       <Background variant={BackgroundVariant.Dots} gap={20} size={1.2} color="var(--grid-dot)" />
       <Controls showInteractive={false} position="bottom-left" />

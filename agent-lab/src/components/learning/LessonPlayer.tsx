@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, type ComponentType } from 'react'
+import { Suspense, useCallback, useEffect, useState, type ComponentType } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { LEVELS, stepKey } from '@/content/course'
 import type { Lesson, Level, Step } from '@/content/types'
@@ -14,7 +14,11 @@ import type { StepProps } from '@/components/steps/shared'
 
 function StepBody({ step, lessonId, done, onComplete }: { step: Step; lessonId: string; done: boolean; onComplete: StepProps['onComplete'] }) {
   const C = STEP_COMPONENTS[step.kind] as ComponentType<StepProps>
-  return <C step={step} lessonId={lessonId} done={done} onComplete={onComplete} />
+  return (
+    <Suspense fallback={<div className="flex h-64 items-center justify-center text-sm text-muted"><span className="mr-2 h-2 w-2 animate-pulse rounded-full bg-accent" /> Loading canvas…</div>}>
+      <C step={step} lessonId={lessonId} done={done} onComplete={onComplete} />
+    </Suspense>
+  )
 }
 
 export function LessonPlayer({ level, lesson }: { level: Level; lesson: Lesson }) {

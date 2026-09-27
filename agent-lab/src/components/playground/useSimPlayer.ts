@@ -86,11 +86,15 @@ export function useSimPlayer(graph: LabGraph, onFinish?: (plan: SimPlan, status:
     const nodes: Record<string, SimStatus> = {}
     const activeEdges = new Set<string>()
     const doneEdges = new Set<string>()
+    const rank: Record<SimStatus, number> = { done: 0, warn: 1, fail: 2, active: 3, waiting: 3 }
+    const settled: Record<string, SimStatus> = {}
     plan.steps.slice(0, index + 1).forEach((s, i) => {
       const current = i === index && (status === 'running' || status === 'awaiting')
       s.nodeIds.forEach((id) => {
-        if (current) nodes[id] = status === 'awaiting' && s.awaitApproval?.nodeId === id ? 'waiting' : 'active'
-        else nodes[id] = s.tone === 'bad' ? 'fail' : s.tone === 'warn' ? 'warn' : 'done'
+        const t = s.nodeTones?.[id]
+        const st: SimStatus = t === 'bad' ? 'fail' : t === 'warn' ? 'warn' : 'done'
+        if (!settled[id] || rank[st] > rank[settled[id]]) settled[id] = st
+        nodes[id] = current ? (status === 'awaiting' && s.awaitApproval?.nodeId === id ? 'waiting' : 'active') : settled[id]
       })
       s.edgeIds.forEach((e) => (current ? activeEdges.add(e) : doneEdges.add(e)))
     })

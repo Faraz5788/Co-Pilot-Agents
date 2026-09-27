@@ -15,6 +15,18 @@ import { SimPanel } from './SimPanel'
 import { createFromPalette } from '@/engine/palette'
 import { useSimPlayer, type PlayerStatus } from './useSimPlayer'
 
+/** Nearest grid position to (x, y) that doesn't overlap an existing node. */
+function freeSpot(g: LabGraph, x: number, y: number) {
+  const W = 200
+  const H = 80
+  const taken = (px: number, py: number) => g.nodes.some((n) => Math.abs(n.x - px) < W && Math.abs(n.y - py) < H)
+  const offsets: [number, number][] = []
+  for (let dx = -3; dx <= 3; dx++) for (let dy = -5; dy <= 5; dy++) offsets.push([dx, dy])
+  offsets.sort((a, b) => Math.hypot(a[0] * W, a[1] * H) - Math.hypot(b[0] * W, b[1] * H))
+  for (const [dx, dy] of offsets) if (!taken(x + dx * W, y + dy * H)) return { x: x + dx * W, y: y + dy * H }
+  return { x: x + 40, y: y + 40 }
+}
+
 export type PanelTab = 'mission' | 'inspect' | 'simulate' | 'review'
 
 const TAB_META: Record<PanelTab, { label: string; icon: string }> = {
@@ -66,17 +78,18 @@ function Inner(p: WorkbenchProps) {
 
   const select = (id: string | null) => {
     setSelected(id)
-    if (id && tabs.includes('inspect') && tab !== 'simulate') setTab('inspect')
+    if (id && tabs.includes('inspect') && tab !== 'simulate' && id !== selected) setTab('inspect')
   }
 
   const add = (item: PaletteItem) => {
     const rect = canvasRef.current?.getBoundingClientRect()
     const center = rect ? rf.screenToFlowPosition({ x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 }) : { x: 0, y: 0 }
-    const jitter = () => (Math.random() - 0.5) * 80
-    const n = createFromPalette(item, center.x - 80 + jitter(), center.y - 20 + jitter())
+    const { x, y } = freeSpot(graph, center.x - 80, center.y - 20)
+    const n = createFromPalette(item, x, y)
     onChange({ ...graph, nodes: [...graph.nodes, n] })
     setSelected(n.id)
-    if (tabs.includes('inspect')) setTab('inspect')
+    // Keep the mission checklist in view while building; otherwise show the new node's settings.
+    if (tabs.includes('inspect') && tab !== 'mission' && tab !== 'simulate') setTab('inspect')
   }
 
   const running = sim.status === 'running' || sim.status === 'awaiting'
@@ -84,9 +97,15 @@ function Inner(p: WorkbenchProps) {
   return (
     <div className={cn('flex flex-col gap-3 lg:flex-row', p.className)}>
       {/* Palette */}
-      <div className="lg:hidden">
-        <Palette items={palette} onAdd={add} horizontal />
-      </div>
+      <details className="group rounded-2xl border border-line bg-surface/70 lg:hidden">
+        <summary className="flex cursor-pointer list-none items-center gap-2 px-3 py-2.5 text-sm font-bold">
+          <Icon name="plus" size={16} className="text-accent" /> Add components
+          <Icon name="chevron-down" size={16} className="ml-auto text-subtle transition-transform group-open:rotate-180" />
+        </summary>
+        <div className="border-t border-line p-3">
+          <Palette items={palette} onAdd={add} horizontal />
+        </div>
+      </details>
       <aside className="hidden w-52 shrink-0 overflow-y-auto rounded-2xl border border-line bg-surface/70 p-3 scrollbar-thin lg:block" aria-label="Components">
         <div className="mb-3 flex items-center gap-1.5 text-xs font-bold"><Icon name="layers" size={14} className="text-accent" /> Components</div>
         <Palette items={palette} onAdd={add} />
@@ -95,7 +114,9 @@ function Inner(p: WorkbenchProps) {
 
       {/* Canvas */}
       <div ref={canvasRef} className={cn('relative min-h-[420px] flex-1 overflow-hidden rounded-2xl border border-line bg-surface/40', p.canvasClassName)}>
-        <FlowCanvas graph={graph} onChange={running ? () => undefined : onChange} selectedId={selected} onSelect={select} highlight={sim.highlight} readOnly={running} />
+        <div className="absolute inset-0">
+          <FlowCanvas graph={graph} onChange={running ? () => undefined : onChange} selectedId={selected} onSelect={select} highlight={sim.highlight} readOnly={running} />
+        </div>
         {running && (
           <div className="pointer-events-none absolute left-3 top-3 flex items-center gap-2 rounded-full border border-accent-2/40 bg-surface/90 px-3 py-1 text-xs font-semibold text-accent-2 shadow-card">
             <span className="h-2 w-2 animate-pulse rounded-full bg-accent-2" /> Simulating…

@@ -21,6 +21,8 @@ export interface SimStep {
   logs: LogLine[]
   tone: Tone
   parallel?: boolean
+  /** Per-node outcome within the step (defaults to ok). */
+  nodeTones?: Record<string, Tone>
   awaitApproval?: { nodeId: string; reason: string; shows: string; action: string }
 }
 
@@ -117,13 +119,17 @@ export function planSimulation(g: LabGraph, opts: SimOptions = {}): SimPlan {
     let waveTone: Tone = 'info'
     const lit: string[] = []
     let awaitApproval: SimStep['awaitApproval']
+    const nodeTones: Record<string, Tone> = {}
+    let cur = ''
+    const rank = { info: 0, ok: 1, warn: 2, bad: 3 }
     const worst = (t: Tone) => {
-      const rank = { info: 0, ok: 1, warn: 2, bad: 3 }
       if (rank[t] > rank[waveTone]) waveTone = t
+      if (cur && rank[t] > rank[nodeTones[cur] ?? 'info']) nodeTones[cur] = t
     }
 
     for (const n of wave) {
       lit.push(n.id)
+      cur = n.id
       switch (n.kind) {
         case 'request':
           waveLogs.push({ icon: 'message-square', tone: 'info', text: `Request received: “${request}”` })
@@ -261,6 +267,7 @@ export function planSimulation(g: LabGraph, opts: SimOptions = {}): SimPlan {
         tone: waveTone,
         parallel,
         awaitApproval,
+        nodeTones,
       })
     }
 
@@ -287,7 +294,7 @@ export function planSimulation(g: LabGraph, opts: SimOptions = {}): SimPlan {
         } else {
           logs.push({ icon: 'sparkles', tone: 'info', text: `${s.label} applied.` })
         }
-        push({ title: `${s.label} (via ${n.label})`, nodeIds: [s.id, n.id], edgeIds: [], logs, tone })
+        push({ title: `${s.label} (via ${n.label})`, nodeIds: [s.id, n.id], edgeIds: [], logs, tone, nodeTones: { [s.id]: tone } })
       }
     }
 
@@ -311,7 +318,7 @@ export function planSimulation(g: LabGraph, opts: SimOptions = {}): SimPlan {
         logs.push({ icon: 'mail', tone: 'warn', text: 'An agent with Email access could send this with no human approval.' })
         if (tone === 'ok') tone = 'warn'
       }
-      push({ title: o.label, nodeIds: [o.id], edgeIds: incoming([o.id]), logs, tone })
+      push({ title: o.label, nodeIds: [o.id], edgeIds: incoming([o.id]), logs, tone, nodeTones: { [o.id]: tone } })
     }
   }
 

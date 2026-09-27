@@ -87,6 +87,7 @@
 }
 
 html, body, #root { height: 100%; }
+body, #root { overflow-x: clip; max-width: 100vw; }
 
 body {
   background-color: var(--bg);
@@ -160,7 +161,8 @@ body {
 
 /* React Flow theming */
 .react-flow { --xy-background-color: transparent; }
-.react-flow__attribution { display: none; }
+.react-flow__attribution { background: transparent !important; opacity: 0.5; font-size: 9px; }
+.react-flow__attribution a { color: var(--subtle) !important; }
 .react-flow__controls { box-shadow: var(--shadow) !important; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); }
 .react-flow__controls-button { background: var(--surface) !important; border-bottom: 1px solid var(--line) !important; fill: var(--fg) !important; color: var(--fg) !important; }
 .react-flow__controls-button:hover { background: var(--surface-2) !important; }

@@ -82,7 +82,7 @@ export default function Playground() {
         <div className="mb-3 flex flex-col gap-3 rounded-2xl border border-accent/30 bg-accent-soft p-3 sm:flex-row sm:items-center">
           <div className="flex items-center gap-2 text-sm font-bold"><Icon name="target" size={16} className="text-accent" /> Objective</div>
           <ol className="flex flex-1 flex-wrap gap-x-5 gap-y-1 text-[13px]">
-            <li><span className="font-bold text-accent">1.</span> Build a system from components on the left</li>
+            <li><span className="font-bold text-accent">1.</span> Build a system from the component panel</li>
             <li><span className="font-bold text-accent">2.</span> Press <span className="font-semibold">Run simulation</span> and watch it execute</li>
             <li><span className="font-bold text-accent">3.</span> Inject a fault — does your design catch it?</li>
             <li><span className="font-bold text-accent">4.</span> Check the <span className="font-semibold">Review</span> score</li>

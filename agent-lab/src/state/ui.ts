@@ -31,7 +31,7 @@ export const useUi = create<UiState>((set, get) => ({
   mobileNavOpen: false,
   pushToast: (t) => {
     const id = uid('toast')
-    set({ toasts: [...get().toasts.slice(-3), { ...t, id }] })
+    set({ toasts: [...get().toasts.slice(-2), { ...t, id }] })
     setTimeout(() => get().dismissToast(id), t.kind === 'badge' ? 4200 : 2600)
   },
   dismissToast: (id) => set({ toasts: get().toasts.filter((t) => t.id !== id) }),

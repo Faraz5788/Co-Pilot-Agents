@@ -36,8 +36,8 @@ export function MissionBrief({ brief }: { brief: Brief }) {
   ]
   return (
     <div className="mb-5 grid gap-px overflow-hidden rounded-2xl border border-accent/25 bg-accent/15 sm:grid-cols-2">
-      {rows.map((r) => (
-        <div key={r.k} className="bg-surface p-3.5">
+      {rows.map((r, i) => (
+        <div key={r.k} className={cn('bg-surface p-3.5', rows.length % 2 === 1 && i === rows.length - 1 && 'sm:col-span-2')}>
           <div className="mb-1 flex items-center gap-1.5 text-[10.5px] font-bold uppercase tracking-[0.14em] text-accent">
             <Icon name={r.icon} size={13} /> {r.k}
           </div>

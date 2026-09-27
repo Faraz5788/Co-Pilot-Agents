@@ -1,8 +1,7 @@
-import type { ComponentType } from 'react'
+import { lazy, type ComponentType } from 'react'
 import type { Step } from '@/content/types'
 import { AgentBuilderStep } from './AgentBuilderStep'
 import { AgentRunStep } from './AgentRunStep'
-import { ArchitectureStep } from './ArchitectureStep'
 import { BreakFixStep } from './BreakFixStep'
 import { CardsStep } from './CardsStep'
 import { LearnStep } from './LearnStep'
@@ -13,6 +12,9 @@ import { SequenceStep } from './SequenceStep'
 import { SkillBuilderStep } from './SkillBuilderStep'
 import { SortStep } from './SortStep'
 import type { StepProps } from './shared'
+
+// The canvas (React Flow) is only loaded when an architecture challenge opens.
+const ArchitectureStep = lazy(() => import('./ArchitectureStep').then((m) => ({ default: m.ArchitectureStep })))
 
 /** Add a new interaction type by adding a kind to `Step` and a component here. */
 export const STEP_COMPONENTS: { [K in Step['kind']]: ComponentType<StepProps<Extract<Step, { kind: K }>>> } = {
@@ -26,7 +28,7 @@ export const STEP_COMPONENTS: { [K in Step['kind']]: ComponentType<StepProps<Ext
   'agent-run': AgentRunStep,
   'skill-builder': SkillBuilderStep,
   'break-fix': BreakFixStep,
-  architecture: ArchitectureStep,
+  architecture: ArchitectureStep as unknown as ComponentType<StepProps<Extract<Step, { kind: 'architecture' }>>>,
   reflect: ReflectStep,
 }
 

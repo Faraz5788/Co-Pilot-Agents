@@ -6,7 +6,7 @@ export function Toaster() {
   const toasts = useUi((s) => s.toasts)
   const dismiss = useUi((s) => s.dismissToast)
   return (
-    <div className="pointer-events-none fixed bottom-20 right-4 z-[70] flex w-72 flex-col gap-2 lg:bottom-6" aria-live="polite" role="status">
+    <div className="pointer-events-none fixed bottom-20 right-4 z-[70] flex w-72 flex-col gap-2 lg:bottom-auto lg:top-4" aria-live="polite" role="status">
       {toasts.map((t) => (
         <button
           key={t.id}
