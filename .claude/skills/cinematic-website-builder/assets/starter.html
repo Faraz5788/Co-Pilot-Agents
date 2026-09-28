@@ -1,0 +1,355 @@
+<!doctype html>
+<!--
+  Cinematic starter — "Tidewater" direction (see references/art-directions.md #2).
+  Single file, no build step. Lenis + GSAP ScrollTrigger from CDN.
+  Sections: nav · hero (shader bg + masked line reveal) · marquee · pinned chapters · bento · CTA · wordmark footer.
+  Replace the copy, then swap tokens in :root to re-skin to any direction.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Harbor — Deploys that stay calm</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600&family=Inter:wght@400;500&family=Space+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lenis@1.3.4/dist/lenis.css">
+<style>
+  :root {
+    --ground: #07080A; --surface: #0C0F12; --hairline: #1B1C1E;
+    --text: #F3F5F8; --muted: #9AA2AD;
+    --accent: #5FB3D9; --btn: #0B141B; --btn-border: #1D4560;
+    --shader-1: #07080A; --shader-2: #0E2433; --shader-3: #1D4560;
+    --display: "Bricolage Grotesque", system-ui, sans-serif;
+    --body: "Inter", system-ui, sans-serif;
+    --mono: "Space Mono", ui-monospace, monospace;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --gutter: clamp(20px, 4vw, 48px);
+    --max: 1240px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; }
+  html { background: var(--ground); color: var(--text); }
+  body { font: 400 17px/1.7 var(--body); -webkit-font-smoothing: antialiased; overflow-x: clip; }
+  a { color: inherit; text-decoration: none; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+  .wrap { max-width: var(--max); margin-inline: auto; padding-inline: var(--gutter); }
+  .label { font: 12px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+  h1, h2, h3 { font-family: var(--display); font-weight: 600; letter-spacing: -0.035em; }
+  h1 { font-size: clamp(2.6rem, 7vw, 5.6rem); line-height: .96; }
+  h2 { font-size: clamp(2rem, 4.4vw, 3.4rem); line-height: 1; }
+  p { max-width: 62ch; }
+
+  /* Grain overlay */
+  body::after { content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 90; opacity: .035; mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+
+  /* Buttons */
+  .btn { display: inline-flex; align-items: center; gap: .6em; min-height: 48px; padding: 0 22px; border-radius: 999px;
+    font: 500 15px/1 var(--body); background: var(--btn); border: 1px solid var(--btn-border); color: var(--text);
+    transition: transform .5s var(--ease), border-color .5s var(--ease); }
+  .btn:hover { transform: translateY(-2px); border-color: var(--accent); }
+  .btn--ghost { background: transparent; border-color: transparent; color: var(--muted); }
+  .btn--ghost:hover { color: var(--text); border-color: transparent; }
+
+  /* Nav */
+  .nav { position: fixed; inset: 0 0 auto; z-index: 50; height: 64px; display: flex; align-items: center;
+    transition: transform .6s var(--ease), background .6s var(--ease); }
+  .nav.is-solid { background: rgb(12 15 18 / .7); backdrop-filter: blur(12px); border-bottom: 1px solid var(--hairline); }
+  .nav.is-hidden { transform: translateY(-100%); }
+  .nav .wrap { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+  .nav__logo { font: 600 18px/1 var(--display); letter-spacing: -0.02em; }
+  .nav__links { display: flex; gap: 28px; font-size: 14px; color: var(--muted); }
+  .nav__links a:hover { color: var(--text); }
+
+  /* Hero */
+  .hero { position: relative; min-height: 100svh; display: grid; align-items: center; padding-block: 120px 80px; isolation: isolate; }
+  .hero canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; opacity: .55;
+    mask-image: linear-gradient(to bottom, #000 55%, transparent); }
+  .pill { display: inline-flex; gap: 10px; align-items: center; padding: 7px 14px 7px 8px; border: 1px solid var(--hairline);
+    border-radius: 999px; background: var(--surface); font-size: 13px; color: var(--muted); margin-bottom: 28px; }
+  .pill b { font: 11px/1 var(--mono); color: var(--ground); background: var(--accent); padding: 5px 8px; border-radius: 999px; letter-spacing: .08em; }
+  .line { display: block; overflow: clip; padding-bottom: .06em; }
+  .line > span { display: block; }
+  .hero p { color: var(--muted); margin: 28px 0 36px; font-size: 18px; }
+  .hero__actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .hero__meta { position: absolute; bottom: 32px; left: 0; right: 0; }
+  .hero__meta .wrap { display: flex; justify-content: space-between; }
+
+  /* Marquee */
+  .marquee { overflow: clip; border-block: 1px solid var(--hairline); padding-block: 22px;
+    mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); }
+  .marquee + .marquee { border-top: 0; }
+  .marquee__track { display: flex; gap: 3rem; width: max-content; animation: marquee 32s linear infinite;
+    font: 15px/1 var(--mono); color: var(--muted); letter-spacing: .04em; }
+  .marquee__track span::after { content: "✦"; margin-left: 3rem; color: var(--btn-border); }
+  .marquee--rev .marquee__track { animation-duration: 38s; animation-direction: reverse; }
+  @keyframes marquee { to { transform: translateX(-50%); } }
+
+  /* Chapters (pinned) */
+  /* Default = static stacked list (mobile, reduced motion, no JS). JS adds .is-pinned on desktop. */
+  .chapters .wrap { display: grid; grid-template-columns: 1fr 1.3fr; gap: 48px; align-items: start; padding-block: clamp(96px, 14vw, 180px); }
+  .chapters__index { font: 13px/1 var(--mono); color: var(--accent); letter-spacing: .1em; margin-bottom: 18px; display: none; }
+  .chapters__stage { display: grid; gap: 48px; }
+  .chapter h3 { font-size: clamp(1.6rem, 3vw, 2.4rem); line-height: 1.05; margin-bottom: 16px; }
+  .chapter p { color: var(--muted); }
+  .chapters__bar { display: none; height: 1px; background: var(--hairline); margin-top: 28px; }
+  .chapters__bar i { display: block; height: 100%; width: 100%; background: var(--accent); transform-origin: left; transform: scaleX(0); }
+  .chapters.is-pinned { height: 100svh; overflow: clip; }
+  .chapters.is-pinned .wrap { height: 100%; align-items: center; padding-block: 0; }
+  .chapters.is-pinned .chapters__index, .chapters.is-pinned .chapters__bar { display: block; }
+  .chapters.is-pinned .chapters__stage { position: relative; height: 320px; display: block; }
+  .chapters.is-pinned .chapter { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; }
+
+  /* Bento */
+  section.block { padding-block: clamp(96px, 14vw, 180px); }
+  .head { display: flex; justify-content: space-between; align-items: end; gap: 32px; margin-bottom: 56px; flex-wrap: wrap; }
+  .bento { display: grid; grid-template-columns: repeat(12, 1fr); gap: 16px; }
+  .card { grid-column: span 4; min-height: 260px; padding: 28px; border: 1px solid var(--hairline); border-radius: 20px;
+    background: var(--surface); display: flex; flex-direction: column; justify-content: space-between;
+    transition: transform .5s var(--ease), border-color .5s var(--ease); }
+  .card:hover { transform: translateY(-4px); border-color: #2a2c2f; }
+  .card--7 { grid-column: span 7; } .card--5 { grid-column: span 5; }
+  .card h3 { font-size: 22px; letter-spacing: -0.02em; margin-top: 18px; }
+  .card p { color: var(--muted); font-size: 15px; margin-top: 8px; }
+  .card__num { font: 600 clamp(3rem, 6vw, 5rem)/1 var(--display); letter-spacing: -0.05em; }
+  .card__num em { font-style: normal; color: var(--accent); }
+  .log { font: 13px/1.9 var(--mono); color: var(--muted); }
+  .log b { color: var(--accent); font-weight: 400; }
+
+  /* CTA + footer */
+  .cta { text-align: center; border-top: 1px solid var(--hairline); }
+  .cta h2 { font-size: clamp(2.4rem, 6vw, 4.6rem); margin-bottom: 32px; }
+  .footer { padding-top: 64px; border-top: 1px solid var(--hairline); overflow: clip; }
+  .footer__cols { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; font-size: 14px; color: var(--muted); }
+  .footer__cols a { display: block; margin-top: 10px; } .footer__cols a:hover { color: var(--text); }
+  .wordmark { font: 600 21vw/.8 var(--display); letter-spacing: -0.06em; color: var(--surface);
+    -webkit-text-stroke: 1px var(--hairline); margin-top: 64px; transform: translateY(12%); white-space: nowrap; }
+
+  @media (max-width: 767px) {
+    .nav__links { display: none; }
+    .chapters .wrap { grid-template-columns: 1fr; }
+    .card, .card--7, .card--5 { grid-column: span 12; }
+    .footer__cols { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+  }
+</style>
+</head>
+<body>
+<header class="nav" id="nav">
+  <div class="wrap">
+    <a class="nav__logo" href="#">Harbor</a>
+    <nav class="nav__links" aria-label="Primary">
+      <a href="#how">How it works</a><a href="#numbers">Numbers</a><a href="#start">Pricing</a>
+    </nav>
+    <a class="btn" href="#start" data-magnetic>Start free</a>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <canvas id="shader" aria-hidden="true"></canvas>
+    <div class="wrap">
+      <a class="pill" href="#how"><b>NEW</b> Rollbacks now finish in under 4 seconds →</a>
+      <h1 data-lines>
+        <span class="line"><span>Deploys that</span></span>
+        <span class="line"><span>stay calm when</span></span>
+        <span class="line"><span>traffic doesn't.</span></span>
+      </h1>
+      <p data-reveal-self>Harbor ships your containers across three regions, watches the error rate for ninety seconds, and pulls the release back before your pager goes off.</p>
+      <div class="hero__actions" data-reveal>
+        <a class="btn" href="#start" data-magnetic>Deploy your first service →</a>
+        <a class="btn btn--ghost" href="#how">See a rollback</a>
+      </div>
+    </div>
+    <div class="hero__meta" aria-hidden="true"><div class="wrap label"><span>eu-west · us-east · ap-south</span><span>scroll ↓</span></div></div>
+  </section>
+
+  <div class="marquee" aria-hidden="true"><div class="marquee__track">
+    <span>Kubernetes</span><span>Docker</span><span>Terraform</span><span>Postgres</span><span>Redis</span><span>GitHub Actions</span><span>OpenTelemetry</span>
+    <span>Kubernetes</span><span>Docker</span><span>Terraform</span><span>Postgres</span><span>Redis</span><span>GitHub Actions</span><span>OpenTelemetry</span>
+  </div></div>
+  <div class="marquee marquee--rev" aria-hidden="true"><div class="marquee__track">
+    <span>canary 5% → 25% → 100%</span><span>p99 watched for 90s</span><span>auto-rollback on 0.4% errors</span><span>zero-downtime migrations</span>
+    <span>canary 5% → 25% → 100%</span><span>p99 watched for 90s</span><span>auto-rollback on 0.4% errors</span><span>zero-downtime migrations</span>
+  </div></div>
+
+  <section class="chapters" id="how">
+    <div class="wrap">
+      <div>
+        <p class="label">How a release moves</p>
+        <h2 style="margin-top:18px">Four stages.<br>No heroics.</h2>
+      </div>
+      <div>
+        <div class="chapters__index" id="chapIndex">01 / 04</div>
+        <div class="chapters__stage">
+          <article class="chapter"><h3>Build once, sign it.</h3><p>Every image is built from the commit, signed, and pinned by digest. What you tested is exactly what runs.</p></article>
+          <article class="chapter"><h3>Canary at five percent.</h3><p>A slice of real traffic reaches the new version first, in one region, while the old version carries the rest.</p></article>
+          <article class="chapter"><h3>Ninety seconds of attention.</h3><p>Harbor compares error rate and p99 latency against the previous release. Nobody has to stare at a dashboard.</p></article>
+          <article class="chapter"><h3>Promote, or quietly undo.</h3><p>Healthy releases roll to every region. Unhealthy ones are pulled back in under four seconds, and you get a note explaining why.</p></article>
+        </div>
+        <div class="chapters__bar"><i id="chapBar"></i></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="numbers">
+    <div class="wrap">
+      <div class="head" data-reveal>
+        <h2>Boring on purpose.</h2>
+        <p class="label">Measured across 41,000 production releases</p>
+      </div>
+      <div class="bento" data-reveal>
+        <div class="card card--7">
+          <span class="label">Median rollback</span>
+          <div><div class="card__num"><span data-count="3.8">3.8</span><em>s</em></div><p>From the first failing health check to the old version serving 100% of traffic.</p></div>
+        </div>
+        <div class="card card--5">
+          <span class="label">Release log</span>
+          <div class="log">12:04:11 build <b>a91f2c</b> signed<br>12:04:38 canary eu-west 5%<br>12:06:08 p99 212ms ✓<br>12:06:09 promoted <b>3/3</b> regions</div>
+        </div>
+        <div class="card"><span class="label">Regions</span><div><h3>Three by default</h3><p>Add more without changing the pipeline.</p></div></div>
+        <div class="card"><span class="label">Migrations</span><div><h3>Expand, then contract</h3><p>Schema changes run in two safe halves.</p></div></div>
+        <div class="card"><span class="label">Audit</span><div><h3>Every change, signed</h3><p>Who shipped what, when, and from which commit.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block cta" id="start">
+    <div class="wrap" data-reveal>
+      <p class="label" style="margin-bottom:24px">Free for three services</p>
+      <h2>Ship on a Friday.<br>Sleep anyway.</h2>
+      <a class="btn" href="#" data-magnetic>Deploy your first service →</a>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="wrap footer__cols">
+    <div><span class="label">Product</span><a href="#">Releases</a><a href="#">Rollbacks</a><a href="#">Pricing</a></div>
+    <div><span class="label">Developers</span><a href="#">Docs</a><a href="#">CLI</a><a href="#">Status</a></div>
+    <div><span class="label">Company</span><a href="#">About</a><a href="#">Careers</a></div>
+    <div><span class="label">Contact</span><a href="mailto:hello@example.com">hello@example.com</a></div>
+  </div>
+  <div class="wordmark" aria-hidden="true">Harbor</div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/CustomEase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.3.4/dist/lenis.min.js"></script>
+<script>
+(() => {
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const mobile = matchMedia("(max-width: 767px)").matches;
+  const css = getComputedStyle(document.documentElement);
+  const token = (n) => css.getPropertyValue(n).trim();
+
+  /* ---------- Shader background (#11) ---------- */
+  (function shader() {
+    const c = document.getElementById("shader");
+    const gl = c.getContext("webgl", { antialias: false, premultipliedAlpha: false });
+    if (!gl) return;
+    const vs = "attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}";
+    const fs = `precision highp float;uniform vec2 r;uniform float t;uniform vec3 c1,c2,c3;
+      vec2 h(vec2 p){p=vec2(dot(p,vec2(127.1,311.7)),dot(p,vec2(269.5,183.3)));return fract(sin(p)*43758.5453)*2.-1.;}
+      float n(vec2 p){vec2 i=floor(p),f=fract(p),u=f*f*(3.-2.*f);
+        return mix(mix(dot(h(i),f),dot(h(i+vec2(1,0)),f-vec2(1,0)),u.x),mix(dot(h(i+vec2(0,1)),f-vec2(0,1)),dot(h(i+1.),f-1.),u.x),u.y);}
+      void main(){vec2 uv=gl_FragCoord.xy/r;vec2 p=vec2(uv.x*r.x/r.y,uv.y)*1.6;
+        float a=n(p+t*.05),b=n(p*1.7-t*.04+a);
+        vec3 col=mix(c1,c2,smoothstep(-.4,.6,a));col=mix(col,c3,smoothstep(-.1,.9,b)*.55);
+        gl_FragColor=vec4(col,1.);}`;
+    const sh = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); return s; };
+    const prog = gl.createProgram();
+    gl.attachShader(prog, sh(gl.VERTEX_SHADER, vs)); gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, fs));
+    gl.linkProgram(prog); gl.useProgram(prog);
+    gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+    const loc = gl.getAttribLocation(prog, "p"); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+    const u = (n) => gl.getUniformLocation(prog, n);
+    const rgb = (hex) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255);
+    gl.uniform3fv(u("c1"), rgb(token("--shader-1"))); gl.uniform3fv(u("c2"), rgb(token("--shader-2"))); gl.uniform3fv(u("c3"), rgb(token("--shader-3")));
+    const dpr = Math.min(devicePixelRatio, 1.5);
+    const size = () => { c.width = c.clientWidth * dpr; c.height = c.clientHeight * dpr; gl.viewport(0, 0, c.width, c.height); gl.uniform2f(u("r"), c.width, c.height); };
+    size(); addEventListener("resize", size);
+    const draw = (ms) => { gl.uniform1f(u("t"), ms / 1000); gl.drawArrays(gl.TRIANGLES, 0, 3); };
+    if (reduced) { draw(8000); return; }
+    let visible = true, raf;
+    const loop = (ms) => { draw(ms + 8000); if (visible) raf = requestAnimationFrame(loop); };
+    new IntersectionObserver(([e]) => { visible = e.isIntersecting; if (visible) raf = requestAnimationFrame(loop); else cancelAnimationFrame(raf); }).observe(c);
+  })();
+
+  if (!window.gsap) return;               // CDN failed: page is still fully readable
+  gsap.registerPlugin(ScrollTrigger, CustomEase);
+  CustomEase.create("site", "0.22, 1, 0.36, 1");
+  gsap.defaults({ ease: "site", duration: 0.75 });
+
+  /* ---------- Nav: solid after hero, hide on scroll down ---------- */
+  const nav = document.getElementById("nav");
+  ScrollTrigger.create({ start: () => innerHeight * 0.8, end: "max",
+    onUpdate: (s) => { nav.classList.add("is-solid"); nav.classList.toggle("is-hidden", s.direction === 1 && s.scroll() > innerHeight); },
+    onLeaveBack: () => nav.classList.remove("is-solid", "is-hidden") });
+
+  if (reduced) return;                    // everything below is motion
+
+  /* ---------- Lenis (#1) ---------- */
+  const lenis = new Lenis({ lerp: 0.1 });
+  lenis.on("scroll", ScrollTrigger.update);
+  gsap.ticker.add((t) => lenis.raf(t * 1000));
+  gsap.ticker.lagSmoothing(0);
+  document.querySelectorAll('a[href^="#"]').forEach((a) => a.addEventListener("click", (e) => {
+    const id = a.getAttribute("href"); if (id.length > 1) { e.preventDefault(); lenis.scrollTo(id, { offset: -64 }); }
+  }));
+
+  /* ---------- Hero: masked line reveal (#3) — transform only, LCP-safe ---------- */
+  gsap.from("[data-lines] .line > span", { yPercent: 105, stagger: 0.08, duration: 1.1, delay: 0.1 });
+  gsap.from("[data-reveal-self], .hero .pill", { y: 16, opacity: 0, delay: 0.45, stagger: 0.06 });
+  gsap.from(".hero__actions > *", { y: 16, opacity: 0, delay: 0.55, stagger: 0.06 });
+
+  /* ---------- Entry reveals (#2) ---------- */
+  gsap.utils.toArray("[data-reveal]").forEach((g) => {
+    if (g.closest(".hero")) return;
+    gsap.from(g.children, { y: 16, opacity: 0, stagger: 0.06, scrollTrigger: { trigger: g, start: "top 85%", once: true } });
+  });
+
+  /* ---------- Count-up ---------- */
+  document.querySelectorAll("[data-count]").forEach((el) => {
+    const end = parseFloat(el.dataset.count), o = { v: 0 };
+    gsap.to(o, { v: end, duration: 1.4, scrollTrigger: { trigger: el, start: "top 85%", once: true },
+      onUpdate: () => (el.textContent = o.v.toFixed(1)) });
+  });
+
+  /* ---------- Pinned chapters (#6) — desktop only ---------- */
+  if (!mobile) {
+    const chapters = gsap.utils.toArray(".chapter"), n = chapters.length;
+    const idx = document.getElementById("chapIndex");
+    document.querySelector(".chapters").classList.add("is-pinned");
+    gsap.set(chapters.slice(1), { yPercent: 30, opacity: 0 });
+    const tl = gsap.timeline({ defaults: { ease: "none", duration: 0.3 },
+      scrollTrigger: { trigger: ".chapters", start: "top top", end: `+=${n * 90}%`, pin: true, scrub: 0.6,
+        onUpdate: (s) => { const i = Math.min(n - 1, Math.floor(s.progress * n)); idx.textContent = `0${i + 1} / 0${n}`; } } });
+    chapters.forEach((el, i) => {
+      if (i > 0) tl.to(el, { yPercent: 0, opacity: 1 }, i);
+      if (i < n - 1) tl.to(el, { yPercent: -30, opacity: 0 }, i + 0.7);
+    });
+    tl.to("#chapBar", { scaleX: 1, duration: n }, 0);
+  }
+
+  /* ---------- Magnetic buttons (#10) ---------- */
+  if (matchMedia("(hover: hover)").matches) document.querySelectorAll("[data-magnetic]").forEach((el) => {
+    const xTo = gsap.quickTo(el, "x", { duration: 0.6 }), yTo = gsap.quickTo(el, "y", { duration: 0.6 });
+    el.addEventListener("pointermove", (e) => { const r = el.getBoundingClientRect();
+      xTo((e.clientX - r.left - r.width / 2) * 0.3); yTo((e.clientY - r.top - r.height / 2) * 0.3); });
+    el.addEventListener("pointerleave", () => { xTo(0); yTo(0); });
+  });
+
+  /* ---------- Footer wordmark rises into place ---------- */
+  gsap.fromTo(".wordmark", { yPercent: 40 }, { yPercent: 12, ease: "none",
+    scrollTrigger: { trigger: ".footer", start: "top bottom", end: "bottom bottom", scrub: true } });
+
+  document.fonts.ready.then(() => ScrollTrigger.refresh());
+})();
+</script>
+</body>
+</html>
