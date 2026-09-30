@@ -7,6 +7,7 @@ import { Icon } from '@/components/ui/Icon'
 import { ButtonLink, Card, IconTile, ProgressBar, SectionTitle } from '@/components/ui/primitives'
 import { LevelStrip } from '@/components/learning/LevelMap'
 import { Page } from '@/components/layout/Page'
+import { FamilySnapshot } from '@/components/cloud/FamilySnapshot'
 
 function Stat({ icon, label, value, sub, tone = 'accent' }: { icon: string; label: string; value: string; sub?: string; tone?: 'accent' | 'cyan' | 'ok' | 'warn' | 'gold' }) {
   return (
@@ -97,6 +98,8 @@ export default function Home() {
         <Stat icon="sparkles" label="Skills unlocked" value={`${s.skills.length}`} tone="warn" />
         <Stat icon="flame" label="Streak" value={`${s.streak.count} day${s.streak.count === 1 ? '' : 's'}`} sub={`Best: ${s.streak.best}`} tone="gold" />
       </section>
+
+      <FamilySnapshot />
 
       {/* Map */}
       <section className="mb-10">

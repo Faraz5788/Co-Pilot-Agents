@@ -38,6 +38,22 @@ Tip: **Settings → Preview all levels** unlocks every level so you can explore.
 
 All data is fictional (*Halcyon Group*, 10,450 employees, organised as Division → Department → Team → Location).
 
+## Family mode (Supabase)
+
+When `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` are set (see `.env`), Agent Lab adds:
+
+- **Email magic-link sign-in.** Progress syncs to Supabase and follows you across devices. Local progress from before sign-in is merged in, not lost.
+- **Families.** Create a family, then share the 6-character join code or invite link (`#/family?join=CODE`). You get a leaderboard (level, XP, lessons, badges, streak, last active, who's online) and a live activity feed of lessons, levels and badges.
+- **Chat.** A family chat room plus a discussion thread under every lesson. Messages can be marked as questions and then marked answered.
+- **Privacy.** Row-level security: you see only yourself and your own family, you can only post as yourself, and only the family RPCs can change which family you're in. The schema is in `supabase/migrations/`.
+
+Without those variables the app runs fully offline, exactly as before. Guests can also skip sign-in.
+
+### One-time setup (Supabase dashboard)
+
+1. **Authentication → URL Configuration:** set *Site URL* to your deployed URL (e.g. `https://agent-lab-family.netlify.app`) and add it under *Redirect URLs*.
+2. **Authentication → Emails → SMTP Settings:** connect a real email sender (e.g. Resend's free tier). Supabase's built-in sender only delivers to your own Supabase team members, a few per hour.
+
 ## Architecture
 
 ```
@@ -56,6 +72,7 @@ src/
     evaluate.ts       # principle-based architecture review (6 dimensions)
     agentRunner.ts    # single-agent simulator for Level 2
     nodeFactory.ts, palette.ts
+  cloud/              # Supabase client, auth, progress sync, realtime hooks
   state/              # learner progress
     progress.ts       # zustand store: XP, lessons, badges, agents, skills, designs, streak
     storage.ts        # ProgressRepository interface (localStorage now; HTTP example included)

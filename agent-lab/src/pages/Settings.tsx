@@ -6,6 +6,7 @@ import { Icon } from '@/components/ui/Icon'
 import { Button, Card } from '@/components/ui/primitives'
 import { Modal } from '@/components/ui/Modal'
 import { Page, PageHeader } from '@/components/layout/Page'
+import { useAuth } from '@/cloud/auth'
 
 function Row({ icon, title, desc, children }: { icon: string; title: string; desc: string; children: ReactNode }) {
   return (
@@ -35,6 +36,7 @@ export default function Settings() {
   const importData = useProgress((x) => x.importData)
   const pushToast = useUi((x) => x.pushToast)
   const [confirm, setConfirm] = useState(false)
+  const signedIn = useAuth((x) => !!x.session)
   const fileRef = useRef<HTMLInputElement>(null)
 
   const exportData = () => {
@@ -61,7 +63,7 @@ export default function Settings() {
 
   return (
     <Page>
-      <PageHeader eyebrow="Settings" title="Preferences" subtitle="Your progress is stored in this browser. No account needed." />
+      <PageHeader eyebrow="Settings" title="Preferences" subtitle={signedIn ? 'Your progress is saved to your account and syncs across devices.' : 'Your progress is stored in this browser.'} />
       <Card className="mb-6 divide-y divide-line">
         <Row icon={s.settings.theme === 'dark' ? 'moon' : 'sun'} title="Dark mode" desc="Agent Lab is designed dark-first, with a full light theme.">
           <Toggle label="Dark mode" on={s.settings.theme === 'dark'} onChange={(v) => setSettings({ theme: v ? 'dark' : 'light' })} />
@@ -81,7 +83,7 @@ export default function Settings() {
           <input ref={fileRef} type="file" accept="application/json" className="hidden" onChange={(e) => e.target.files?.[0] && onImport(e.target.files[0])} />
           <Button variant="secondary" icon="upload" onClick={() => fileRef.current?.click()}>Import</Button>
         </Row>
-        <Row icon="rotate-ccw" title="Reset progress" desc="Start again from Level 1. This can’t be undone.">
+        <Row icon="rotate-ccw" title="Reset progress" desc={signedIn ? 'Start again from Level 1 on every device. This can’t be undone.' : 'Start again from Level 1. This can’t be undone.'}>
           <Button variant="danger" icon="trash" onClick={() => setConfirm(true)}>Reset</Button>
         </Row>
       </Card>

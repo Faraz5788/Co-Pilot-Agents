@@ -11,6 +11,7 @@ import { Button, ButtonLink, ProgressBar } from '@/components/ui/primitives'
 import { PHASE_META, STEP_COMPONENTS } from '@/components/steps/registry'
 import { MissionBrief } from '@/components/steps/shared'
 import type { StepProps } from '@/components/steps/shared'
+import { LessonDiscussion } from '@/components/cloud/LessonDiscussion'
 
 function StepBody({ step, lessonId, done, onComplete }: { step: Step; lessonId: string; done: boolean; onComplete: StepProps['onComplete'] }) {
   const C = STEP_COMPONENTS[step.kind] as ComponentType<StepProps>
@@ -153,6 +154,8 @@ export function LessonPlayer({ level, lesson }: { level: Level; lesson: Lesson }
         {step.mission && <MissionBrief brief={step.mission} />}
         <StepBody step={step} lessonId={lesson.id} done={!!completedSteps[key]} onComplete={onComplete} />
       </div>
+
+      <LessonDiscussion lessonId={lesson.id} title={lesson.title} />
 
       {/* Footer */}
       <div className="sticky bottom-16 z-20 mt-8 lg:bottom-4">

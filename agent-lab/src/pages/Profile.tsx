@@ -7,6 +7,8 @@ import { localRepository } from '@/state/storage'
 import { Icon } from '@/components/ui/Icon'
 import { Button, ButtonLink, Card, IconTile, SectionTitle } from '@/components/ui/primitives'
 import { Page, PageHeader } from '@/components/layout/Page'
+import { AccountCard } from '@/components/cloud/AccountCard'
+import { cloudEnabled } from '@/cloud/client'
 
 export default function Profile() {
   const s = useProgress()
@@ -23,7 +25,8 @@ export default function Profile() {
   return (
     <Page>
       <PageHeader eyebrow="Profile" title="Your lab" subtitle="Everything you’ve built lives here: agents, skills and system designs." />
-      <Card className="mb-10 flex flex-col gap-5 p-5 sm:flex-row sm:items-center">
+      <AccountCard />
+      {!cloudEnabled && <Card className="mb-10 flex flex-col gap-5 p-5 sm:flex-row sm:items-center">
         <span className="flex h-20 w-20 shrink-0 items-center justify-center rounded-3xl bg-gradient-brand font-display text-2xl font-bold text-white">{initials}</span>
         <div className="flex-1">
           <label className="block">
@@ -32,7 +35,7 @@ export default function Profile() {
           </label>
           <div className="mt-2 text-sm text-muted">{rank.title} · {fmt(s.xp)} XP · {missionsCompleted(s)} missions · {Object.keys(s.badges).length} badges</div>
         </div>
-      </Card>
+      </Card>}
 
       <SectionTitle eyebrow="Agents" title="Agents you’ve built" />
       {s.agents.length === 0 ? (

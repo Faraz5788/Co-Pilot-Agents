@@ -11,6 +11,12 @@ import Resources from '@/pages/Resources'
 import Profile from '@/pages/Profile'
 import Settings from '@/pages/Settings'
 import NotFound from '@/pages/NotFound'
+import Family from '@/pages/Family'
+import Chat from '@/pages/Chat'
+import { AuthGate } from '@/components/cloud/AuthGate'
+import { startCloudSync } from '@/cloud/sync'
+
+startCloudSync()
 
 const Playground = lazy(() => import('@/pages/Playground'))
 
@@ -45,13 +51,15 @@ export default function App() {
     <HashRouter>
       <ErrorBoundary>
         <Routes>
-          <Route element={<AppShell />}>
+          <Route element={<AuthGate><AppShell /></AuthGate>}>
             <Route index element={<Home />} />
             <Route path="path" element={<LearningPath />} />
             <Route path="level/:levelId" element={<LevelPage />} />
             <Route path="level/:levelId/lesson/:lessonId" element={<LessonPage />} />
             <Route path="missions" element={<Missions />} />
             <Route path="playground" element={<Suspense fallback={<Loading />}><Playground /></Suspense>} />
+            <Route path="family" element={<Family />} />
+            <Route path="chat" element={<Chat />} />
             <Route path="achievements" element={<Achievements />} />
             <Route path="resources" element={<Resources />} />
             <Route path="profile" element={<Profile />} />
