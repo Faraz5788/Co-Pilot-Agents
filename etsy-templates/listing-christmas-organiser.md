@@ -11,8 +11,8 @@ Folder: `listing-photos/christmas-organiser/`
 7. `listing-07.png` – to-do & card list
 8. `listing-08.png` – how it works
 
-## Title (137/140 characters)
-Christmas Planner Spreadsheet UK, Christmas Budget & Gift Tracker, Secret Santa Generator, Dinner Planner, Excel & Google Sheets Template
+## Title (136/140 characters, only one & allowed)
+Christmas Planner Spreadsheet UK, Christmas Budget, Gift Tracker, Secret Santa Generator, Dinner Planner, Excel & Google Sheets Template
 
 ## Listing details
 - Type: **Digital**
