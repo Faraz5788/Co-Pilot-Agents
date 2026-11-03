@@ -1,0 +1,96 @@
+{
+ "slides": [
+  {
+   "type": "hero",
+   "badge": "UK SELF ASSESSMENT READY",
+   "title": "Sole Trader Bookkeeping Spreadsheet",
+   "sub": "Income \u00b7 Expenses \u00b7 Mileage \u00b7 Tax pot",
+   "pills": [
+    "Excel & Google Sheets",
+    "HMRC categories",
+    "UK tax year"
+   ],
+   "main": "dashboard",
+   "second": "mileage",
+   "tablet_top": 700,
+   "bullets": [
+    "Ready for your Self Assessment",
+    "Tax pot so January isn't a shock",
+    "Mileage claims worked out for you"
+   ]
+  },
+  {
+   "type": "included",
+   "sub": "Everything a UK sole trader needs to keep simple, tidy records",
+   "items": [
+    [
+     "Dashboard",
+     "Monthly profit, tax pot & chart"
+    ],
+    [
+     "Income Log",
+     "Clients, invoices & paid status"
+    ],
+    [
+     "Expenses Log",
+     "Sorted into HMRC expense boxes"
+    ],
+    [
+     "Mileage Log",
+     "Claim worked out at 45p / 25p"
+    ],
+    [
+     "Setup",
+     "Your business, tax year & categories"
+    ],
+    [
+     "How-To Guide",
+     "Simple steps, no skills needed"
+    ]
+   ]
+  },
+  {
+   "type": "feature",
+   "heading": "Your whole tax year on one page",
+   "bullets": [
+    "Runs 6 April to 5 April",
+    "Profit for every month",
+    "A tax pot so January isn't a shock",
+    "Totals per HMRC category for your return"
+   ],
+   "shot": "dashboard",
+   "left": 690,
+   "top": 90,
+   "width": 730
+  },
+  {
+   "type": "wide",
+   "heading": "Log income & expenses in seconds",
+   "sub": "Pick a category from the dropdown \u2014 the dashboard does the rest",
+   "shot": "expenses",
+   "width": 1340,
+   "bullets": [
+    "12 HMRC expense categories",
+    "Missing-receipt warnings",
+    "Unpaid invoice total",
+    "Room for 500 entries each"
+   ]
+  },
+  {
+   "type": "wide",
+   "heading": "Mileage claims done for you",
+   "sub": "Log each business journey \u2014 your claim adds up automatically",
+   "shot": "mileage",
+   "width": 1100,
+   "bullets": [
+    "45p for the first 10,000 miles",
+    "25p after that",
+    "Rates editable if they change"
+   ]
+  },
+  {
+   "type": "how",
+   "step3": "Everything else calculates for you. Re-use it every tax year"
+  }
+ ]
+}
