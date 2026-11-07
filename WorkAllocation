@@ -1,1 +1,7 @@
-https://claude.ai/artifact/Re4GsvDyyyQHqa8UCqJ9Bu
+Work Allocation – fee earner matching app
+
+Live demo (fictional data): https://claude.ai/artifact/Re4GsvDyyyQHqa8UCqJ9Bu
+
+Full source: work-allocation-app/
+  - index.html  – the complete app (open in Edge or Chrome, no install needed)
+  - README.md   – how it works, matching logic, CSV import formats, limitations
