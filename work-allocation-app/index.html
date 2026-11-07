@@ -2,7 +2,7 @@
 <html lang="en-GB">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Work Allocation</title>
 <style>
 :root {
@@ -16,20 +16,20 @@
     --bg: #12151c; --panel: #1b2029; --ink: #e6e9ef; --muted: #9aa3b4; --line: #2d3442;
     --accent: #7ea2e6; --accent-ink: #0f1420; --accent-soft: #233149;
     --good: #5cc28f; --good-soft: #17322a; --warn: #e2ad52; --warn-soft: #362a14;
-    --bad: #ec7d76; --bad-soft: #3a1d1c; --chip: #262c38;
+    --bad: #ec7d76; --bad-soft: #3a1d1c; --chip: #262c38; color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --bg: #12151c; --panel: #1b2029; --ink: #e6e9ef; --muted: #9aa3b4; --line: #2d3442;
   --accent: #7ea2e6; --accent-ink: #0f1420; --accent-soft: #233149;
   --good: #5cc28f; --good-soft: #17322a; --warn: #e2ad52; --warn-soft: #362a14;
-  --bad: #ec7d76; --bad-soft: #3a1d1c; --chip: #262c38;
+  --bad: #ec7d76; --bad-soft: #3a1d1c; --chip: #262c38; color-scheme: dark;
 }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--bg); color: var(--ink);
   font: 14px/1.45 "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif; }
 header { background: var(--panel); border-bottom: 1px solid var(--line); }
-.wrap { max-width: 1180px; margin: 0 auto; padding: 0 16px; }
+.wrap { max-width: 1180px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 .top { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 0 6px; }
 h1 { font-size: 18px; margin: 0; letter-spacing: .2px; }
 h1 small { color: var(--muted); font-weight: 400; font-size: 13px; margin-left: 6px; }
@@ -279,6 +279,17 @@ code { background: var(--chip); padding: 1px 5px; border-radius: 4px; font-size:
 </dialog>
 <datalist id="skilllist"></datalist>
 <datalist id="teamlist"></datalist>
+<dialog id="cdlg">
+  <div class="dh">Please confirm</div>
+  <div class="db" id="cdlg-msg"></div>
+  <div class="df"><button class="btn" id="cdlg-no">Cancel</button><button class="btn primary" id="cdlg-yes">Confirm</button></div>
+</dialog>
+<dialog id="tdlg">
+  <div class="dh" id="tdlg-title">File</div>
+  <div class="db"><p class="muted" style="margin:0 0 8px">Copy this text and save it as <b id="tdlg-name"></b>, or use Download if your browser allows it.</p>
+    <textarea id="tdlg-text" rows="12" readonly style="font-family:Consolas,monospace;font-size:12px"></textarea></div>
+  <div class="df"><button class="btn" id="tdlg-close">Close</button><button class="btn" id="tdlg-dl">Download</button><button class="btn primary" id="tdlg-copy">Copy</button></div>
+</dialog>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -550,9 +561,9 @@ function renderPeople() {
         <td class="row" style="flex-wrap:nowrap"><button class="btn small" data-edit="${p.id}">Edit</button><button class="btn small danger" data-del="${p.id}">Delete</button></td></tr>`;
     }).join("") : `<tr><td colspan="7" class="empty">No fee earners yet. Add one, import a CSV, or load demo data under Data &amp; settings.</td></tr>`);
   $$("[data-edit]").forEach(b => b.onclick = () => openPerson(b.dataset.edit));
-  $$("[data-del]").forEach(b => b.onclick = () => {
+  $$("[data-del]").forEach(b => b.onclick = async () => {
     const p = person(b.dataset.del);
-    if (!confirm(`Delete ${p.name} and their absence and allocation records?`)) return;
+    if (!(await ask(`Delete ${p.name} and their absence and allocation records?`))) return;
     state.people = state.people.filter(x => x.id !== p.id);
     state.absences = state.absences.filter(x => x.personId !== p.id);
     state.allocations = state.allocations.filter(x => x.personId !== p.id);
@@ -696,6 +707,28 @@ const TEMPLATES = {
   util: "name,utilisation\nJane Smith,82\n",
   absence: "name,from,to,type\nJane Smith,2026-12-22,2026-12-31,Annual leave\n",
 };
+/** In-page confirm (browser confirm() is blocked in some hosts). */
+function ask(msg) {
+  return new Promise(res => {
+    const d = $("#cdlg"); $("#cdlg-msg").textContent = msg;
+    const done = v => { d.close(); res(v); };
+    $("#cdlg-yes").onclick = () => done(true); $("#cdlg-no").onclick = () => done(false);
+    d.oncancel = e => { e.preventDefault(); done(false); };
+    d.showModal();
+  });
+}
+/** Show file content with Copy and Download, since downloads are blocked in some hosts. */
+function showText(name, text, type = "text/csv") {
+  const d = $("#tdlg");
+  $("#tdlg-title").textContent = name; $("#tdlg-name").textContent = name; $("#tdlg-text").value = text;
+  $("#tdlg-close").onclick = () => d.close();
+  $("#tdlg-dl").onclick = () => download(name, text, type);
+  $("#tdlg-copy").onclick = async () => {
+    try { await navigator.clipboard.writeText(text); toast("Copied to clipboard"); }
+    catch { const t = $("#tdlg-text"); t.focus(); t.select(); toast("Press Ctrl+C to copy"); }
+  };
+  d.showModal();
+}
 function download(name, text, type = "text/csv") {
   const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([text], { type })); a.download = name; a.click();
   setTimeout(() => URL.revokeObjectURL(a.href), 1000);
@@ -707,9 +740,9 @@ function initData() {
       holidays: $("#s-holidays").value.split(/\s+/).map(normDate).filter(Boolean) };
     save(); renderAll(); toast("Settings saved");
   };
-  $$("[data-tpl]").forEach(b => b.onclick = () => download(`${b.dataset.tpl}-template.csv`, TEMPLATES[b.dataset.tpl]));
+  $$("[data-tpl]").forEach(b => b.onclick = () => showText(`${b.dataset.tpl}-template.csv`, TEMPLATES[b.dataset.tpl]));
   $$("[data-imp]").forEach(inp => inp.onchange = async () => { if (inp.files[0]) importCSV(inp.dataset.imp, await inp.files[0].text()); inp.value = ""; });
-  $("#d-export").onclick = () => download(`work-allocation-backup-${today()}.json`, JSON.stringify(state, null, 2), "application/json");
+  $("#d-export").onclick = () => showText(`work-allocation-backup-${today()}.json`, JSON.stringify(state, null, 2), "application/json");
   $("#d-import").onchange = async e => {
     const f = e.target.files[0]; if (!f) return;
     try { const s = JSON.parse(await f.text()); if (!Array.isArray(s.people)) throw 0;
@@ -717,8 +750,8 @@ function initData() {
     catch { toast("That file isn't a valid backup."); }
     e.target.value = "";
   };
-  $("#d-demo").onclick = () => { if (state.people.length && !confirm("Replace current data with demo data?")) return; state = demo(); save(); renderAll(); toast("Demo data loaded"); };
-  $("#d-clear").onclick = () => { if (!confirm("Delete ALL fee earners, absence and allocations from this browser?")) return; state = blank(); save(); renderAll(); toast("All data deleted"); };
+  $("#d-demo").onclick = async () => { if (state.people.length && !(await ask("Replace current data with demo data?"))) return; state = demo(); save(); renderAll(); toast("Demo data loaded"); };
+  $("#d-clear").onclick = async () => { if (!(await ask("Delete ALL fee earners, absence and allocations from this browser?"))) return; state = blank(); save(); renderAll(); toast("All data deleted"); };
 }
 
 /* ------------------------------------------------------------------ *
