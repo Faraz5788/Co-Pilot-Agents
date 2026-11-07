@@ -1,0 +1,783 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Work Allocation</title>
+<style>
+:root {
+  --bg: #f5f6f8; --panel: #ffffff; --ink: #1c2230; --muted: #5d6576; --line: #dfe2e8;
+  --accent: #23407a; --accent-ink: #ffffff; --accent-soft: #e6ecf7;
+  --good: #1f7a4d; --good-soft: #e3f3ea; --warn: #9a6200; --warn-soft: #fbf0dc;
+  --bad: #a3302a; --bad-soft: #f8e4e2; --chip: #eef0f4;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #12151c; --panel: #1b2029; --ink: #e6e9ef; --muted: #9aa3b4; --line: #2d3442;
+    --accent: #7ea2e6; --accent-ink: #0f1420; --accent-soft: #233149;
+    --good: #5cc28f; --good-soft: #17322a; --warn: #e2ad52; --warn-soft: #362a14;
+    --bad: #ec7d76; --bad-soft: #3a1d1c; --chip: #262c38;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #12151c; --panel: #1b2029; --ink: #e6e9ef; --muted: #9aa3b4; --line: #2d3442;
+  --accent: #7ea2e6; --accent-ink: #0f1420; --accent-soft: #233149;
+  --good: #5cc28f; --good-soft: #17322a; --warn: #e2ad52; --warn-soft: #362a14;
+  --bad: #ec7d76; --bad-soft: #3a1d1c; --chip: #262c38;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink);
+  font: 14px/1.45 "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif; }
+header { background: var(--panel); border-bottom: 1px solid var(--line); }
+.wrap { max-width: 1180px; margin: 0 auto; padding: 0 16px; }
+.top { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 0 6px; }
+h1 { font-size: 18px; margin: 0; letter-spacing: .2px; }
+h1 small { color: var(--muted); font-weight: 400; font-size: 13px; margin-left: 6px; }
+nav { display: flex; gap: 2px; overflow-x: auto; }
+nav button { background: none; border: 0; border-bottom: 2px solid transparent; padding: 10px 12px;
+  color: var(--muted); font: inherit; cursor: pointer; white-space: nowrap; }
+nav button.active { color: var(--ink); border-bottom-color: var(--accent); font-weight: 600; }
+main { padding: 18px 0 48px; }
+section.tab { display: none; } section.tab.active { display: block; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+.card h2 { font-size: 15px; margin: 0 0 4px; } .card p.sub { margin: 0 0 14px; color: var(--muted); }
+.grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 4px; font-weight: 600; }
+input, select, textarea { width: 100%; padding: 7px 9px; border: 1px solid var(--line); border-radius: 6px;
+  background: var(--panel); color: var(--ink); font: inherit; }
+input:focus, select:focus, textarea:focus { outline: 2px solid var(--accent-soft); border-color: var(--accent); }
+.btn { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); background: var(--panel);
+  color: var(--ink); padding: 7px 12px; border-radius: 6px; font: inherit; cursor: pointer; }
+.btn:hover { border-color: var(--accent); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 600; }
+.btn.small { padding: 3px 8px; font-size: 12px; }
+.btn.danger { color: var(--bad); }
+.row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.spacer { flex: 1; }
+table { width: 100%; border-collapse: collapse; }
+th, td { text-align: left; padding: 8px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: 12px; color: var(--muted); font-weight: 600; }
+.tablewrap { overflow-x: auto; }
+.chip { display: inline-block; background: var(--chip); border-radius: 999px; padding: 2px 9px; font-size: 12px; margin: 2px 4px 2px 0; }
+.chip.ok { background: var(--good-soft); color: var(--good); }
+.chip.miss { background: var(--bad-soft); color: var(--bad); }
+.chip.part { background: var(--warn-soft); color: var(--warn); }
+.chip button { background: none; border: 0; color: inherit; cursor: pointer; padding: 0 0 0 4px; font-size: 13px; }
+.muted { color: var(--muted); }
+.skillrow { display: grid; max-width: 620px; grid-template-columns: 1fr 170px 32px; gap: 6px; margin-bottom: 6px; }
+.result { display: grid; grid-template-columns: 56px 1fr auto; gap: 14px; align-items: start; padding: 14px 0; border-bottom: 1px solid var(--line); }
+.result:last-child { border-bottom: 0; }
+.score { width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 16px;
+  background: var(--accent-soft); color: var(--accent); }
+.score.good { background: var(--good-soft); color: var(--good); }
+.score.warn { background: var(--warn-soft); color: var(--warn); }
+.score.bad { background: var(--bad-soft); color: var(--bad); }
+.name { font-weight: 600; font-size: 15px; }
+.bars { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 8px; max-width: 560px; }
+.bar small { display: block; color: var(--muted); font-size: 11px; margin-bottom: 3px; }
+.bar .track { height: 6px; background: var(--chip); border-radius: 3px; overflow: hidden; }
+.bar .fill { height: 100%; background: var(--accent); }
+.why { margin: 8px 0 0; padding-left: 18px; color: var(--muted); font-size: 13px; }
+.flag { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px; margin-left: 6px; vertical-align: 2px; }
+.flag.good { background: var(--good-soft); color: var(--good); }
+.flag.warn { background: var(--warn-soft); color: var(--warn); }
+details summary { cursor: pointer; color: var(--muted); padding: 6px 0; }
+.util { display: inline-flex; align-items: center; gap: 6px; }
+.util .track { display: inline-block; width: 70px; height: 6px; background: var(--chip); border-radius: 3px; overflow: hidden; }
+.util .fill { display: block; height: 100%; }
+.empty { color: var(--muted); padding: 18px 0; text-align: center; }
+.toast { position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); background: var(--ink); color: var(--bg);
+  padding: 9px 16px; border-radius: 6px; opacity: 0; transition: opacity .2s; pointer-events: none; z-index: 10; }
+.toast.show { opacity: 1; }
+dialog { border: 1px solid var(--line); border-radius: 10px; background: var(--panel); color: var(--ink); width: min(640px, calc(100vw - 32px)); padding: 0; }
+dialog::backdrop { background: rgba(0,0,0,.35); }
+dialog .dh { padding: 14px 16px; border-bottom: 1px solid var(--line); font-weight: 600; }
+dialog .db { padding: 16px; max-height: 70vh; overflow: auto; }
+dialog .df { padding: 12px 16px; border-top: 1px solid var(--line); display: flex; justify-content: flex-end; gap: 8px; }
+.checks { display: flex; flex-wrap: wrap; gap: 4px 14px; }
+.checks label { display: inline-flex; gap: 5px; align-items: center; font-weight: 400; color: var(--ink); font-size: 13px; margin: 0; }
+.checks input { width: auto; }
+code { background: var(--chip); padding: 1px 5px; border-radius: 4px; font-size: 12px; }
+@media (max-width: 640px) {
+  .result { grid-template-columns: 44px 1fr; } .result .actions { grid-column: 1 / -1; }
+  .score { width: 44px; height: 44px; font-size: 14px; }
+  .bars { grid-template-columns: 1fr; }
+  .skillrow { grid-template-columns: 1fr 110px 32px; }
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="top">
+      <h1>Work Allocation <small>Fee earner matching</small></h1>
+      <button class="btn small" id="themeBtn" title="Toggle light/dark">Theme</button>
+    </div>
+    <nav id="nav">
+      <button data-tab="allocate" class="active">Allocate work</button>
+      <button data-tab="people">Fee earners</button>
+      <button data-tab="absence">Absence</button>
+      <button data-tab="myskills">My skills</button>
+      <button data-tab="allocations">Allocations</button>
+      <button data-tab="data">Data &amp; settings</button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- ============ ALLOCATE ============ -->
+<section class="tab active" id="tab-allocate">
+  <div class="card">
+    <h2>New piece of work</h2>
+    <p class="sub">Describe the work. The app checks every fee earner's skills, absence and current utilisation over the work period and ranks who is best placed.</p>
+    <div class="grid">
+      <div><label>Matter / task title</label><input id="w-title" placeholder="e.g. SPA review – Project Falcon"></div>
+      <div><label>Client</label><input id="w-client" placeholder="Client name"></div>
+      <div><label>Matter number</label><input id="w-matter" placeholder="Optional"></div>
+      <div><label>Practice group</label><select id="w-team"></select></div>
+      <div><label>Start date</label><input type="date" id="w-from"></div>
+      <div><label>End date</label><input type="date" id="w-to"></div>
+      <div><label>Estimated hours</label><input type="number" id="w-hours" min="1" step="0.5" value="20"></div>
+      <div><label>Fee earners needed</label><input type="number" id="w-count" min="1" value="1"></div>
+    </div>
+    <div style="margin-top:14px">
+      <label>Grades that can do this work <span class="muted" style="font-weight:400">(leave all unticked for any grade)</span></label>
+      <div class="checks" id="w-grades"></div>
+    </div>
+    <div style="margin-top:14px">
+      <label>Skills required</label>
+      <div id="w-skills"></div>
+      <button class="btn small" id="w-addskill">+ Add skill</button>
+    </div>
+    <div class="row" style="margin-top:16px">
+      <button class="btn primary" id="w-run">Find available fee earners</button>
+      <button class="btn" id="w-reset">Clear</button>
+    </div>
+  </div>
+  <div class="card" id="results" style="display:none"></div>
+</section>
+
+<!-- ============ PEOPLE ============ -->
+<section class="tab" id="tab-people">
+  <div class="card">
+    <div class="row">
+      <div><h2>Fee earners</h2><p class="sub" style="margin:0">Grade, practice group, chargeable target, current utilisation and skills.</p></div>
+      <div class="spacer"></div>
+      <input id="p-search" placeholder="Search name, skill, team…" style="max-width:240px">
+      <button class="btn primary" id="p-add">+ Add fee earner</button>
+    </div>
+    <div class="tablewrap" style="margin-top:12px"><table id="p-table"></table></div>
+  </div>
+</section>
+
+<!-- ============ ABSENCE ============ -->
+<section class="tab" id="tab-absence">
+  <div class="card">
+    <h2>Record absence</h2>
+    <p class="sub">Annual leave, sickness, training, secondment etc. Weekends are ignored automatically; bank holidays can be added under Data &amp; settings.</p>
+    <div class="grid">
+      <div><label>Fee earner</label><select id="a-person"></select></div>
+      <div><label>From</label><input type="date" id="a-from"></div>
+      <div><label>To</label><input type="date" id="a-to"></div>
+      <div><label>Type</label><select id="a-type">
+        <option>Annual leave</option><option>Sickness</option><option>Training</option>
+        <option>Secondment</option><option>Parental leave</option><option>Other</option></select></div>
+    </div>
+    <div class="row" style="margin-top:12px"><button class="btn primary" id="a-add">Add absence</button></div>
+  </div>
+  <div class="card">
+    <div class="row"><h2>Absence log</h2><div class="spacer"></div>
+      <label class="checks" style="margin:0"><label><input type="checkbox" id="a-past"> Show past</label></label></div>
+    <div class="tablewrap"><table id="a-table"></table></div>
+  </div>
+</section>
+
+<!-- ============ MY SKILLS ============ -->
+<section class="tab" id="tab-myskills">
+  <div class="card">
+    <h2>My skills profile</h2>
+    <p class="sub">Fee earners pick their name and keep their own skills up to date. Levels: <b>1 Working knowledge</b> · <b>2 Experienced</b> · <b>3 Expert</b>.</p>
+    <div class="grid"><div><label>I am</label><select id="m-person"></select></div></div>
+    <div id="m-editor" style="margin-top:14px"></div>
+  </div>
+</section>
+
+<!-- ============ ALLOCATIONS ============ -->
+<section class="tab" id="tab-allocations">
+  <div class="card">
+    <h2>Allocated work</h2>
+    <p class="sub">Work assigned through this app. Allocated hours reduce each fee earner's free capacity in future searches.</p>
+    <div class="tablewrap"><table id="al-table"></table></div>
+  </div>
+</section>
+
+<!-- ============ DATA ============ -->
+<section class="tab" id="tab-data">
+  <div class="card">
+    <h2>Matching settings</h2>
+    <p class="sub">How the ranking is weighted. Weights are normalised, so they don't need to add up to 100.</p>
+    <div class="grid">
+      <div><label>Weight: skills match</label><input type="number" id="s-wskill" min="0"></div>
+      <div><label>Weight: free capacity</label><input type="number" id="s-wcap" min="0"></div>
+      <div><label>Weight: days available</label><input type="number" id="s-wavail" min="0"></div>
+      <div><label>Utilisation ceiling (%)</label><input type="number" id="s-ceiling" min="50" max="200"></div>
+      <div><label>Missing a required skill</label><select id="s-strict">
+        <option value="exclude">Exclude the person</option><option value="penalise">Show, but score lower</option></select></div>
+    </div>
+    <p class="muted" style="margin:10px 0 0;font-size:13px">Utilisation ceiling: someone at or above this % of their chargeable target is treated as having no spare capacity.</p>
+    <div style="margin-top:14px">
+      <label>Bank holidays / office closures (one date per line, YYYY-MM-DD)</label>
+      <textarea id="s-holidays" rows="4"></textarea>
+    </div>
+    <div class="row" style="margin-top:12px"><button class="btn primary" id="s-save">Save settings</button></div>
+  </div>
+
+  <div class="card">
+    <h2>Import from your systems</h2>
+    <p class="sub">Upload CSV exports (e.g. from your time-recording system, HR system or Power BI). Download a template to see the expected columns. People are matched by <code>name</code> (or <code>email</code> if present).</p>
+    <div class="tablewrap"><table>
+      <tr><th>Data</th><th>Columns</th><th></th></tr>
+      <tr><td>Fee earners</td><td><code>name, email, grade, team, office, daily_target_hours, utilisation, skills</code><br><span class="muted">skills like <code>M&amp;A:3; Due Diligence:2</code>. Adds new people, updates existing.</span></td>
+        <td class="row"><button class="btn small" data-tpl="people">Template</button><label class="btn small">Upload<input type="file" accept=".csv" data-imp="people" hidden></label></td></tr>
+      <tr><td>Utilisation</td><td><code>name, utilisation</code><br><span class="muted">Utilisation as % of chargeable target (e.g. 85). Updates existing people only.</span></td>
+        <td class="row"><button class="btn small" data-tpl="util">Template</button><label class="btn small">Upload<input type="file" accept=".csv" data-imp="util" hidden></label></td></tr>
+      <tr><td>Absence</td><td><code>name, from, to, type</code><br><span class="muted">Dates as YYYY-MM-DD or DD/MM/YYYY.</span></td>
+        <td class="row"><button class="btn small" data-tpl="absence">Template</button><label class="btn small">Upload<input type="file" accept=".csv" data-imp="absence" hidden></label></td></tr>
+    </table></div>
+  </div>
+
+  <div class="card">
+    <h2>Backup &amp; reset</h2>
+    <p class="sub">Data is saved in this browser only. Export a backup file to move it to another machine or share it with a colleague.</p>
+    <div class="row">
+      <button class="btn" id="d-export">Export backup (.json)</button>
+      <label class="btn">Restore backup<input type="file" accept=".json" id="d-import" hidden></label>
+      <button class="btn" id="d-demo">Load demo data</button>
+      <button class="btn danger" id="d-clear">Delete all data</button>
+    </div>
+  </div>
+</section>
+</main>
+
+<dialog id="pdlg">
+  <div class="dh" id="pdlg-title">Fee earner</div>
+  <div class="db">
+    <div class="grid">
+      <div><label>Name</label><input id="pd-name"></div>
+      <div><label>Email</label><input id="pd-email"></div>
+      <div><label>Grade</label><select id="pd-grade"></select></div>
+      <div><label>Practice group</label><input id="pd-team" list="teamlist"></div>
+      <div><label>Office</label><input id="pd-office"></div>
+      <div><label>Daily chargeable target (hrs)</label><input type="number" id="pd-target" step="0.25" min="0"></div>
+      <div><label>Current utilisation (% of target)</label><input type="number" id="pd-util" min="0" max="250"></div>
+    </div>
+    <div style="margin-top:14px"><label>Skills</label><div id="pd-skills"></div>
+      <button class="btn small" id="pd-addskill">+ Add skill</button></div>
+  </div>
+  <div class="df"><button class="btn" id="pd-cancel">Cancel</button><button class="btn primary" id="pd-save">Save</button></div>
+</dialog>
+<datalist id="skilllist"></datalist>
+<datalist id="teamlist"></datalist>
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+/* ------------------------------------------------------------------ *
+ *  Storage & state
+ * ------------------------------------------------------------------ */
+const KEY = "workAllocation.v1";
+const GRADES = ["Trainee", "Paralegal", "Associate", "Senior Associate", "Legal Director", "Partner"];
+const LEVELS = { 1: "Working knowledge", 2: "Experienced", 3: "Expert" };
+const DEFAULT_SKILLS = ["Commercial Contracts", "M&A", "Due Diligence", "Corporate Governance", "Banking & Finance",
+  "Real Estate", "Construction", "Planning", "Employment", "Pensions", "Litigation", "Arbitration",
+  "Insolvency & Restructuring", "Intellectual Property", "Data Protection & GDPR", "Regulatory", "Tax",
+  "Private Client", "Competition", "Technology & Outsourcing"];
+const DEFAULT_SETTINGS = { wSkill: 45, wCap: 35, wAvail: 20, ceiling: 100, strict: "exclude", holidays: [] };
+
+let state = load();
+
+function blank() { return { people: [], absences: [], allocations: [], settings: { ...DEFAULT_SETTINGS } }; }
+function load() {
+  try {
+    const raw = localStorage.getItem(KEY);
+    if (raw) { const s = JSON.parse(raw); s.settings = { ...DEFAULT_SETTINGS, ...(s.settings || {}) }; return s; }
+  } catch (e) { /* storage unavailable */ }
+  return null;
+}
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { /* ignore */ } }
+const uid = () => Math.random().toString(36).slice(2, 10);
+const $ = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+function toast(msg) { const t = $("#toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove("show"), 2400); }
+const person = id => state.people.find(p => p.id === id);
+
+/* ------------------------------------------------------------------ *
+ *  Dates
+ * ------------------------------------------------------------------ */
+const iso = d => { const z = new Date(d.getTime() - d.getTimezoneOffset() * 60000); return z.toISOString().slice(0, 10); };
+const parseISO = s => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); };
+const addDays = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };
+const today = () => iso(new Date());
+function fmt(s) { if (!s) return ""; const d = parseISO(s); return d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }); }
+function normDate(s) {
+  s = String(s || "").trim(); if (!s) return "";
+  let m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/); if (m) return `${m[1]}-${m[2].padStart(2, "0")}-${m[3].padStart(2, "0")}`;
+  m = s.match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{2,4})$/);
+  if (m) { const y = m[3].length === 2 ? "20" + m[3] : m[3]; return `${y}-${m[2].padStart(2, "0")}-${m[1].padStart(2, "0")}`; }
+  return "";
+}
+/** Working days (Mon–Fri, excluding bank holidays) between two ISO dates inclusive, as ISO strings. */
+function workingDays(from, to) {
+  const out = [], hol = new Set(state.settings.holidays || []);
+  if (!from || !to || from > to) return out;
+  for (let d = parseISO(from), end = parseISO(to); d <= end; d = addDays(d, 1)) {
+    const day = d.getDay(), s = iso(d);
+    if (day !== 0 && day !== 6 && !hol.has(s)) out.push(s);
+  }
+  return out;
+}
+
+/* ------------------------------------------------------------------ *
+ *  Matching engine
+ * ------------------------------------------------------------------ */
+/**
+ * For one fee earner and one piece of work, calculate:
+ *  - availability: share of working days in the window they're not absent
+ *  - free hours:   available days × daily chargeable target × headroom below the utilisation ceiling,
+ *                  minus hours already allocated in this app that overlap the window
+ *  - skill match:  per required skill, held level ÷ required level (capped at 1); missing = 0
+ * then a weighted score out of 100, plus plain-English reasons and any exclusion reasons.
+ */
+function evaluate(p, w) {
+  const S = state.settings;
+  const days = workingDays(w.from, w.to);
+  const totalDays = days.length || 1;
+  const absent = new Set();
+  const absenceNotes = [];
+  state.absences.filter(a => a.personId === p.id && a.to >= w.from && a.from <= w.to).forEach(a => {
+    const d = workingDays(a.from > w.from ? a.from : w.from, a.to < w.to ? a.to : w.to);
+    d.forEach(x => absent.add(x));
+    if (d.length) absenceNotes.push(`${a.type} ${fmt(a.from)} – ${fmt(a.to)} (${d.length} working day${d.length > 1 ? "s" : ""} in period)`);
+  });
+  const availDays = days.filter(d => !absent.has(d)).length;
+  const availability = days.length ? availDays / days.length : 0;
+
+  const util = Number(p.utilisation) || 0;
+  const headroom = Math.max(0, (S.ceiling - util) / 100);
+  let free = availDays * (Number(p.dailyTarget) || 0) * headroom;
+  let alreadyAllocated = 0;
+  state.allocations.filter(a => a.personId === p.id && a.to >= w.from && a.from <= w.to).forEach(a => {
+    const span = workingDays(a.from, a.to).length || 1;
+    const overlap = workingDays(a.from > w.from ? a.from : w.from, a.to < w.to ? a.to : w.to).length;
+    alreadyAllocated += a.hours * overlap / span;
+  });
+  free = Math.max(0, free - alreadyAllocated);
+  const perPerson = w.hours / (w.count || 1);
+  const capacity = perPerson > 0 ? Math.min(1, free / perPerson) : 1;
+
+  const skillDetail = w.skills.map(req => {
+    const has = (p.skills || []).find(s => s.name.toLowerCase() === req.name.toLowerCase());
+    const lvl = has ? Number(has.level) : 0;
+    return { name: req.name, req: req.level, lvl, ratio: Math.min(1, lvl / req.level) };
+  });
+  const skill = skillDetail.length ? skillDetail.reduce((a, b) => a + b.ratio, 0) / skillDetail.length : 1;
+  const missing = skillDetail.filter(s => s.lvl === 0);
+
+  const excluded = [];
+  if (w.grades.length && !w.grades.includes(p.grade)) excluded.push(`Grade (${p.grade}) not in the grades selected`);
+  if (days.length && availDays === 0) excluded.push("Absent for the whole period");
+  if (S.strict === "exclude" && missing.length) excluded.push(`Missing required skill${missing.length > 1 ? "s" : ""}: ${missing.map(m => m.name).join(", ")}`);
+  if (free <= 0 && availDays > 0) excluded.push(`No spare capacity (utilisation ${util}% vs ceiling ${S.ceiling}%${alreadyAllocated ? `, plus ${alreadyAllocated.toFixed(1)}h already allocated` : ""})`);
+
+  const wt = S.wSkill + S.wCap + S.wAvail || 1;
+  const score = Math.round(100 * (skill * S.wSkill + capacity * S.wCap + availability * S.wAvail) / wt);
+
+  const why = [];
+  why.push(`${availDays} of ${days.length} working days available` + (absenceNotes.length ? ` — ${absenceNotes.join("; ")}` : ""));
+  why.push(`Utilisation ${util}% of target → about ${free.toFixed(1)}h free in the period vs ${perPerson.toFixed(1)}h needed` +
+    (alreadyAllocated ? ` (after ${alreadyAllocated.toFixed(1)}h already allocated via this app)` : ""));
+  const under = skillDetail.filter(s => s.lvl > 0 && s.lvl < s.req);
+  if (under.length) why.push(`Below the requested level in: ${under.map(s => `${s.name} (${s.lvl} vs ${s.req})`).join(", ")}`);
+
+  return { p, score, skill, capacity, availability, free, availDays, totalDays: days.length, skillDetail, excluded, why, perPerson };
+}
+
+function rank(w) {
+  const all = state.people.map(p => evaluate(p, w));
+  const ok = all.filter(r => !r.excluded.length).sort((a, b) => b.score - a.score || b.free - a.free);
+  const out = all.filter(r => r.excluded.length).sort((a, b) => a.p.name.localeCompare(b.p.name));
+  return { ok, out };
+}
+
+/* ------------------------------------------------------------------ *
+ *  UI helpers
+ * ------------------------------------------------------------------ */
+function allSkills() {
+  const set = new Set(DEFAULT_SKILLS);
+  state.people.forEach(p => (p.skills || []).forEach(s => set.add(s.name)));
+  return [...set].sort((a, b) => a.localeCompare(b));
+}
+function allTeams() { return [...new Set(state.people.map(p => p.team).filter(Boolean))].sort(); }
+function refreshLists() {
+  $("#skilllist").innerHTML = allSkills().map(s => `<option value="${esc(s)}">`).join("");
+  $("#teamlist").innerHTML = allTeams().map(s => `<option value="${esc(s)}">`).join("");
+  const opts = state.people.slice().sort((a, b) => a.name.localeCompare(b.name)).map(p => `<option value="${p.id}">${esc(p.name)}</option>`).join("");
+  const keepA = $("#a-person").value, keepM = $("#m-person").value;
+  $("#a-person").innerHTML = opts; if (keepA) $("#a-person").value = keepA;
+  $("#m-person").innerHTML = `<option value="">— select your name —</option>` + opts; $("#m-person").value = keepM;
+  const keepT = $("#w-team").value;
+  $("#w-team").innerHTML = `<option value="">Any practice group</option>` + allTeams().map(t => `<option>${esc(t)}</option>`).join("");
+  $("#w-team").value = keepT;
+}
+function skillRow(container, s = { name: "", level: 2 }) {
+  const div = document.createElement("div");
+  div.className = "skillrow";
+  div.innerHTML = `<input list="skilllist" placeholder="Skill" value="${esc(s.name)}">
+    <select>${[1, 2, 3].map(l => `<option value="${l}" ${Number(s.level) === l ? "selected" : ""}>${l} · ${LEVELS[l]}</option>`).join("")}</select>
+    <button class="btn small danger" title="Remove">✕</button>`;
+  div.querySelector("button").onclick = () => div.remove();
+  container.appendChild(div);
+}
+function readSkills(container) {
+  const seen = new Set();
+  return $$(".skillrow", container).map(r => ({ name: r.querySelector("input").value.trim(), level: Number(r.querySelector("select").value) }))
+    .filter(s => s.name && !seen.has(s.name.toLowerCase()) && seen.add(s.name.toLowerCase()));
+}
+function utilBar(u, ceiling = state.settings.ceiling) {
+  const pct = Math.min(100, (u / ceiling) * 100);
+  const col = u >= ceiling ? "var(--bad)" : u >= ceiling * 0.85 ? "var(--warn)" : "var(--good)";
+  return `<span class="util"><span class="track"><span class="fill" style="width:${pct}%;background:${col}"></span></span>${u}%</span>`;
+}
+
+/* ------------------------------------------------------------------ *
+ *  Allocate tab
+ * ------------------------------------------------------------------ */
+let lastWork = null;
+function initAllocate() {
+  $("#w-grades").innerHTML = GRADES.map(g => `<label><input type="checkbox" value="${g}"> ${g}</label>`).join("");
+  $("#w-addskill").onclick = () => skillRow($("#w-skills"));
+  $("#w-run").onclick = runMatch;
+  $("#w-reset").onclick = resetWork;
+  resetWork();
+}
+function resetWork() {
+  ["#w-title", "#w-client", "#w-matter"].forEach(s => $(s).value = "");
+  $("#w-team").value = ""; $("#w-hours").value = 20; $("#w-count").value = 1;
+  $("#w-from").value = today(); $("#w-to").value = iso(addDays(new Date(), 13));
+  $$("#w-grades input").forEach(c => c.checked = false);
+  $("#w-skills").innerHTML = ""; skillRow($("#w-skills"));
+  $("#results").style.display = "none";
+}
+function readWork() {
+  return {
+    title: $("#w-title").value.trim() || "Untitled work", client: $("#w-client").value.trim(), matter: $("#w-matter").value.trim(),
+    team: $("#w-team").value, from: $("#w-from").value, to: $("#w-to").value,
+    hours: Number($("#w-hours").value) || 0, count: Math.max(1, Number($("#w-count").value) || 1),
+    grades: $$("#w-grades input:checked").map(c => c.value), skills: readSkills($("#w-skills")),
+  };
+}
+function runMatch() {
+  const w = readWork();
+  if (!w.from || !w.to || w.from > w.to) return toast("Please choose a valid start and end date.");
+  if (!state.people.length) return toast("Add fee earners first (or load demo data under Data & settings).");
+  lastWork = w;
+  renderResults();
+}
+function renderResults() {
+  const w = lastWork; if (!w) return;
+  let { ok, out } = rank(w);
+  if (w.team) {
+    // practice group narrows the pool, but we still report who was filtered out and why
+    const tag = r => r.p.team === w.team ? r : { ...r, excluded: [`Different practice group (${r.p.team || "none"})`, ...r.excluded] };
+    out = out.map(tag).concat(ok.filter(r => r.p.team !== w.team).map(tag)).sort((a, b) => a.p.name.localeCompare(b.p.name));
+    ok = ok.filter(r => r.p.team === w.team);
+  }
+  const days = workingDays(w.from, w.to).length;
+  const el = $("#results"); el.style.display = "block";
+  const head = `<div class="row"><div><h2>Suggestions for “${esc(w.title)}”</h2>
+    <p class="sub" style="margin:0">${fmt(w.from)} – ${fmt(w.to)} · ${days} working days · ${w.hours}h${w.count > 1 ? ` across ${w.count} people (${(w.hours / w.count).toFixed(1)}h each)` : ""}
+    ${w.skills.length ? " · " + w.skills.map(s => `${esc(s.name)} ≥ ${s.level}`).join(", ") : ""}</p></div></div>`;
+  const list = ok.length ? ok.map((r, i) => resultRow(r, i < w.count)).join("") :
+    `<div class="empty">Nobody meets all the criteria. Check the excluded list below, or relax the grades, skills or dates.</div>`;
+  const excl = out.length ? `<details style="margin-top:8px"><summary>${out.length} fee earner${out.length > 1 ? "s" : ""} not suggested — see why</summary>
+    <div class="tablewrap"><table><tr><th>Name</th><th>Grade</th><th>Reason</th></tr>
+    ${out.map(r => `<tr><td>${esc(r.p.name)}</td><td>${esc(r.p.grade)}</td><td>${r.excluded.map(esc).join("<br>")}</td></tr>`).join("")}
+    </table></div></details>` : "";
+  el.innerHTML = head + `<div style="margin-top:6px">${list}</div>` + excl;
+  $$("[data-alloc]", el).forEach(b => b.onclick = () => allocate(b.dataset.alloc));
+}
+function resultRow(r, top) {
+  const cls = r.score >= 80 ? "good" : r.score >= 60 ? "" : r.score >= 40 ? "warn" : "bad";
+  const full = r.capacity >= 1 && r.availability >= 0.8;
+  const flag = top ? (full ? `<span class="flag good">Recommended</span>` : `<span class="flag warn">Best available</span>`) : "";
+  const bar = (label, v) => `<div class="bar"><small>${label} · ${Math.round(v * 100)}%</small><div class="track"><div class="fill" style="width:${v * 100}%"></div></div></div>`;
+  const chips = r.skillDetail.map(s => `<span class="chip ${s.lvl === 0 ? "miss" : s.lvl < s.req ? "part" : "ok"}">${esc(s.name)} ${s.lvl ? s.lvl : "–"}/${s.req}</span>`).join("");
+  return `<div class="result">
+    <div class="score ${cls}">${r.score}</div>
+    <div><div class="name">${esc(r.p.name)}${flag}</div>
+      <div class="muted">${esc(r.p.grade)} · ${esc(r.p.team || "—")}${r.p.office ? " · " + esc(r.p.office) : ""} · ${utilBar(Number(r.p.utilisation) || 0)}</div>
+      <div style="margin-top:6px">${chips}</div>
+      <div class="bars">${bar("Skills", r.skill)}${bar("Capacity", r.capacity)}${bar("Days available", r.availability)}</div>
+      <ul class="why">${r.why.map(x => `<li>${esc(x)}</li>`).join("")}</ul></div>
+    <div class="actions"><button class="btn small primary" data-alloc="${r.p.id}">Allocate</button></div></div>`;
+}
+function allocate(pid) {
+  const w = lastWork, p = person(pid);
+  const hours = Math.round((w.hours / w.count) * 10) / 10;
+  state.allocations.push({ id: uid(), personId: pid, title: w.title, client: w.client, matter: w.matter, hours, from: w.from, to: w.to, created: today() });
+  save(); renderAllocations(); renderResults();
+  toast(`${hours}h allocated to ${p.name}`);
+}
+
+/* ------------------------------------------------------------------ *
+ *  People tab
+ * ------------------------------------------------------------------ */
+let editing = null;
+function renderPeople() {
+  const q = $("#p-search").value.trim().toLowerCase();
+  const rows = state.people.filter(p => !q || [p.name, p.grade, p.team, p.office, ...(p.skills || []).map(s => s.name)].join(" ").toLowerCase().includes(q))
+    .sort((a, b) => a.name.localeCompare(b.name));
+  const now = today();
+  $("#p-table").innerHTML = `<tr><th>Name</th><th>Grade</th><th>Practice group</th><th>Utilisation</th><th>Skills</th><th>Next absence</th><th></th></tr>` +
+    (rows.length ? rows.map(p => {
+      const next = state.absences.filter(a => a.personId === p.id && a.to >= now).sort((a, b) => a.from.localeCompare(b.from))[0];
+      return `<tr><td><b>${esc(p.name)}</b>${p.office ? `<div class="muted">${esc(p.office)}</div>` : ""}</td><td>${esc(p.grade)}</td><td>${esc(p.team || "—")}</td>
+        <td>${utilBar(Number(p.utilisation) || 0)}<div class="muted">${p.dailyTarget}h/day target</div></td>
+        <td>${(p.skills || []).map(s => `<span class="chip">${esc(s.name)} ${s.level}</span>`).join("") || '<span class="muted">None yet</span>'}</td>
+        <td>${next ? `${esc(next.type)}<div class="muted">${fmt(next.from)} – ${fmt(next.to)}</div>` : '<span class="muted">—</span>'}</td>
+        <td class="row" style="flex-wrap:nowrap"><button class="btn small" data-edit="${p.id}">Edit</button><button class="btn small danger" data-del="${p.id}">Delete</button></td></tr>`;
+    }).join("") : `<tr><td colspan="7" class="empty">No fee earners yet. Add one, import a CSV, or load demo data under Data &amp; settings.</td></tr>`);
+  $$("[data-edit]").forEach(b => b.onclick = () => openPerson(b.dataset.edit));
+  $$("[data-del]").forEach(b => b.onclick = () => {
+    const p = person(b.dataset.del);
+    if (!confirm(`Delete ${p.name} and their absence and allocation records?`)) return;
+    state.people = state.people.filter(x => x.id !== p.id);
+    state.absences = state.absences.filter(x => x.personId !== p.id);
+    state.allocations = state.allocations.filter(x => x.personId !== p.id);
+    save(); renderAll();
+  });
+}
+function openPerson(id) {
+  editing = id ? person(id) : null;
+  const p = editing || { name: "", email: "", grade: "Associate", team: "", office: "", dailyTarget: 6, utilisation: 0, skills: [] };
+  $("#pdlg-title").textContent = editing ? `Edit ${p.name}` : "Add fee earner";
+  $("#pd-grade").innerHTML = GRADES.map(g => `<option>${g}</option>`).join("");
+  $("#pd-name").value = p.name; $("#pd-email").value = p.email || ""; $("#pd-grade").value = p.grade; $("#pd-team").value = p.team || "";
+  $("#pd-office").value = p.office || ""; $("#pd-target").value = p.dailyTarget; $("#pd-util").value = p.utilisation;
+  $("#pd-skills").innerHTML = ""; (p.skills.length ? p.skills : [{ name: "", level: 2 }]).forEach(s => skillRow($("#pd-skills"), s));
+  $("#pdlg").showModal();
+}
+function initPeople() {
+  $("#p-add").onclick = () => openPerson(null);
+  $("#p-search").oninput = renderPeople;
+  $("#pd-addskill").onclick = () => skillRow($("#pd-skills"));
+  $("#pd-cancel").onclick = () => $("#pdlg").close();
+  $("#pd-save").onclick = () => {
+    const name = $("#pd-name").value.trim(); if (!name) return toast("Name is required.");
+    const data = { name, email: $("#pd-email").value.trim(), grade: $("#pd-grade").value, team: $("#pd-team").value.trim(),
+      office: $("#pd-office").value.trim(), dailyTarget: Number($("#pd-target").value) || 0, utilisation: Number($("#pd-util").value) || 0,
+      skills: readSkills($("#pd-skills")) };
+    if (editing) Object.assign(editing, data); else state.people.push({ id: uid(), ...data });
+    save(); $("#pdlg").close(); renderAll(); toast("Saved");
+  };
+}
+
+/* ------------------------------------------------------------------ *
+ *  Absence tab
+ * ------------------------------------------------------------------ */
+function initAbsence() {
+  $("#a-from").value = today(); $("#a-to").value = today();
+  $("#a-past").onchange = renderAbsence;
+  $("#a-add").onclick = () => {
+    const a = { id: uid(), personId: $("#a-person").value, from: $("#a-from").value, to: $("#a-to").value, type: $("#a-type").value };
+    if (!a.personId) return toast("Choose a fee earner.");
+    if (!a.from || !a.to || a.from > a.to) return toast("Check the dates.");
+    state.absences.push(a); save(); renderAll(); toast("Absence added");
+  };
+}
+function renderAbsence() {
+  const now = today(), past = $("#a-past").checked;
+  const rows = state.absences.filter(a => past || a.to >= now).sort((a, b) => a.from.localeCompare(b.from));
+  $("#a-table").innerHTML = `<tr><th>Fee earner</th><th>Type</th><th>From</th><th>To</th><th>Working days</th><th></th></tr>` +
+    (rows.length ? rows.map(a => `<tr><td>${esc(person(a.personId)?.name || "Unknown")}</td><td>${esc(a.type)}</td><td>${fmt(a.from)}</td><td>${fmt(a.to)}</td>
+      <td>${workingDays(a.from, a.to).length}</td><td><button class="btn small danger" data-dela="${a.id}">Remove</button></td></tr>`).join("")
+      : `<tr><td colspan="6" class="empty">No ${past ? "" : "current or upcoming "}absence recorded.</td></tr>`);
+  $$("[data-dela]").forEach(b => b.onclick = () => { state.absences = state.absences.filter(a => a.id !== b.dataset.dela); save(); renderAll(); });
+}
+
+/* ------------------------------------------------------------------ *
+ *  My skills tab
+ * ------------------------------------------------------------------ */
+function renderMySkills() {
+  const p = person($("#m-person").value), ed = $("#m-editor");
+  if (!p) { ed.innerHTML = `<p class="muted">Select your name to view and update your skills.</p>`; return; }
+  ed.innerHTML = `<div id="m-skills"></div><div class="row" style="margin-top:8px">
+    <button class="btn small" id="m-add">+ Add skill</button><div class="spacer"></div><button class="btn primary" id="m-save">Save my skills</button></div>`;
+  (p.skills.length ? p.skills : [{ name: "", level: 2 }]).forEach(s => skillRow($("#m-skills"), s));
+  $("#m-add").onclick = () => skillRow($("#m-skills"));
+  $("#m-save").onclick = () => { p.skills = readSkills($("#m-skills")); p.skillsUpdated = today(); save(); renderPeople(); refreshLists(); toast("Your skills have been saved"); };
+}
+
+/* ------------------------------------------------------------------ *
+ *  Allocations tab
+ * ------------------------------------------------------------------ */
+function renderAllocations() {
+  const rows = state.allocations.slice().sort((a, b) => b.from.localeCompare(a.from));
+  $("#al-table").innerHTML = `<tr><th>Work</th><th>Fee earner</th><th>Period</th><th>Hours</th><th></th></tr>` +
+    (rows.length ? rows.map(a => `<tr><td><b>${esc(a.title)}</b><div class="muted">${esc([a.client, a.matter].filter(Boolean).join(" · "))}</div></td>
+      <td>${esc(person(a.personId)?.name || "Unknown")}</td><td>${fmt(a.from)} – ${fmt(a.to)}</td><td>${a.hours}</td>
+      <td><button class="btn small danger" data-delal="${a.id}">Remove</button></td></tr>`).join("")
+      : `<tr><td colspan="5" class="empty">Nothing allocated yet.</td></tr>`);
+  $$("[data-delal]").forEach(b => b.onclick = () => { state.allocations = state.allocations.filter(a => a.id !== b.dataset.delal); save(); renderAllocations(); if (lastWork) renderResults(); });
+}
+
+/* ------------------------------------------------------------------ *
+ *  Data & settings tab
+ * ------------------------------------------------------------------ */
+function renderSettings() {
+  const s = state.settings;
+  $("#s-wskill").value = s.wSkill; $("#s-wcap").value = s.wCap; $("#s-wavail").value = s.wAvail;
+  $("#s-ceiling").value = s.ceiling; $("#s-strict").value = s.strict; $("#s-holidays").value = (s.holidays || []).join("\n");
+}
+function parseCSV(text) {
+  const rows = []; let row = [], cell = "", q = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (q) { if (c === '"' && text[i + 1] === '"') { cell += '"'; i++; } else if (c === '"') q = false; else cell += c; }
+    else if (c === '"') q = true; else if (c === ",") { row.push(cell); cell = ""; }
+    else if (c === "\n" || c === "\r") { if (c === "\r" && text[i + 1] === "\n") i++; row.push(cell); rows.push(row); row = []; cell = ""; }
+    else cell += c;
+  }
+  if (cell || row.length) { row.push(cell); rows.push(row); }
+  const clean = rows.filter(r => r.some(x => x.trim()));
+  if (!clean.length) return [];
+  const head = clean[0].map(h => h.trim().toLowerCase().replace(/^﻿/, "").replace(/[\s-]+/g, "_"));
+  return clean.slice(1).map(r => Object.fromEntries(head.map((h, i) => [h, (r[i] || "").trim()])));
+}
+function findPerson(r) {
+  const email = (r.email || "").toLowerCase(), name = (r.name || r.fee_earner || "").toLowerCase();
+  return state.people.find(p => (email && (p.email || "").toLowerCase() === email) || (name && p.name.toLowerCase() === name));
+}
+function parseSkills(s) {
+  return String(s || "").split(/[;|]/).map(x => x.trim()).filter(Boolean).map(x => {
+    const m = x.match(/^(.*?)(?:[:=]\s*([123]))?$/); return { name: m[1].trim(), level: Number(m[2] || 2) };
+  });
+}
+function importCSV(kind, text) {
+  const rows = parseCSV(text); let added = 0, updated = 0, skipped = 0;
+  rows.forEach(r => {
+    const p = findPerson(r);
+    if (kind === "people") {
+      const name = r.name || r.fee_earner; if (!name) return skipped++;
+      const util = r.utilisation ?? r.utilization;
+      const data = { name, email: r.email || p?.email || "", grade: GRADES.find(g => g.toLowerCase() === (r.grade || "").toLowerCase()) || r.grade || p?.grade || "Associate",
+        team: r.team || r.practice_group || p?.team || "", office: r.office || p?.office || "",
+        dailyTarget: r.daily_target_hours ? Number(r.daily_target_hours) : (p?.dailyTarget ?? 6),
+        utilisation: util !== undefined && util !== "" ? parseFloat(util) : (p?.utilisation ?? 0),
+        skills: r.skills ? parseSkills(r.skills) : (p?.skills || []) };
+      if (p) { Object.assign(p, data); updated++; } else { state.people.push({ id: uid(), ...data }); added++; }
+    } else if (kind === "util") {
+      const u = parseFloat(r.utilisation ?? r.utilization);
+      if (!p || isNaN(u)) return skipped++;
+      p.utilisation = u; updated++;
+    } else if (kind === "absence") {
+      const from = normDate(r.from || r.start || r.start_date), to = normDate(r.to || r.end || r.end_date || r.from);
+      if (!p || !from || !to) return skipped++;
+      state.absences.push({ id: uid(), personId: p.id, from, to, type: r.type || "Annual leave" }); added++;
+    }
+  });
+  save(); renderAll();
+  toast(`Import done: ${added} added, ${updated} updated${skipped ? `, ${skipped} skipped (no match / bad data)` : ""}`);
+}
+const TEMPLATES = {
+  people: "name,email,grade,team,office,daily_target_hours,utilisation,skills\nJane Smith,jane.smith@firm.com,Associate,Corporate,Manchester,6,82,M&A:3; Due Diligence:2\n",
+  util: "name,utilisation\nJane Smith,82\n",
+  absence: "name,from,to,type\nJane Smith,2026-12-22,2026-12-31,Annual leave\n",
+};
+function download(name, text, type = "text/csv") {
+  const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([text], { type })); a.download = name; a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+function initData() {
+  $("#s-save").onclick = () => {
+    state.settings = { wSkill: Number($("#s-wskill").value) || 0, wCap: Number($("#s-wcap").value) || 0, wAvail: Number($("#s-wavail").value) || 0,
+      ceiling: Number($("#s-ceiling").value) || 100, strict: $("#s-strict").value,
+      holidays: $("#s-holidays").value.split(/\s+/).map(normDate).filter(Boolean) };
+    save(); renderAll(); toast("Settings saved");
+  };
+  $$("[data-tpl]").forEach(b => b.onclick = () => download(`${b.dataset.tpl}-template.csv`, TEMPLATES[b.dataset.tpl]));
+  $$("[data-imp]").forEach(inp => inp.onchange = async () => { if (inp.files[0]) importCSV(inp.dataset.imp, await inp.files[0].text()); inp.value = ""; });
+  $("#d-export").onclick = () => download(`work-allocation-backup-${today()}.json`, JSON.stringify(state, null, 2), "application/json");
+  $("#d-import").onchange = async e => {
+    const f = e.target.files[0]; if (!f) return;
+    try { const s = JSON.parse(await f.text()); if (!Array.isArray(s.people)) throw 0;
+      state = { ...blank(), ...s, settings: { ...DEFAULT_SETTINGS, ...(s.settings || {}) } }; save(); renderAll(); toast("Backup restored"); }
+    catch { toast("That file isn't a valid backup."); }
+    e.target.value = "";
+  };
+  $("#d-demo").onclick = () => { if (state.people.length && !confirm("Replace current data with demo data?")) return; state = demo(); save(); renderAll(); toast("Demo data loaded"); };
+  $("#d-clear").onclick = () => { if (!confirm("Delete ALL fee earners, absence and allocations from this browser?")) return; state = blank(); save(); renderAll(); toast("All data deleted"); };
+}
+
+/* ------------------------------------------------------------------ *
+ *  Demo data (fictional)
+ * ------------------------------------------------------------------ */
+function demo() {
+  const s = blank();
+  const t = new Date(), d = n => iso(addDays(t, n));
+  const P = (name, grade, team, office, util, skills, target = 6) =>
+    ({ id: uid(), name, email: name.toLowerCase().replace(/[^a-z]+/g, ".") + "@example-firm.com", grade, team, office, dailyTarget: target, utilisation: util,
+       skills: skills.split(";").map(x => { const [n, l] = x.split(":"); return { name: n.trim(), level: Number(l) }; }) });
+  s.people = [
+    P("Amelia Clarke", "Senior Associate", "Corporate", "Manchester", 78, "M&A:3;Due Diligence:3;Corporate Governance:2"),
+    P("Ben Okafor", "Associate", "Corporate", "Leeds", 64, "M&A:2;Due Diligence:3;Commercial Contracts:2"),
+    P("Chloe Patel", "Associate", "Corporate", "London", 96, "M&A:3;Due Diligence:2;Banking & Finance:2"),
+    P("Daniel Hughes", "Trainee", "Corporate", "Manchester", 55, "Due Diligence:1;Commercial Contracts:1", 5),
+    P("Emily Watson", "Legal Director", "Commercial", "London", 71, "Commercial Contracts:3;Technology & Outsourcing:3;Data Protection & GDPR:2"),
+    P("Farah Ahmed", "Associate", "Commercial", "Manchester", 58, "Commercial Contracts:2;Data Protection & GDPR:3;Intellectual Property:2"),
+    P("George Bennett", "Partner", "Real Estate", "Leeds", 88, "Real Estate:3;Planning:2;Construction:2", 5),
+    P("Hannah Lewis", "Senior Associate", "Real Estate", "Manchester", 69, "Real Estate:3;Banking & Finance:2"),
+    P("Imran Shah", "Paralegal", "Real Estate", "Manchester", 47, "Real Estate:1;Due Diligence:2", 6.5),
+    P("Jessica Moore", "Senior Associate", "Employment", "London", 82, "Employment:3;Pensions:2;Litigation:2"),
+    P("Kieran Doyle", "Associate", "Disputes", "Manchester", 61, "Litigation:3;Arbitration:2;Insolvency & Restructuring:2"),
+    P("Laura Chen", "Associate", "Disputes", "Leeds", 104, "Litigation:2;Regulatory:3;Competition:2"),
+  ];
+  const by = n => s.people.find(p => p.name === n).id;
+  s.absences = [
+    { id: uid(), personId: by("Amelia Clarke"), from: d(3), to: d(9), type: "Annual leave" },
+    { id: uid(), personId: by("Ben Okafor"), from: d(12), to: d(12), type: "Training" },
+    { id: uid(), personId: by("Farah Ahmed"), from: d(0), to: d(4), type: "Annual leave" },
+    { id: uid(), personId: by("Hannah Lewis"), from: d(-5), to: d(30), type: "Parental leave" },
+  ];
+  s.allocations = [
+    { id: uid(), personId: by("Ben Okafor"), title: "Share purchase – Project Heron", client: "Northwind Holdings", matter: "NW-0412", hours: 10, from: d(0), to: d(13), created: d(-2) },
+  ];
+  return s;
+}
+
+/* ------------------------------------------------------------------ *
+ *  Boot
+ * ------------------------------------------------------------------ */
+function renderAll() { refreshLists(); renderPeople(); renderAbsence(); renderMySkills(); renderAllocations(); renderSettings(); if (lastWork) renderResults(); }
+function initNav() {
+  $$("#nav button").forEach(b => b.onclick = () => {
+    $$("#nav button").forEach(x => x.classList.toggle("active", x === b));
+    $$("section.tab").forEach(s => s.classList.toggle("active", s.id === "tab-" + b.dataset.tab));
+  });
+  $("#themeBtn").onclick = () => {
+    const root = document.documentElement, dark = matchMedia("(prefers-color-scheme: dark)").matches;
+    const cur = root.dataset.theme || (dark ? "dark" : "light");
+    root.dataset.theme = cur === "dark" ? "light" : "dark";
+    try { localStorage.setItem(KEY + ".theme", root.dataset.theme); } catch (e) {}
+  };
+  try { const th = localStorage.getItem(KEY + ".theme"); if (th) document.documentElement.dataset.theme = th; } catch (e) {}
+}
+if (!state) { state = demo(); save(); }
+initNav(); initAllocate(); initPeople(); initAbsence(); initData();
+$("#m-person").onchange = renderMySkills;
+renderAll();
+</script>
+</body>
+</html>
