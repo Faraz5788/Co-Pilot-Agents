@@ -161,6 +161,49 @@ textarea{resize:vertical;min-height:70px}
 .err{color:var(--warn);font-size:.85rem;min-height:1em}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 84px);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:999px;font-weight:600;font-size:.88rem;z-index:20}
 @media (prefers-reduced-motion:no-preference){.ev,.cell,.chip,.tab{transition:background-color .15s,border-color .15s}}
+
+/* calendars row + people */
+.calrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:4px 0}
+.calrow .legend{margin-right:2px}
+.chip.cal[aria-pressed="false"]{opacity:.55;text-decoration:line-through}
+.chip.cal[aria-pressed="true"]{background:color-mix(in srgb,var(--k) 16%,var(--surface));color:var(--ink);border-color:var(--k)}
+.daystrip{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;margin-top:10px}
+.daystrip button{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:7px 2px;display:flex;flex-direction:column;align-items:center;font-size:.72rem;color:var(--muted);min-width:0}
+.daystrip button b{font-size:1rem;color:var(--ink);font-variant-numeric:tabular-nums}
+.daystrip button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.daystrip button[aria-pressed="true"] b{color:var(--bg)}
+.sched{margin-top:12px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.srow{display:grid;grid-template-columns:minmax(0,150px) 1fr;gap:12px;padding:11px 14px;border-top:1px solid var(--line);align-items:start}
+.srow:first-child{border-top:0}
+.pname{display:flex;gap:8px;align-items:center;min-width:0;font-weight:600}
+.pname span.t{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pname small{display:block;font-weight:500;color:var(--muted);font-size:.72rem}
+.mini{width:26px;height:26px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:.8rem;font-weight:700;background:color-mix(in srgb,var(--k) 22%,transparent);color:var(--k)}
+.slots{display:flex;flex-direction:column;gap:5px;min-width:0}
+.slot{display:flex;gap:8px;font-size:.86rem;min-width:0}
+.slot .tm{font-variant-numeric:tabular-nums;color:var(--muted);flex:none;width:52px}
+.slot .ti{overflow-wrap:anywhere}
+.slot.busy .ti{font-style:italic;color:var(--muted)}
+.free{color:var(--muted);font-size:.86rem}
+.panel{margin-top:12px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:12px}
+.panel h3{font-family:var(--display);font-weight:500;font-size:1.1rem;margin:0}
+.prow{display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding-top:12px;border-top:1px solid var(--line)}
+.prow:first-of-type{border-top:0;padding-top:0}
+.prow .pname{flex:1 1 180px}
+.role{font-size:.75rem;font-weight:700;padding:3px 9px;border-radius:999px;background:var(--sunk);color:var(--muted);white-space:nowrap}
+.role.visit{background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--accent)}
+.role.ended{background:color-mix(in srgb,var(--warn) 14%,transparent);color:var(--warn)}
+.ctrl{display:flex;gap:8px;flex-wrap:wrap;align-items:center;width:100%}
+.ctrl select,.ctrl input{width:auto;flex:1 1 140px}
+.hint{font-size:.82rem;color:var(--muted)}
+.hint.warn{color:var(--warn)}
+.steps{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;color:var(--muted)}
+.steps b{color:var(--ink)}
+.copy{display:flex;gap:8px;flex-wrap:wrap}
+.copy code{flex:1 1 200px;background:var(--sunk);border-radius:8px;padding:9px 10px;font-size:.8rem;overflow-wrap:anywhere;user-select:all}
+.gate{margin-top:28px;padding:28px 20px;text-align:center;background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}
+.gate h2{font-family:var(--display);margin:0 0 6px}
+@media (max-width:480px){.srow{grid-template-columns:1fr;gap:6px}}
 </style>
 
 <div class="app">
@@ -176,6 +219,7 @@ textarea{resize:vertical;min-height:70px}
       <button class="tab" role="tab" data-tab="upcoming" aria-selected="true">Upcoming</button>
       <button class="tab" role="tab" data-tab="month" aria-selected="false">Month</button>
       <button class="tab" role="tab" data-tab="twins" aria-selected="false">Twins</button>
+      <button class="tab" role="tab" data-tab="people" aria-selected="false">People</button>
       <button class="tab" role="tab" data-tab="log" aria-selected="false">Daily log <span class="lock">Premium</span></button>
     </div>
   </div>
@@ -190,8 +234,14 @@ textarea{resize:vertical;min-height:70px}
   <form class="dlg" id="evForm" novalidate>
     <header><h2 id="evDlgTitle">New entry</h2><button type="button" class="iconbtn" data-close>Close</button></header>
     <div class="body">
+      <div class="field" id="calField"><span class="legend">Calendar</span>
+        <div class="pick" id="fCal">
+          <label><input type="radio" name="cal" value="family" checked>Family calendar</label>
+          <label><input type="radio" name="cal" value="me">My calendar</label>
+        </div>
+      </div>
       <label class="field"><span>What</span><input type="text" id="fTitle" maxlength="120" placeholder="e.g. 16-week vaccinations" autocomplete="off"></label>
-      <div class="field"><span class="legend">Who is it for</span><div class="pick" id="fWho"></div></div>
+      <div class="field famOnly"><span class="legend">Who is it for</span><div class="pick" id="fWho"></div></div>
       <div class="field"><span class="legend">Type</span>
         <div class="pick" id="fType">
           <label><input type="radio" name="type" value="appointment" checked>Appointment</label>
@@ -204,7 +254,7 @@ textarea{resize:vertical;min-height:70px}
         <label class="field"><span>Time (optional)</span><input type="time" id="fTime"></label>
       </div>
       <label class="check"><input type="checkbox" id="fYearly"> Repeats every year (birthdays, anniversaries)</label>
-      <div class="field"><span class="legend">Who's handling it</span><div class="pick" id="fOwner"></div></div>
+      <div class="field famOnly"><span class="legend">Who's handling it</span><div class="pick" id="fOwner"></div></div>
       <label class="field"><span>Notes</span><textarea id="fNotes" maxlength="2000" placeholder="Address, what to bring, questions to ask"></textarea></label>
       <label class="field" id="outcomeField"><span>What happened (after)</span><textarea id="fOutcome" maxlength="2000" placeholder="Weight, what the doctor said, follow-ups"></textarea></label>
       <label class="check" id="doneField"><input type="checkbox" id="fDone"> Done</label>
@@ -242,12 +292,15 @@ textarea{resize:vertical;min-height:70px}
 
 <script>
 (() => {
+  const ARTIFACT_URL = "https://claude.ai/artifact/NQsiQw4pRcLMxmWEQnKTk4";
   // ---------- helpers ----------
   const $ = (s, el = document) => el.querySelector(s);
+  const $$ = (s, el = document) => [...el.querySelectorAll(s)];
   const pad = n => String(n).padStart(2, "0");
   const ymd = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
   const parse = s => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); };
   const addDays = (s, n) => { const d = parse(s); d.setDate(d.getDate() + n); return ymd(d); };
+  const daysBetween = (a, b) => Math.round((parse(b) - parse(a)) / 864e5);
   const todayStr = () => ymd(new Date());
   const fmtDay = (s, opts = { weekday: "short", day: "numeric", month: "short" }) => parse(s).toLocaleDateString("en-GB", opts);
   const h = (tag, attrs = {}, ...kids) => {
@@ -255,70 +308,124 @@ textarea{resize:vertical;min-height:70px}
     for (const [k, v] of Object.entries(attrs)) {
       if (v == null || v === false) continue;
       if (k === "class") el.className = v; else if (k === "text") el.textContent = v;
+      else if (k === "kcolor") el.style.setProperty("--k", v);
       else if (k.startsWith("on")) el.addEventListener(k.slice(2), v); else el.setAttribute(k, v === true ? "" : v);
     }
     for (const c of kids.flat()) if (c != null && c !== false) el.append(c.nodeType ? c : document.createTextNode(c));
     return el;
   };
   const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+  const store = {
+    get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch { return d; } },
+    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
+  };
 
   // ---------- state ----------
   const DEFAULT_SETTINGS = { kids: { a: "Twin A", b: "Twin B" }, parents: { p1: "Dad", p2: "Mum" } };
   const S = {
-    events: new Map(), settings: structuredClone(DEFAULT_SETTINGS),
-    tab: "upcoming", filter: "all", month: null, selDay: todayStr(), kidView: "a",
-    mode: "connecting", canWrite: true, db: null, editing: null
+    events: new Map(),            // family calendar
+    personal: new Map(),          // uid -> Map(id -> ev)
+    members: new Map(),           // uid -> {nickname, shareMode, isOwner, joinedAt}
+    access: new Map(),            // uid -> {role, until}
+    profiles: {},
+    settings: structuredClone(DEFAULT_SETTINGS),
+    tab: "upcoming", filter: "all", month: null, selDay: todayStr(), kidView: "a", peopleDay: todayStr(),
+    hidden: new Set(store.get("tp-hidden-cals", [])),
+    mode: "connecting", canWrite: true, db: null, user: null, me: null, isOwner: false, editing: null
   };
   { const t = parse(todayStr()); S.month = new Date(t.getFullYear(), t.getMonth(), 1); }
 
   const kidName = k => k === "fam" ? "Family" : (S.settings.kids?.[k] || (k === "a" ? "Twin A" : "Twin B"));
   const ownerName = o => o === "both" ? "Both of us" : (S.settings.parents?.[o] || "");
   const TYPE_LBL = { appointment: "Appointment", keydate: "Key date", reminder: "Reminder" };
+  const PALETTE = ["#C2457A", "#3B78C4", "#4F8A2B", "#C0661F", "#6D5BD0", "#0F8A94"];
+  const hash = s => [...s].reduce((a, c) => (a * 31 + c.charCodeAt(0)) >>> 0, 7);
+  const personColor = id => S.profiles[id]?.color || PALETTE[hash(id) % PALETTE.length];
+  const personName = id => {
+    const n = S.members.get(id)?.nickname || S.profiles[id]?.name || "";
+    if (id === S.me) return n ? `${n} (you)` : "You";
+    return n || "Someone";
+  };
+  const shortName = id => id === S.me ? "You" : (S.members.get(id)?.nickname || S.profiles[id]?.name || "Someone");
 
-  // expand yearly events to occurrences in [from, to]
+  // access state for a person
+  function accessOf(id) {
+    const m = S.members.get(id), a = S.access.get(id), t = todayStr();
+    if (m?.isOwner) return { label: "Owner", cls: "", active: true };
+    if (!a) return { label: "New · not set yet", cls: "", active: true, unset: true };
+    if (a.role === "removed") return { label: "Removed", cls: "ended", active: false };
+    if (a.role === "visitor") {
+      if (a.until && a.until < t) return { label: `Visit ended ${fmtDay(a.until, { day: "numeric", month: "short" })}`, cls: "ended", active: false, ended: true };
+      const left = a.until ? daysBetween(t, a.until) : null;
+      return { label: a.until ? `Visiting until ${fmtDay(a.until, { day: "numeric", month: "short" })} · ${left === 0 ? "last day" : left + " day" + (left > 1 ? "s" : "") + " left"}` : "Visitor", cls: "visit", active: true };
+    }
+    return { label: "Family · ongoing", cls: "", active: true };
+  }
+  const calVisible = id => accessOf(id).active && !S.hidden.has(id);
+  const myAccess = () => S.me ? accessOf(S.me) : { active: true };
+  const locked = () => !S.isOwner && S.me && !myAccess().active;
+
+  // dates an event lands on within [from, to]
+  function datesFor(ev, from, to) {
+    if (!ev.date) return [];
+    if (!ev.yearly) return ev.date >= from && ev.date <= to ? [ev.date] : [];
+    const out = [];
+    for (let y = parse(from).getFullYear(); y <= parse(to).getFullYear(); y++) {
+      let md = ev.date.slice(5); if (md === "02-29" && !(y % 4 === 0 && (y % 100 !== 0 || y % 400 === 0))) md = "02-28";
+      const d = `${y}-${md}`; if (d >= ev.date && d >= from && d <= to) out.push(d);
+    }
+    return out;
+  }
+  const sortOcc = (a, b) => a.date.localeCompare(b.date) || (a.ev.time || "").localeCompare(b.ev.time || "") || a.ev.title.localeCompare(b.ev.title);
+
+  // everything shown in Upcoming / Month, respecting filters
   function occurrences(from, to) {
     const out = [];
-    const y0 = parse(from).getFullYear(), y1 = parse(to).getFullYear();
     for (const ev of S.events.values()) {
-      if (!ev.date) continue;
       if (S.filter !== "all" && !(ev.who || []).includes(S.filter)) continue;
-      if (ev.yearly) {
-        for (let y = y0; y <= y1; y++) {
-          let md = ev.date.slice(5); if (md === "02-29" && !(y % 4 === 0 && (y % 100 !== 0 || y % 400 === 0))) md = "02-28";
-          const d = `${y}-${md}`;
-          if (d >= ev.date && d >= from && d <= to) out.push({ ev, date: d });
-        }
-      } else if (ev.date >= from && ev.date <= to) out.push({ ev, date: ev.date });
+      if (S.hidden.has("family")) continue;
+      datesFor(ev, from, to).forEach(date => out.push({ ev, date }));
     }
-    return out.sort((a, b) => a.date.localeCompare(b.date) || (a.ev.time || "").localeCompare(b.ev.time || "") || a.ev.title.localeCompare(b.ev.title));
+    if (S.filter === "all") for (const [id, evs] of S.personal) {
+      if (!calVisible(id)) continue;
+      for (const ev of evs.values()) datesFor(ev, from, to).forEach(date => out.push({ ev, date }));
+    }
+    return out.sort(sortOcc);
   }
-  const stripeFor = who => {
-    const w = (who || []).filter(Boolean);
+  const isBusyOnly = ev => ev.cal !== "family" && ev.cal !== S.me && S.members.get(ev.cal)?.shareMode === "busy";
+  const shownTitle = ev => isBusyOnly(ev) ? "Busy" : ev.title;
+  const stripeFor = ev => {
+    if (ev.cal !== "family") return personColor(ev.cal);
+    const w = (ev.who || []).filter(Boolean);
     if (w.length === 1) return `var(--${w[0] === "fam" ? "fam" : "kid-" + w[0]})`;
     if (w.includes("a") && w.includes("b")) return "linear-gradient(var(--kid-a) 50%, var(--kid-b) 50%)";
     return "var(--fam)";
   };
   const whoChips = who => (who || []).map(k => h("span", { class: `who k-${k}` }, h("span", { class: "dot" }), kidName(k)));
+  const personChip = id => h("span", { class: "who", kcolor: personColor(id) }, h("span", { class: "dot" }), shortName(id));
 
   // ---------- rendering ----------
   function eventCard(ev, date) {
-    const unassigned = ev.type === "appointment" && !ev.owner && !ev.done;
+    const fam = ev.cal === "family", busy = isBusyOnly(ev);
+    const unassigned = fam && ev.type === "appointment" && !ev.owner && !ev.done;
     const meta = h("span", { class: "ev-meta" },
-      whoChips(ev.who),
-      ev.owner ? h("span", { class: "tag", text: `${ownerName(ev.owner)} handling` }) : null,
+      fam ? whoChips(ev.who) : personChip(ev.cal),
+      fam && ev.owner ? h("span", { class: "tag", text: `${ownerName(ev.owner)} handling` }) : null,
       unassigned ? h("span", { class: "tag warn", text: "No one assigned" }) : null,
-      ev.type !== "appointment" ? h("span", { class: "tag", text: TYPE_LBL[ev.type] || "" }) : null,
-      ev.yearly ? h("span", { class: "tag", text: "Every year" }) : null,
+      !busy && ev.type && ev.type !== "appointment" ? h("span", { class: "tag", text: TYPE_LBL[ev.type] || "" }) : null,
+      !busy && ev.yearly ? h("span", { class: "tag", text: "Every year" }) : null,
       ev.done ? h("span", { class: "tag done", text: "Done" }) : null,
       ev.example ? h("span", { class: "ex", text: "Example" }) : null
     );
-    const main = h("span", { class: "ev-main" }, h("span", { class: "ev-title", text: ev.title }), meta);
-    if (ev.outcome) main.append(h("span", { class: "ev-note" }, h("b", { text: "Outcome: " }), ev.outcome));
-    else if (ev.notes) main.append(h("span", { class: "ev-note", text: ev.notes }));
-    const btn = h("button", { class: "ev", type: "button", onclick: () => openEvent(ev.id) },
+    const main = h("span", { class: "ev-main" }, h("span", { class: "ev-title", text: shownTitle(ev) }), meta);
+    if (!busy) {
+      if (ev.outcome) main.append(h("span", { class: "ev-note" }, h("b", { text: "Outcome: " }), ev.outcome));
+      else if (ev.notes) main.append(h("span", { class: "ev-note", text: ev.notes }));
+    }
+    const btn = h("button", { class: "ev", type: "button", onclick: () => busy ? toast(`${shortName(ev.cal)} shares only busy times`) : openEvent(ev.cal, ev.id) },
       h("span", { class: "ev-time" }, ev.time || "All day", date && S.tab !== "upcoming" ? h("small", { text: fmtDay(date, { day: "numeric", month: "short" }) }) : null),
       main);
-    btn.style.setProperty("--stripe", stripeFor(ev.who));
+    btn.style.setProperty("--stripe", stripeFor(ev));
     return btn;
   }
 
@@ -326,7 +433,7 @@ textarea{resize:vertical;min-height:70px}
     const t = todayStr(), end = addDays(t, 90);
     const occ = occurrences(t, end).filter(o => !(o.ev.done && !o.ev.yearly));
     const week = occ.filter(o => o.date <= addDays(t, 6));
-    const unassigned = occ.filter(o => o.ev.type === "appointment" && !o.ev.owner).length;
+    const unassigned = occ.filter(o => o.ev.cal === "family" && o.ev.type === "appointment" && !o.ev.owner).length;
     view.append(h("div", { class: "summary" },
       h("span", {}, "Next 7 days: ", h("strong", { text: String(week.length) }), week.length === 1 ? " entry" : " entries"),
       unassigned ? h("span", { class: "warnpill", text: `${unassigned} appointment${unassigned > 1 ? "s" : ""} with no one assigned` }) : null));
@@ -335,7 +442,7 @@ textarea{resize:vertical;min-height:70px}
     for (const o of occ) {
       if (o.date !== cur) {
         cur = o.date;
-        const diff = Math.round((parse(o.date) - parse(t)) / 864e5);
+        const diff = daysBetween(t, o.date);
         const label = diff === 0 ? "Today" : diff === 1 ? "Tomorrow" : fmtDay(o.date, { weekday: "long" });
         list = h("div", { class: "list" });
         view.append(h("section", { class: "day" },
@@ -347,8 +454,8 @@ textarea{resize:vertical;min-height:70px}
 
   function renderMonth(view) {
     const m = S.month, y = m.getFullYear(), mo = m.getMonth();
-    const first = new Date(y, mo, 1), startOffset = (first.getDay() + 6) % 7;
-    const gridStart = new Date(y, mo, 1 - startOffset), gs = ymd(gridStart), ge = addDays(gs, 41);
+    const startOffset = (new Date(y, mo, 1).getDay() + 6) % 7;
+    const gs = ymd(new Date(y, mo, 1 - startOffset)), ge = addDays(gs, 41);
     const byDay = {};
     for (const o of occurrences(gs, ge)) (byDay[o.date] ||= []).push(o);
     view.append(h("div", { class: "mhead" },
@@ -364,9 +471,10 @@ textarea{resize:vertical;min-height:70px}
       const ds = addDays(gs, i), dd = parse(ds), items = byDay[ds] || [];
       const marks = h("div", { class: "marks" });
       items.slice(0, 3).forEach(o => {
-        const k = (o.ev.who || [])[0] || "fam";
-        marks.append(h("span", { class: `dot k-${(o.ev.who || []).length > 1 && o.ev.who.includes("a") && o.ev.who.includes("b") ? "a" : k}` }));
-        marks.append(h("span", { class: `lbl k-${k}`, text: o.ev.title }));
+        const fam = o.ev.cal === "family", k = fam ? ((o.ev.who || [])[0] || "fam") : null;
+        const color = fam ? null : personColor(o.ev.cal);
+        marks.append(h("span", { class: `dot${fam ? " k-" + k : ""}`, kcolor: color }));
+        marks.append(h("span", { class: `lbl${fam ? " k-" + k : ""}`, kcolor: color, text: shownTitle(o.ev) }));
       });
       if (items.length > 3) marks.append(h("span", { class: "more", text: `+${items.length - 3}` }));
       grid.append(h("button", {
@@ -375,7 +483,7 @@ textarea{resize:vertical;min-height:70px}
         onclick: () => { S.selDay = ds; render(); }
       }, h("span", { class: "n", text: String(dd.getDate()) }), marks));
     }
-    view.append(h("div", { style: "overflow-x:auto" }, grid));
+    view.append(grid);
     const sel = byDay[S.selDay] || occurrences(S.selDay, S.selDay);
     const list = h("div", { class: "list" });
     sel.forEach(o => list.append(eventCard(o.ev)));
@@ -391,7 +499,7 @@ textarea{resize:vertical;min-height:70px}
       ["a", "b"].map(x => h("button", { type: "button", class: `k-${x}`, "aria-pressed": String(x === k), onclick: () => { S.kidView = x; render(); } }, h("span", { class: "dot" }), kidName(x)))));
     const all = [...S.events.values()].filter(e => (e.who || []).includes(k));
     const t = todayStr();
-    const next = [...all].map(e => ({ ev: e, date: e.yearly ? nextYearly(e.date, t) : e.date })).filter(o => o.date >= t && !(o.ev.done && !o.ev.yearly)).sort((a, b) => a.date.localeCompare(b.date) || (a.ev.time || "").localeCompare(b.ev.time || ""));
+    const next = all.map(e => ({ ev: e, date: e.yearly ? nextYearly(e.date, t) : e.date })).filter(o => o.date >= t && !(o.ev.done && !o.ev.yearly)).sort(sortOcc);
     const past = all.filter(e => !e.yearly && (e.date < t || e.done)).sort((a, b) => b.date.localeCompare(a.date));
     const appts = all.filter(e => e.type === "appointment");
     const nextAppt = next.find(o => o.ev.type === "appointment");
@@ -416,6 +524,118 @@ textarea{resize:vertical;min-height:70px}
     return d < date ? date : d;
   }
 
+  // ----- People: who's around, sharing settings, access -----
+  function peopleOrder() {
+    const ids = [...S.members.keys()];
+    return ids.sort((a, b) => (b === S.me) - (a === S.me) || (S.members.get(b)?.isOwner ? 1 : 0) - (S.members.get(a)?.isOwner ? 1 : 0) || shortName(a).localeCompare(shortName(b)));
+  }
+  function renderPeople(view) {
+    const t = todayStr(), day = S.peopleDay;
+    // day strip
+    view.append(h("div", { class: "section-title", text: "Who's around" }));
+    view.append(h("div", { class: "daystrip", role: "group", "aria-label": "Choose day" },
+      Array.from({ length: 7 }, (_, i) => addDays(t, i)).map(d => h("button", { type: "button", "aria-pressed": String(d === day), onclick: () => { S.peopleDay = d; render(); } },
+        i0(d, t), h("b", { text: String(parse(d).getDate()) })))));
+    const sched = h("div", { class: "sched" });
+    // family row
+    const famItems = [...S.events.values()].flatMap(ev => datesFor(ev, day, day).map(() => ev)).sort((a, b) => (a.time || "").localeCompare(b.time || ""));
+    sched.append(schedRow(h("span", { class: "mini k-fam", text: "F" }), "Family calendar", `${kidName("a")} & ${kidName("b")}`, famItems));
+    for (const id of peopleOrder()) {
+      const acc = accessOf(id);
+      if (!acc.active) continue;
+      const items = [...(S.personal.get(id)?.values() || [])].flatMap(ev => datesFor(ev, day, day).map(() => ev)).sort((a, b) => (a.time || "").localeCompare(b.time || ""));
+      sched.append(schedRow(h("span", { class: "mini", kcolor: personColor(id), text: shortName(id).charAt(0).toUpperCase() }), personName(id), acc.label, items));
+    }
+    view.append(sched);
+    view.append(h("p", { class: "hint", style: "margin-top:8px", text: `${fmtDay(day, { weekday: "long", day: "numeric", month: "long" })}. Add things to your own calendar with Add → My calendar.` }));
+
+    // my sharing
+    renderMySharing(view);
+    renderAccessList(view);
+    renderInvite(view);
+  }
+  const i0 = (d, t) => d === t ? "Today" : fmtDay(d, { weekday: "short" });
+  function schedRow(avatar, name, sub, items) {
+    const slots = h("div", { class: "slots" });
+    if (!items.length) slots.append(h("span", { class: "free", text: "Free" }));
+    items.forEach(ev => {
+      const busy = isBusyOnly(ev);
+      slots.append(h("div", { class: `slot${busy ? " busy" : ""}` }, h("span", { class: "tm", text: ev.time || "All day" }), h("span", { class: "ti", text: shownTitle(ev) })));
+    });
+    return h("div", { class: "srow" }, h("div", { class: "pname" }, avatar, h("span", { class: "t" }, name, h("small", { text: sub }))), slots);
+  }
+  function renderMySharing(view) {
+    if (!S.me) return;
+    const m = S.members.get(S.me) || {};
+    const nick = h("input", { type: "text", id: "myNick", maxlength: "30", placeholder: "Your name as others see it" }); nick.value = m.nickname || "";
+    const mode = m.shareMode || "details";
+    const err = h("div", { class: "err", role: "alert" });
+    view.append(h("div", { class: "section-title", text: "Your calendar" }));
+    view.append(h("form", { class: "panel", onsubmit: async e => {
+      e.preventDefault();
+      const next = { nickname: nick.value.trim(), shareMode: $('input[name="shareMode"]:checked', e.target)?.value || "details" };
+      try { await writeDoc(`members/${S.me}`, { ...m, ...next }); toast("Saved"); } catch (er) { handleWriteError(er, err); }
+    } },
+      h("label", { class: "field" }, h("span", { text: "Your name" }), nick),
+      h("div", { class: "field" }, h("span", { class: "legend", text: "What others see on your calendar" }),
+        h("div", { class: "pick" },
+          h("label", {}, h("input", { type: "radio", name: "shareMode", value: "details", checked: mode === "details" }), "Full details"),
+          h("label", {}, h("input", { type: "radio", name: "shareMode", value: "busy", checked: mode === "busy" }), "Busy times only"))),
+      err,
+      h("div", {}, h("button", { class: "btn primary", type: "submit", text: "Save" }))));
+  }
+  function renderAccessList(view) {
+    const ids = peopleOrder();
+    view.append(h("div", { class: "section-title", text: "People with access" }));
+    const panel = h("div", { class: "panel" });
+    if (!ids.length) panel.append(h("p", { class: "hint", text: "No one has joined yet. People appear here the first time they open the planner." }));
+    for (const id of ids) {
+      const acc = accessOf(id), a = S.access.get(id), m = S.members.get(id);
+      const row = h("div", { class: "prow" },
+        h("div", { class: "pname" }, h("span", { class: "mini", kcolor: personColor(id), text: shortName(id).charAt(0).toUpperCase() }), h("span", { class: "t", text: personName(id) })),
+        h("span", { class: `role ${acc.cls}`, text: acc.label }));
+      if (S.isOwner && !m?.isOwner && id !== S.me) {
+        const sel = h("select", { "aria-label": `Access for ${shortName(id)}` },
+          h("option", { value: "family", text: "Family · ongoing" }),
+          h("option", { value: "visitor", text: "Visitor until…" }));
+        sel.value = a?.role === "visitor" ? "visitor" : "family";
+        const until = h("input", { type: "date", "aria-label": "Visit ends", min: todayStr() });
+        until.value = a?.until || addDays(todayStr(), 30);
+        until.hidden = sel.value !== "visitor";
+        sel.addEventListener("change", () => until.hidden = sel.value !== "visitor");
+        const err = h("div", { class: "err", role: "alert" });
+        const remove = h("button", { type: "button", class: "btn danger", text: a?.role === "removed" ? "Removed" : "Remove", disabled: a?.role === "removed" });
+        remove.addEventListener("click", async () => {
+          if (!remove.classList.contains("armed")) { remove.classList.add("armed"); remove.textContent = "Tap again to remove"; return; }
+          try { await writeDoc(`access/${id}`, { role: "removed", until: todayStr() }); toast(`${shortName(id)} removed`); } catch (er) { handleWriteError(er, err); }
+        });
+        row.append(h("div", { class: "ctrl" }, sel, until,
+          h("button", { type: "button", class: "btn", text: "Save", onclick: async () => {
+            const rec = sel.value === "visitor" ? { role: "visitor", until: until.value || addDays(todayStr(), 30) } : { role: "family", until: null };
+            try { await writeDoc(`access/${id}`, rec); toast("Access updated"); } catch (er) { handleWriteError(er, err); }
+          } }), remove), err);
+        if (!acc.active) row.append(h("p", { class: "hint warn", text: `${shortName(id)} can no longer see the calendars in this app. To stop them opening the page at all, remove them in the Share menu too.` }));
+        else if (acc.unset) row.append(h("p", { class: "hint", text: "Choose whether they're family or visiting until a set date." }));
+      }
+      panel.append(row);
+    }
+    view.append(panel);
+  }
+  function renderInvite(view) {
+    view.append(h("div", { class: "section-title", text: "Invite someone" }));
+    const code = h("code", { text: ARTIFACT_URL });
+    view.append(h("div", { class: "panel" },
+      h("ol", { class: "steps" },
+        h("li", {}, "Tap ", h("b", { text: "Share" }), " at the top of this page and add their email as an ", h("b", { text: "Editor" }), "."),
+        h("li", {}, "Send them this link. They'll need a free claude.ai account."),
+        h("li", {}, "When they open it, they appear under ", h("b", { text: "People with access" }), ". Set them as family, or as a visitor until a date.")),
+      h("div", { class: "copy" }, code, h("button", { type: "button", class: "btn", text: "Copy link", onclick: async e => {
+        try { await navigator.clipboard.writeText(ARTIFACT_URL); toast("Link copied"); }
+        catch { const r = document.createRange(); r.selectNodeContents(code); const s = getSelection(); s.removeAllRanges(); s.addRange(r); toast("Link selected, copy it now"); }
+      } })),
+      S.isOwner || S.mode === "preview" ? null : h("p", { class: "hint", text: "Only the planner's owner can invite people and set how long they can see it." })));
+  }
+
   function renderLog(view) {
     view.append(h("div", { class: "premium" },
       h("div", { class: "mock", "aria-hidden": "true" },
@@ -436,33 +656,72 @@ textarea{resize:vertical;min-height:70px}
   function emptyState() {
     return h("div", { class: "empty" },
       h("h3", { text: S.filter === "all" ? "Nothing planned yet" : `Nothing planned for ${kidName(S.filter)}` }),
-      h("p", { text: S.canWrite ? "Tap Add to put in the first appointment, birthday or reminder. Both of you will see it." : "Entries will appear here once they are added." }));
+      h("p", { text: S.canWrite ? "Tap Add to put in the first appointment, birthday or reminder. Everyone who shares the planner will see it." : "Entries will appear here once they are added." }));
   }
 
   function renderFilters() {
     const slot = $("#filterSlot"); slot.replaceChildren();
-    if (S.tab === "twins" || S.tab === "log") return;
+    if (S.tab !== "upcoming" && S.tab !== "month") return;
     slot.append(h("div", { class: "filters", role: "group", "aria-label": "Show entries for" },
       [["all", "Everyone"], ["a", kidName("a")], ["b", kidName("b")], ["fam", "Family"]].map(([k, lbl]) =>
         h("button", { type: "button", class: `chip k-${k}`, "aria-pressed": String(S.filter === k), onclick: () => { S.filter = k; render(); } },
           k !== "all" ? h("span", { class: "dot" }) : null, lbl))));
+    const people = peopleOrder().filter(id => accessOf(id).active && (S.personal.get(id)?.size));
+    if (S.filter === "all" && people.length) {
+      const toggle = id => { S.hidden.has(id) ? S.hidden.delete(id) : S.hidden.add(id); store.set("tp-hidden-cals", [...S.hidden]); render(); };
+      slot.append(h("div", { class: "calrow", role: "group", "aria-label": "Calendars shown" },
+        h("span", { class: "legend", text: "Calendars" }),
+        h("button", { type: "button", class: "chip cal k-fam", "aria-pressed": String(!S.hidden.has("family")), onclick: () => toggle("family") }, h("span", { class: "dot" }), "Family"),
+        people.map(id => h("button", { type: "button", class: "chip cal", kcolor: personColor(id), "aria-pressed": String(!S.hidden.has(id)), onclick: () => toggle(id) }, h("span", { class: "dot" }), shortName(id)))));
+    }
   }
 
   function renderBanner() {
     const slot = $("#bannerSlot"); slot.replaceChildren();
     if (S.mode === "preview") slot.append(h("div", { class: "banner" }, h("b", { text: "Preview mode. " }), "Saved data isn't available in this view, so changes last until you close the page."));
     else if (!S.canWrite) slot.append(h("div", { class: "banner" }, h("b", { text: "View only. " }), "Ask the person who shared this to invite you as an Editor so you can add entries."));
+    else if (S.me && !S.isOwner) {
+      const a = S.access.get(S.me);
+      if (a?.role === "visitor" && a.until && a.until >= todayStr()) slot.append(h("div", { class: "banner" }, h("b", { text: "You're visiting. " }), `You can see and add to the shared calendars until ${fmtDay(a.until, { weekday: "long", day: "numeric", month: "long" })}.`));
+    }
   }
 
   function render() {
-    document.querySelectorAll(".tab").forEach(b => b.setAttribute("aria-selected", String(b.dataset.tab === S.tab)));
+    $$(".tab").forEach(b => b.setAttribute("aria-selected", String(b.dataset.tab === S.tab)));
+    const view = $("#view"); view.replaceChildren();
+    if (locked()) {
+      $("#addBtn").hidden = true; $("#bannerSlot").replaceChildren(); $("#filterSlot").replaceChildren();
+      const a = S.access.get(S.me);
+      view.append(h("div", { class: "gate" }, h("h2", { text: a?.role === "removed" ? "Your access has been removed" : "Your shared visit has ended" }),
+        h("p", { class: "hint", text: a?.role === "removed" ? "Ask the planner's owner if you think this is a mistake." : `Shared access ended on ${fmtDay(a.until, { weekday: "long", day: "numeric", month: "long" })}. Ask the planner's owner to extend it.` })));
+      return;
+    }
     $("#addBtn").hidden = !S.canWrite || S.tab === "log";
     renderBanner(); renderFilters();
-    const view = $("#view"); view.replaceChildren();
-    ({ upcoming: renderUpcoming, month: renderMonth, twins: renderTwins, log: renderLog })[S.tab](view);
+    ({ upcoming: renderUpcoming, month: renderMonth, twins: renderTwins, people: renderPeople, log: renderLog })[S.tab](view);
   }
 
   function setStatus(text, s) { const el = $("#status"); el.textContent = text; el.dataset.s = s; }
+
+  // ---------- writes (store, or memory in preview) ----------
+  async function writeDoc(path, body) {
+    if (S.db) return S.db.doc(path).set(body);
+    const [col, id] = [path.split("/").slice(0, -1).join("/"), path.split("/").pop()];
+    if (col === "members") S.members.set(id, body);
+    else if (col === "access") S.access.set(id, body);
+    else if (col === "family") S.settings = body;
+    else if (col === "events") S.events.set(id, { id, cal: "family", ...body });
+    else if (col.startsWith("cals/")) { const owner = col.split("/")[1]; if (!S.personal.has(owner)) S.personal.set(owner, new Map()); S.personal.get(owner).set(id, { id, cal: owner, ...body }); }
+    render();
+  }
+  async function deleteDoc(path) {
+    if (S.db) return S.db.doc(path).delete();
+    const parts = path.split("/"), id = parts.pop(), col = parts.join("/");
+    if (col === "events") S.events.delete(id);
+    else if (col.startsWith("cals/")) S.personal.get(parts[1])?.delete(id);
+    render();
+  }
+  const evPath = (cal, id) => cal === "family" ? `events/${id}` : `cals/${cal}/events/${id}`;
 
   // ---------- dialog: event ----------
   const evDlg = $("#evDlg");
@@ -473,73 +732,80 @@ textarea{resize:vertical;min-height:70px}
     for (const [v, l] of [["", "Not decided"], ["p1", ownerName("p1")], ["p2", ownerName("p2")], ["both", "Both of us"]])
       own.append(h("label", {}, h("input", { type: "radio", name: "owner", value: v }), l));
   }
-  function openEvent(id, presetDate) {
-    if (!S.canWrite && !id) return;
+  const syncCalFields = () => {
+    const fam = ($('#fCal input:checked')?.value || "family") === "family";
+    $$(".famOnly", evDlg).forEach(el => el.hidden = !fam);
+    $("#fTitle").placeholder = fam ? "e.g. 16-week vaccinations" : "e.g. Work trip, Gym, Dinner with friends";
+  };
+  $$('#fCal input').forEach(i => i.addEventListener("change", syncCalFields));
+  function getEvent(cal, id) { return cal === "family" ? S.events.get(id) : S.personal.get(cal)?.get(id); }
+  function openEvent(cal, id, presetDate) {
+    const ev = id ? getEvent(cal, id) : null;
+    const mine = !ev || ev.cal === "family" || ev.cal === S.me;
+    const editable = S.canWrite && mine;
+    if (!ev && !S.canWrite) return;
     buildPickers();
-    const ev = id ? S.events.get(id) : null;
-    S.editing = id || null;
-    $("#evDlgTitle").textContent = ev ? "Edit entry" : "New entry";
+    S.editing = ev ? { cal: ev.cal, id: ev.id } : null;
+    $("#evDlgTitle").textContent = ev ? (editable ? "Edit entry" : `${shortName(ev.cal)}'s entry`) : "New entry";
+    $("#calField").hidden = !!ev || !S.me;
+    $$('#fCal input').forEach(i => i.checked = i.value === "family");
     $("#fTitle").value = ev?.title || "";
     const who = ev?.who || (S.filter !== "all" ? [S.filter] : ["a", "b"]);
-    document.querySelectorAll('#fWho input').forEach(i => i.checked = who.includes(i.value));
-    document.querySelectorAll('#fType input').forEach(i => i.checked = i.value === (ev?.type || "appointment"));
+    $$('#fWho input').forEach(i => i.checked = who.includes(i.value));
+    $$('#fType input').forEach(i => i.checked = i.value === (ev?.type || "appointment"));
     $("#fDate").value = ev?.date || presetDate || todayStr();
     $("#fTime").value = ev?.time || "";
     $("#fYearly").checked = !!ev?.yearly;
-    document.querySelectorAll('#fOwner input').forEach(i => i.checked = i.value === (ev?.owner || ""));
+    $$('#fOwner input').forEach(i => i.checked = i.value === (ev?.owner || ""));
     $("#fNotes").value = ev?.notes || "";
     $("#fOutcome").value = ev?.outcome || "";
     $("#fDone").checked = !!ev?.done;
     $("#outcomeField").hidden = !ev; $("#doneField").hidden = !ev;
-    const del = $("#delBtn"); del.hidden = !ev || !S.canWrite; del.classList.remove("armed"); del.textContent = "Delete";
-    $("#saveBtn").hidden = !S.canWrite;
-    evDlg.querySelectorAll("input,textarea").forEach(el => el.disabled = !S.canWrite);
+    if (ev) $$(".famOnly", evDlg).forEach(el => el.hidden = ev.cal !== "family"); else syncCalFields();
+    const del = $("#delBtn"); del.hidden = !ev || !editable; del.classList.remove("armed"); del.textContent = "Delete";
+    $("#saveBtn").hidden = !editable;
+    evDlg.querySelectorAll("input,textarea").forEach(el => el.disabled = !editable);
     $("#fErr").textContent = "";
     evDlg.showModal();
     if (!ev) $("#fTitle").focus();
   }
   $("#evForm").addEventListener("submit", async e => {
     e.preventDefault();
+    const cal = S.editing ? S.editing.cal : (($('#fCal input:checked')?.value === "me" && S.me) ? S.me : "family");
+    const fam = cal === "family";
     const title = $("#fTitle").value.trim();
-    const who = [...document.querySelectorAll('#fWho input:checked')].map(i => i.value);
+    const who = fam ? $$('#fWho input:checked').map(i => i.value) : [];
     const date = $("#fDate").value;
     if (!title) return $("#fErr").textContent = "Add a short description, like “Hearing test”.";
-    if (!who.length) return $("#fErr").textContent = "Choose who it's for.";
+    if (fam && !who.length) return $("#fErr").textContent = "Choose who it's for.";
     if (!date) return $("#fErr").textContent = "Pick a date.";
-    const prev = S.editing ? S.events.get(S.editing) : null;
+    const prev = S.editing ? getEvent(S.editing.cal, S.editing.id) : null;
     const body = {
       title, who, date,
-      type: document.querySelector('#fType input:checked')?.value || "appointment",
+      type: $('#fType input:checked')?.value || "appointment",
       time: $("#fTime").value || "",
       yearly: $("#fYearly").checked,
-      owner: document.querySelector('#fOwner input:checked')?.value || "",
+      owner: fam ? ($('#fOwner input:checked')?.value || "") : "",
       notes: $("#fNotes").value.trim(),
       outcome: $("#fOutcome").value.trim(),
       done: $("#fDone").checked,
-      example: prev?.example && prev.title === title ? true : false,
+      example: !!(prev?.example && prev.title === title),
       createdAt: prev?.createdAt || new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
-    const id = S.editing || uid();
     $("#saveBtn").disabled = true;
-    try {
-      if (S.db) await S.db.collection("events").doc(id).set(body);
-      else { S.events.set(id, { id, ...body }); render(); }
-      evDlg.close(); toast(prev ? "Saved" : "Added");
-    } catch (err) { handleWriteError(err, $("#fErr")); }
+    try { await writeDoc(evPath(cal, S.editing?.id || uid()), body); evDlg.close(); toast(prev ? "Saved" : fam ? "Added to the family calendar" : "Added to your calendar"); }
+    catch (err) { handleWriteError(err, $("#fErr")); }
     finally { $("#saveBtn").disabled = false; }
   });
   $("#delBtn").addEventListener("click", async () => {
     const b = $("#delBtn");
     if (!b.classList.contains("armed")) { b.classList.add("armed"); b.textContent = "Tap again to delete"; return; }
-    try {
-      if (S.db) await S.db.collection("events").doc(S.editing).delete();
-      else { S.events.delete(S.editing); render(); }
-      evDlg.close(); toast("Deleted");
-    } catch (err) { handleWriteError(err, $("#fErr")); }
+    try { await deleteDoc(evPath(S.editing.cal, S.editing.id)); evDlg.close(); toast("Deleted"); }
+    catch (err) { handleWriteError(err, $("#fErr")); }
   });
 
-  // ---------- dialog: settings ----------
+  // ---------- dialog: names ----------
   const setDlg = $("#setDlg");
   $("#settingsBtn").addEventListener("click", () => {
     $("#sKidA").value = S.settings.kids.a; $("#sKidB").value = S.settings.kids.b;
@@ -554,51 +820,55 @@ textarea{resize:vertical;min-height:70px}
     if (!S.canWrite) return setDlg.close();
     const val = (id, d) => $(id).value.trim() || d;
     const next = { kids: { a: val("#sKidA", "Twin A"), b: val("#sKidB", "Twin B") }, parents: { p1: val("#sP1", "Dad"), p2: val("#sP2", "Mum") } };
-    try {
-      if (S.db) await S.db.doc("family/settings").set(next);
-      else { S.settings = next; render(); }
-      setDlg.close(); toast("Names saved");
-    } catch (err) { handleWriteError(err, $("#sErr")); }
+    try { await writeDoc("family/settings", next); setDlg.close(); toast("Names saved"); }
+    catch (err) { handleWriteError(err, $("#sErr")); }
   });
   $("#clearEx").addEventListener("click", async () => {
     const ids = [...S.events.values()].filter(e => e.example).map(e => e.id);
-    try {
-      for (const id of ids) { if (S.db) await S.db.collection("events").doc(id).delete(); else S.events.delete(id); }
-      if (!S.db) render();
-      setDlg.close(); toast(`Removed ${ids.length} examples`);
-    } catch (err) { handleWriteError(err, $("#sErr")); }
+    try { for (const id of ids) await deleteDoc(`events/${id}`); setDlg.close(); toast(`Removed ${ids.length} examples`); }
+    catch (err) { handleWriteError(err, $("#sErr")); }
   });
-  document.querySelectorAll("[data-close]").forEach(b => b.addEventListener("click", () => b.closest("dialog").close()));
+  $$("[data-close]").forEach(b => b.addEventListener("click", () => b.closest("dialog").close()));
 
   function handleWriteError(err, el) {
     const code = err?.code;
-    if (code === "invalid_argument" || code === "not_granted") { S.canWrite = false; el.textContent = "You can view this planner but not change it. Ask to be invited as an Editor."; render(); }
+    if (code === "invalid_argument" || code === "not_granted") el.textContent = "You don't have permission to change this. Ask the planner's owner to invite you as an Editor.";
     else if (code === "quota_exceeded") el.textContent = "The planner is full. Delete some old entries and try again.";
     else el.textContent = "Couldn't save just now. Check your connection and try again.";
   }
   let toastT;
   function toast(msg) {
-    document.querySelector(".toast")?.remove(); clearTimeout(toastT);
+    $(".toast")?.remove(); clearTimeout(toastT);
     const t = h("div", { class: "toast", role: "status", text: msg }); document.body.append(t);
     toastT = setTimeout(() => t.remove(), 2200);
   }
 
   // ---------- wiring ----------
-  document.querySelectorAll(".tab").forEach(b => b.addEventListener("click", () => { S.tab = b.dataset.tab; render(); }));
-  $("#addBtn").addEventListener("click", () => openEvent(null, S.tab === "month" ? S.selDay : null));
+  $$(".tab").forEach(b => b.addEventListener("click", () => { S.tab = b.dataset.tab; render(); }));
+  $("#addBtn").addEventListener("click", () => openEvent(null, null, S.tab === "month" ? S.selDay : S.tab === "people" ? S.peopleDay : null));
   $("#todayLbl").textContent = new Date().toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" });
 
   // Preview fallback (only when the shared store isn't available, e.g. opening the file directly)
   function loadPreview() {
     S.mode = "preview"; setStatus("Preview", "warn");
     const t = todayStr();
-    [
-      { title: "Health visitor home visit", who: ["a", "b"], type: "appointment", date: addDays(t, 2), time: "11:00", owner: "both" },
-      { title: "16-week vaccinations", who: ["a", "b"], type: "appointment", date: addDays(t, 4), time: "10:30", owner: "p2", notes: "Bring both red books. Calpol in the bag." },
-      { title: "Hip scan", who: ["a"], type: "appointment", date: addDays(t, 10), time: "14:00", owner: "" },
-      { title: "Anniversary dinner", who: ["fam"], type: "keydate", date: addDays(t, 14), yearly: true },
-      { title: "Clinic weigh-in", who: ["b"], type: "appointment", date: addDays(t, -5), time: "09:30", owner: "p1", done: true, outcome: "6.1 kg, on track. Next weigh-in in 4 weeks." }
-    ].forEach(e => { const id = uid(); S.events.set(id, { id, example: true, notes: "", outcome: "", time: "", owner: "", yearly: false, done: false, ...e }); });
+    S.me = "me"; S.isOwner = true;
+    S.members.set("me", { nickname: "", shareMode: "details", isOwner: true });
+    S.members.set("partner", { nickname: "Partner", shareMode: "details" });
+    S.members.set("sam", { nickname: "Sam (example)", shareMode: "details" });
+    S.members.set("jo", { nickname: "Jo (example)", shareMode: "busy" });
+    S.access.set("partner", { role: "family", until: null });
+    S.access.set("sam", { role: "visitor", until: addDays(t, 23) });
+    S.access.set("jo", { role: "family", until: null });
+    const add = (cal, e) => { const id = uid(), ev = { id, cal, example: true, who: [], notes: "", outcome: "", time: "", owner: "", type: "appointment", yearly: false, done: false, ...e }; if (cal === "family") S.events.set(id, ev); else { if (!S.personal.has(cal)) S.personal.set(cal, new Map()); S.personal.get(cal).set(id, ev); } };
+    add("family", { title: "Health visitor home visit", who: ["a", "b"], date: addDays(t, 2), time: "11:00", owner: "both" });
+    add("family", { title: "16-week vaccinations", who: ["a", "b"], date: addDays(t, 4), time: "10:30", owner: "p2", notes: "Bring both red books." });
+    add("family", { title: "Hip scan", who: ["a"], date: addDays(t, 10), time: "14:00" });
+    add("family", { title: "Clinic weigh-in", who: ["b"], date: addDays(t, -5), time: "09:30", owner: "p1", done: true, outcome: "6.1 kg, on track." });
+    add("me", { title: "Office day", date: addDays(t, 1), time: "09:00" });
+    add("sam", { title: "Arriving: pick up from the airport", date: addDays(t, 1), time: "16:40" });
+    add("sam", { title: "Free to babysit", date: addDays(t, 3), time: "18:00" });
+    add("jo", { title: "Work trip", date: addDays(t, 2), time: "08:00" });
     render();
   }
 
@@ -609,11 +879,16 @@ textarea{resize:vertical;min-height:70px}
     if (!db) return loadPreview();
     S.db = db; S.mode = "live";
     const user = await c.use("user").catch(() => null);
-    if (user) { const c = await user.can("data.write"); if (c === false) S.canWrite = false; }
+    S.user = user;
+    if (user) {
+      const cw = await user.can("data.write"); if (cw === false) S.canWrite = false;
+      S.isOwner = await user.isOwner();
+      S.me = await user.id();
+    }
     let loaded = false;
     const timer = setTimeout(() => { if (!loaded) setStatus("Can't reach saved data yet", "warn"); }, 10000);
     db.collection("events").onSnapshot(snap => {
-      S.events = new Map(snap.docs.map(d => [d.id, { id: d.id, ...d.data() }]));
+      S.events = new Map(snap.docs.map(d => [d.id, { id: d.id, cal: "family", ...d.data() }]));
       if (!snap.metadata.fromCache) { loaded = true; clearTimeout(timer); setStatus("Shared · up to date", "live"); }
       render();
     }, () => { clearTimeout(timer); setStatus("Not syncing. Reopen to retry", "warn"); });
@@ -622,6 +897,29 @@ textarea{resize:vertical;min-height:70px}
       S.settings = { kids: { ...DEFAULT_SETTINGS.kids, ...(d?.kids || {}) }, parents: { ...DEFAULT_SETTINGS.parents, ...(d?.parents || {}) } };
       render();
     }, () => {});
+    db.collection("access").onSnapshot(snap => { S.access = new Map(snap.docs.map(d => [d.id, d.data()])); render(); }, () => {});
+    const calSubs = new Map();
+    const syncCalSubs = () => {
+      const want = new Set(S.members.keys()); if (S.me) want.add(S.me);
+      for (const id of want) if (!calSubs.has(id)) calSubs.set(id, db.collection(`cals/${id}/events`).onSnapshot(snap => {
+        S.personal.set(id, new Map(snap.docs.map(d => [d.id, { id: d.id, cal: id, ...d.data() }]))); render();
+      }, () => {}));
+      for (const [id, un] of calSubs) if (!want.has(id)) { un(); calSubs.delete(id); S.personal.delete(id); }
+    };
+    db.collection("members").onSnapshot(async snap => {
+      S.members = new Map(snap.docs.map(d => [d.id, d.data()]));
+      syncCalSubs(); render();
+      if (user && S.members.size) { S.profiles = await user.profiles([...S.members.keys()]); render(); }
+    }, () => {});
+    syncCalSubs();
+    // join: record this person once so others can see them under People
+    if (S.me && S.canWrite) {
+      try {
+        const ref = db.doc(`members/${S.me}`), snap = await ref.get();
+        if (!snap.exists) await ref.set({ nickname: (await user.me()).name || "", shareMode: "details", isOwner: S.isOwner, joinedAt: new Date().toISOString() });
+        else if (!!snap.data().isOwner !== S.isOwner) await ref.update({ isOwner: S.isOwner });
+      } catch {}
+    }
     render();
   }
   start();
