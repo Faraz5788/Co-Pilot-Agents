@@ -58,6 +58,13 @@ If you open `index.html` straight from disk, it runs in preview mode with sample
 - **Live calendar sync.** The .ics import is a one-off copy. Keeping Google, Outlook or university calendars in sync needs a backend that subscribes to those calendars.
 - **Notifications, payments and storage.** Push reminders, App Store / Google Play purchases for Premium, and unlimited chat and log history all need a real backend.
 
+## Look and feel
+- **App shell:** a deep ultramarine header band with the plumage stripe along its edge, and a bottom navigation bar with icons (Home, Calendar, Lists, Chat, More). The other pages (Key dates/Deadlines, Trips, Kids/Profiles, People, Care log, Group settings) live in the **More** sheet.
+- **Type:** Gloock, a high-contrast serif, for headings and big numbers, with Hanken Grotesk for everything else.
+- **Surfaces:** grouped lists in soft panels with thin dividers instead of outlined boxes, and coloured "feather" markers showing who each entry is for.
+- **Calendar:** one page with an Agenda/Month switch. Person filters scroll sideways in one row.
+- **On phones:** pop-ups open as bottom sheets.
+
 ## Colours
 The palette comes from Kenya's lilac-breasted roller (*Coracias caudatus*): lilac breast, turquoise belly, ultramarine flight feathers (the main accent), cinnamon back and olive crown. The bird's dark eye-stripe is used for text. Neutrals carry a faint lilac tint, and a thin "plumage" stripe runs across the top of the app. Each colour has a lighter version for dark mode.
 Each person can pick **Auto**, **Light** or **Dark** with the theme button in the header, or under Group → Appearance. The choice is saved on that device only. Auto follows the claude.ai theme setting, then the device's own setting.
