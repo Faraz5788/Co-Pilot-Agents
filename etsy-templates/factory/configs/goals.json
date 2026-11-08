@@ -1,0 +1,95 @@
+{
+ "slides": [
+  {
+   "type": "hero",
+   "badge": "NEW YEAR 2027",
+   "title": "Goals & Habit Tracker Spreadsheet",
+   "sub": "Goals \u00b7 Daily habits \u00b7 Monthly reflection",
+   "pills": [
+    "Excel & Google Sheets",
+    "12 monthly trackers",
+    "Auto charts"
+   ],
+   "main": "dashboard",
+   "second": "jan",
+   "tablet_top": 720,
+   "bullets": [
+    "Track up to 10 daily habits",
+    "12 goals with progress bars",
+    "A heatmap of your whole year"
+   ]
+  },
+  {
+   "type": "included",
+   "sub": "Everything you need to make 2027 your year",
+   "items": [
+    [
+     "Dashboard",
+     "Your year in a heatmap & chart"
+    ],
+    [
+     "Goals",
+     "12 goals with progress bars"
+    ],
+    [
+     "12 Monthly Trackers",
+     "Tick up to 10 habits a day"
+    ],
+    [
+     "Reflect",
+     "Score each month & plan the next"
+    ],
+    [
+     "Setup",
+     "Your name, year & habits"
+    ],
+    [
+     "How-To Guide",
+     "Simple steps, no skills needed"
+    ]
+   ]
+  },
+  {
+   "type": "wide",
+   "heading": "Tick it off, watch it grow",
+   "sub": "One tap a day \u2014 your scores and streaks update themselves",
+   "shot": "jan",
+   "width": 1340,
+   "bullets": [
+    "Up to 10 habits",
+    "Weekends & short months handled",
+    "Daily and monthly scores"
+   ]
+  },
+  {
+   "type": "feature",
+   "heading": "See your whole year at a glance",
+   "bullets": [
+    "Habit heatmap month by month",
+    "Year score for every habit",
+    "Monthly scores from your reflections",
+    "Goal progress on one page"
+   ],
+   "shot": "dashboard",
+   "left": 690,
+   "top": 90,
+   "width": 730
+  },
+  {
+   "type": "wide",
+   "heading": "Goals that actually move",
+   "sub": "Set a start and a target \u2014 progress and status update automatically",
+   "shot": "goals",
+   "width": 1340,
+   "bullets": [
+    "Works for goals that go down too",
+    "Overdue goals flagged",
+    "Re-use it every year"
+   ]
+  },
+  {
+   "type": "how",
+   "step3": "Change the year to re-use it every January"
+  }
+ ]
+}

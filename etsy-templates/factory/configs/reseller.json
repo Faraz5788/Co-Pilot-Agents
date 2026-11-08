@@ -1,0 +1,84 @@
+{
+ "slides": [
+  {
+   "type": "hero",
+   "badge": "FOR VINTED \u00b7 EBAY \u00b7 DEPOP",
+   "title": "Reseller Profit Tracker Spreadsheet",
+   "sub": "Inventory \u00b7 Sales \u00b7 Profit \u00b7 ROI",
+   "pills": [
+    "Excel & Google Sheets",
+    "Auto profit & ROI",
+    "UK \u00a3"
+   ],
+   "main": "dashboard",
+   "second": "inventory_calc",
+   "tablet_top": 720,
+   "bullets": [
+    "Profit & ROI on every item",
+    "Know your best platform & source",
+    "See what stock is sitting unsold"
+   ]
+  },
+  {
+   "type": "included",
+   "sub": "Know exactly what you're making on every flip",
+   "items": [
+    [
+     "Dashboard",
+     "Profit by month, platform & source"
+    ],
+    [
+     "Inventory & Sales",
+     "Every item from buy to sold"
+    ],
+    [
+     "Automatic Fees",
+     "Set each platform's fee once"
+    ],
+    [
+     "Profit & ROI",
+     "Worked out on every sale"
+    ],
+    [
+     "Setup",
+     "Your platforms & sources"
+    ],
+    [
+     "How-To Guide",
+     "Simple steps, no skills needed"
+    ]
+   ]
+  },
+  {
+   "type": "feature",
+   "heading": "See what's really making you money",
+   "bullets": [
+    "Profit & sales month by month",
+    "Best platform and best source",
+    "Money tied up in unsold stock",
+    "Average days to sell"
+   ],
+   "shot": "dashboard",
+   "left": 690,
+   "top": 90,
+   "width": 730
+  },
+  {
+   "type": "wide",
+   "heading": "Every item tracked from buy to sold",
+   "sub": "Fees, profit, ROI and status calculate themselves",
+   "shot": "inventory_calc",
+   "width": 1340,
+   "bullets": [
+    "Automatic item IDs",
+    "In stock \u2192 Listed \u2192 Sold",
+    "Platform fees worked out",
+    "Room for 1,000 items"
+   ]
+  },
+  {
+   "type": "how",
+   "step3": "Fees, profit and ROI calculate for you"
+  }
+ ]
+}
