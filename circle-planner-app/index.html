@@ -1,4 +1,4 @@
-<title>Twin Planner</title>
+<title>Circle Planner</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -8,17 +8,17 @@
 :root{
   --bg:#F2F5F7; --surface:#FFFFFF; --sunk:#E6ECF1; --ink:#1A2836; --muted:#5A6B7A; --line:#D3DCE4;
   --accent:#1F4E79; --accent-ink:#FFFFFF;
-  --kid-a:#23867C; --kid-b:#8656BF; --fam:#B97C12; --warn:#B4532A;
+  --c0:#23867C; --c1:#8656BF; --c2:#C0473F; --c3:#2F6FB5; --c4:#5E8A1E; --c5:#B4579A; --fam:#B97C12; --warn:#B4532A;
   --display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
   --body:"Figtree","Segoe UI",system-ui,-apple-system,sans-serif;
   --r:12px;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#0E1620; --surface:#16212C; --sunk:#1E2B38; --ink:#E5ECF2; --muted:#93A4B3; --line:#2A3A49;
-  --accent:#86B6E6; --accent-ink:#0E1620; --kid-a:#4FC2B6; --kid-b:#B590EA; --fam:#E4AE4C; --warn:#EC8B62; color-scheme:dark}}
+  --accent:#86B6E6; --accent-ink:#0E1620; --c0:#4FC2B6; --c1:#B590EA; --c2:#EE7D73; --c3:#7FB0EA; --c4:#9CC75A; --c5:#E28CC8; --fam:#E4AE4C; --warn:#EC8B62; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0E1620; --surface:#16212C; --sunk:#1E2B38; --ink:#E5ECF2; --muted:#93A4B3; --line:#2A3A49;
-  --accent:#86B6E6; --accent-ink:#0E1620; --kid-a:#4FC2B6; --kid-b:#B590EA; --fam:#E4AE4C; --warn:#EC8B62; color-scheme:dark}
+  --accent:#86B6E6; --accent-ink:#0E1620; --c0:#4FC2B6; --c1:#B590EA; --c2:#EE7D73; --c3:#7FB0EA; --c4:#9CC75A; --c5:#E28CC8; --fam:#E4AE4C; --warn:#EC8B62; color-scheme:dark}
 
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.45}
@@ -37,7 +37,7 @@ button{cursor:pointer}
 .sub{color:var(--muted);font-size:.85rem;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .status{display:inline-flex;align-items:center;gap:6px}
 .status::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--muted)}
-.status[data-s="live"]::before{background:var(--kid-a)}
+.status[data-s="live"]::before{background:var(--c0)}
 .status[data-s="warn"]::before{background:var(--warn)}
 .iconbtn{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:7px 12px;font-size:.85rem;font-weight:600}
 .tabs{display:flex;gap:4px;margin-top:12px;border-bottom:1px solid var(--line);overflow-x:auto;scrollbar-width:none}
@@ -49,7 +49,7 @@ button{cursor:pointer}
 .chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 12px;font-size:.85rem;font-weight:600;display:inline-flex;gap:7px;align-items:center}
 .chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .dot{width:9px;height:9px;border-radius:50%;flex:none}
-.k-a{--k:var(--kid-a)} .k-b{--k:var(--kid-b)} .k-fam{--k:var(--fam)}
+.k-fam{--k:var(--fam)}
 .dot{background:var(--k,var(--muted))}
 
 .banner{margin-top:12px;padding:10px 12px;border-radius:var(--r);background:var(--sunk);font-size:.88rem;color:var(--muted)}
@@ -107,7 +107,7 @@ button{cursor:pointer}
 }
 .cell .more{font-size:.62rem;color:var(--muted)}
 
-/* twins */
+/* profiles */
 .seg{display:inline-flex;background:var(--sunk);border-radius:999px;padding:3px;margin-top:16px}
 .seg button{border:0;background:none;border-radius:999px;padding:7px 16px;font-weight:600;display:inline-flex;gap:7px;align-items:center;color:var(--muted)}
 .seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgb(0 0 0 / .12)}
@@ -202,6 +202,10 @@ textarea{resize:vertical;min-height:70px}
 .copy{display:flex;gap:8px;flex-wrap:wrap}
 .copy code{flex:1 1 200px;background:var(--sunk);border-radius:8px;padding:9px 10px;font-size:.8rem;overflow-wrap:anywhere;user-select:all}
 .gate{margin-top:28px;padding:28px 20px;text-align:center;background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}
+.plist{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+.prof-edit{display:flex;gap:8px;align-items:center}
+.prof-edit input{flex:1 1 auto}
+.swatch{width:30px;height:30px;border-radius:50%;border:2px solid var(--surface);box-shadow:0 0 0 1px var(--line);background:var(--k);flex:none}
 .gate h2{font-family:var(--display);margin:0 0 6px}
 @media (max-width:480px){.srow{grid-template-columns:1fr;gap:6px}}
 </style>
@@ -210,15 +214,15 @@ textarea{resize:vertical;min-height:70px}
   <div class="top">
     <div class="brand">
       <div>
-        <h1><span class="pair" aria-hidden="true"><i style="background:var(--kid-a)"></i><i style="background:var(--kid-b)"></i></span>Twin Planner</h1>
+        <h1><span class="pair" aria-hidden="true"><i style="background:var(--c0)"></i><i style="background:var(--c1)"></i><i style="background:var(--fam)"></i></span><span id="groupTitle">Circle Planner</span></h1>
         <div class="sub"><span id="todayLbl"></span><span aria-hidden="true">·</span><span class="status" id="status" data-s="">Connecting…</span></div>
       </div>
-      <button class="iconbtn" id="settingsBtn" type="button">Names</button>
+      <button class="iconbtn" id="settingsBtn" type="button">Group</button>
     </div>
     <div class="tabs" role="tablist" aria-label="Views">
       <button class="tab" role="tab" data-tab="upcoming" aria-selected="true">Upcoming</button>
       <button class="tab" role="tab" data-tab="month" aria-selected="false">Month</button>
-      <button class="tab" role="tab" data-tab="twins" aria-selected="false">Twins</button>
+      <button class="tab" role="tab" data-tab="profiles" aria-selected="false">Profiles</button>
       <button class="tab" role="tab" data-tab="people" aria-selected="false">People</button>
       <button class="tab" role="tab" data-tab="log" aria-selected="false">Daily log <span class="lock">Premium</span></button>
     </div>
@@ -236,11 +240,11 @@ textarea{resize:vertical;min-height:70px}
     <div class="body">
       <div class="field" id="calField"><span class="legend">Calendar</span>
         <div class="pick" id="fCal">
-          <label><input type="radio" name="cal" value="family" checked>Family calendar</label>
+          <label><input type="radio" name="cal" value="family" checked>Group calendar</label>
           <label><input type="radio" name="cal" value="me">My calendar</label>
         </div>
       </div>
-      <label class="field"><span>What</span><input type="text" id="fTitle" maxlength="120" placeholder="e.g. 16-week vaccinations" autocomplete="off"></label>
+      <label class="field"><span>What</span><input type="text" id="fTitle" maxlength="120" placeholder="e.g. Dentist, School play, Bin day" autocomplete="off"></label>
       <div class="field famOnly"><span class="legend">Who is it for</span><div class="pick" id="fWho"></div></div>
       <div class="field"><span class="legend">Type</span>
         <div class="pick" id="fType">
@@ -270,15 +274,13 @@ textarea{resize:vertical;min-height:70px}
 
 <dialog id="setDlg" aria-labelledby="setDlgTitle">
   <form class="dlg" id="setForm" novalidate>
-    <header><h2 id="setDlgTitle">Family names</h2><button type="button" class="iconbtn" data-close>Close</button></header>
+    <header><h2 id="setDlgTitle">Group settings</h2><button type="button" class="iconbtn" data-close>Close</button></header>
     <div class="body">
-      <div class="row">
-        <label class="field"><span>First twin</span><input type="text" id="sKidA" maxlength="30"></label>
-        <label class="field"><span>Second twin</span><input type="text" id="sKidB" maxlength="30"></label>
-      </div>
-      <div class="row">
-        <label class="field"><span>Parent 1</span><input type="text" id="sP1" maxlength="30"></label>
-        <label class="field"><span>Parent 2</span><input type="text" id="sP2" maxlength="30"></label>
+      <label class="field"><span>Group name</span><input type="text" id="sGroup" maxlength="40" placeholder="e.g. The Tak family, Flat 4, Book club"></label>
+      <div class="field"><span class="legend">People you plan for</span>
+        <p class="hint" style="margin:0">Kids, grandparents, pets, anyone who has appointments but doesn't use the app. People who share the planner are under People.</p>
+        <div id="sProfiles" class="plist"></div>
+        <div><button type="button" class="btn" id="sAddProfile">Add someone</button></div>
       </div>
       <div id="exampleBox" hidden>
         <p class="ev-note">Some entries are examples to show how the planner works.</p>
@@ -286,7 +288,7 @@ textarea{resize:vertical;min-height:70px}
       </div>
       <div class="err" id="sErr" role="alert"></div>
     </div>
-    <footer><span></span><button type="submit" class="btn primary">Save names</button></footer>
+    <footer><span></span><button type="submit" class="btn primary">Save</button></footer>
   </form>
 </dialog>
 
@@ -321,7 +323,13 @@ textarea{resize:vertical;min-height:70px}
   };
 
   // ---------- state ----------
-  const DEFAULT_SETTINGS = { kids: { a: "Twin A", b: "Twin B" }, parents: { p1: "Dad", p2: "Mum" } };
+  const DEFAULT_SETTINGS = { groupName: "", profiles: [], parents: {} };
+  // older saves kept two fixed names under `kids`; read them as profiles
+  const normalizeSettings = d => ({
+    groupName: d?.groupName || "",
+    profiles: Array.isArray(d?.profiles) ? d.profiles : d?.kids ? [{ id: "a", name: d.kids.a || "Person 1", color: 0 }, { id: "b", name: d.kids.b || "Person 2", color: 1 }] : [],
+    parents: d?.parents || {}
+  });
   const S = {
     events: new Map(),            // family calendar
     personal: new Map(),          // uid -> Map(id -> ev)
@@ -329,14 +337,23 @@ textarea{resize:vertical;min-height:70px}
     access: new Map(),            // uid -> {role, until}
     profiles: {},
     settings: structuredClone(DEFAULT_SETTINGS),
-    tab: "upcoming", filter: "all", month: null, selDay: todayStr(), kidView: "a", peopleDay: todayStr(),
+    tab: "upcoming", filter: "all", month: null, selDay: todayStr(), kidView: null, peopleDay: todayStr(),
     hidden: new Set(store.get("tp-hidden-cals", [])),
     mode: "connecting", canWrite: true, db: null, user: null, me: null, isOwner: false, editing: null
   };
   { const t = parse(todayStr()); S.month = new Date(t.getFullYear(), t.getMonth(), 1); }
 
-  const kidName = k => k === "fam" ? "Family" : (S.settings.kids?.[k] || (k === "a" ? "Twin A" : "Twin B"));
-  const ownerName = o => o === "both" ? "Both of us" : (S.settings.parents?.[o] || "");
+  const profiles = () => S.settings.profiles || [];
+  const profileOf = k => profiles().find(p => p.id === k);
+  const kidName = k => k === "fam" ? "Whole group" : (profileOf(k)?.name || "Removed profile");
+  const profileColor = k => k === "fam" ? "var(--fam)" : `var(--c${(profileOf(k)?.color ?? 0) % 6})`;
+  const groupLabel = () => S.settings.groupName || "Group";
+  const ownerName = o => {
+    if (o === "all") return "Everyone";
+    if (o === "both") return "Both of us";
+    if (o === "p1" || o === "p2") return S.settings.parents?.[o] || (o === "p1" ? "Dad" : "Mum");
+    return shortName(o);
+  };
   const TYPE_LBL = { appointment: "Appointment", keydate: "Key date", reminder: "Reminder" };
   const PALETTE = ["#C2457A", "#3B78C4", "#4F8A2B", "#C0661F", "#6D5BD0", "#0F8A94"];
   const hash = s => [...s].reduce((a, c) => (a * 31 + c.charCodeAt(0)) >>> 0, 7);
@@ -397,11 +414,11 @@ textarea{resize:vertical;min-height:70px}
   const stripeFor = ev => {
     if (ev.cal !== "family") return personColor(ev.cal);
     const w = (ev.who || []).filter(Boolean);
-    if (w.length === 1) return `var(--${w[0] === "fam" ? "fam" : "kid-" + w[0]})`;
-    if (w.includes("a") && w.includes("b")) return "linear-gradient(var(--kid-a) 50%, var(--kid-b) 50%)";
-    return "var(--fam)";
+    if (!w.length) return "var(--fam)";
+    if (w.length === 1) return profileColor(w[0]);
+    return `linear-gradient(${profileColor(w[0])} 50%, ${profileColor(w[1])} 50%)`;
   };
-  const whoChips = who => (who || []).map(k => h("span", { class: `who k-${k}` }, h("span", { class: "dot" }), kidName(k)));
+  const whoChips = who => (who || []).map(k => h("span", { class: "who", kcolor: profileColor(k) }, h("span", { class: "dot" }), kidName(k)));
   const personChip = id => h("span", { class: "who", kcolor: personColor(id) }, h("span", { class: "dot" }), shortName(id));
 
   // ---------- rendering ----------
@@ -471,10 +488,10 @@ textarea{resize:vertical;min-height:70px}
       const ds = addDays(gs, i), dd = parse(ds), items = byDay[ds] || [];
       const marks = h("div", { class: "marks" });
       items.slice(0, 3).forEach(o => {
-        const fam = o.ev.cal === "family", k = fam ? ((o.ev.who || [])[0] || "fam") : null;
-        const color = fam ? null : personColor(o.ev.cal);
-        marks.append(h("span", { class: `dot${fam ? " k-" + k : ""}`, kcolor: color }));
-        marks.append(h("span", { class: `lbl${fam ? " k-" + k : ""}`, kcolor: color, text: shownTitle(o.ev) }));
+        const fam = o.ev.cal === "family";
+        const color = fam ? profileColor((o.ev.who || [])[0] || "fam") : personColor(o.ev.cal);
+        marks.append(h("span", { class: "dot", kcolor: color }));
+        marks.append(h("span", { class: "lbl", kcolor: color, text: shownTitle(o.ev) }));
       });
       if (items.length > 3) marks.append(h("span", { class: "more", text: `+${items.length - 3}` }));
       grid.append(h("button", {
@@ -493,17 +510,25 @@ textarea{resize:vertical;min-height:70px}
       list));
   }
 
-  function renderTwins(view) {
+  function renderProfiles(view) {
+    const list = profiles();
+    if (!list.length) {
+      view.append(h("div", { class: "empty" }, h("h3", { text: "Add the people you plan for" }),
+        h("p", { text: "Kids, grandparents, pets: anyone with appointments. Each gets a page with what's coming up and a history of past visits." }),
+        S.canWrite ? h("button", { class: "btn primary", type: "button", text: "Add people", onclick: openSettings }) : null));
+      return;
+    }
+    if (!profileOf(S.kidView)) S.kidView = list[0].id;
     const k = S.kidView;
-    view.append(h("div", { class: "seg", role: "group", "aria-label": "Choose twin" },
-      ["a", "b"].map(x => h("button", { type: "button", class: `k-${x}`, "aria-pressed": String(x === k), onclick: () => { S.kidView = x; render(); } }, h("span", { class: "dot" }), kidName(x)))));
+    view.append(h("div", { class: "seg", role: "group", "aria-label": "Choose person", style: "flex-wrap:wrap" },
+      list.map(p => h("button", { type: "button", kcolor: profileColor(p.id), "aria-pressed": String(p.id === k), onclick: () => { S.kidView = p.id; render(); } }, h("span", { class: "dot" }), p.name))));
     const all = [...S.events.values()].filter(e => (e.who || []).includes(k));
     const t = todayStr();
     const next = all.map(e => ({ ev: e, date: e.yearly ? nextYearly(e.date, t) : e.date })).filter(o => o.date >= t && !(o.ev.done && !o.ev.yearly)).sort(sortOcc);
     const past = all.filter(e => !e.yearly && (e.date < t || e.done)).sort((a, b) => b.date.localeCompare(a.date));
     const appts = all.filter(e => e.type === "appointment");
     const nextAppt = next.find(o => o.ev.type === "appointment");
-    view.append(h("div", { class: `profile k-${k}` },
+    view.append(h("div", { class: "profile", kcolor: profileColor(k) },
       h("div", { class: "avatar", text: kidName(k).trim().charAt(0).toUpperCase() || "?" }),
       h("div", {}, h("h2", { text: kidName(k) }),
         h("p", { text: nextAppt ? `Next appointment: ${nextAppt.ev.title}, ${fmtDay(nextAppt.date)}${nextAppt.ev.time ? " at " + nextAppt.ev.time : ""}` : "No appointments coming up" })),
@@ -539,7 +564,7 @@ textarea{resize:vertical;min-height:70px}
     const sched = h("div", { class: "sched" });
     // family row
     const famItems = [...S.events.values()].flatMap(ev => datesFor(ev, day, day).map(() => ev)).sort((a, b) => (a.time || "").localeCompare(b.time || ""));
-    sched.append(schedRow(h("span", { class: "mini k-fam", text: "F" }), "Family calendar", `${kidName("a")} & ${kidName("b")}`, famItems));
+    sched.append(schedRow(h("span", { class: "mini k-fam", text: groupLabel().charAt(0).toUpperCase() }), `${groupLabel()} calendar`, profiles().map(p => p.name).join(", ") || "Shared entries", famItems));
     for (const id of peopleOrder()) {
       const acc = accessOf(id);
       if (!acc.active) continue;
@@ -639,17 +664,17 @@ textarea{resize:vertical;min-height:70px}
   function renderLog(view) {
     view.append(h("div", { class: "premium" },
       h("div", { class: "mock", "aria-hidden": "true" },
-        h("div", {}, h("b", { text: "2h 10m" }), `${kidName("a")}: since last feed`),
-        h("div", {}, h("b", { text: "1h 35m" }), `${kidName("b")}: since last feed`),
+        h("div", {}, h("b", { text: "2h 10m" }), `${profiles()[0]?.name || "Baby"}: since last feed`),
+        h("div", {}, h("b", { text: "8:00 pm" }), `${profiles()[1]?.name || "Grandad"}: next medicine`),
         h("div", {}, h("b", { text: "7" }), "Nappies today"),
         h("div", {}, h("b", { text: "11h 20m" }), "Sleep in 24h")),
       h("div", { class: "pitch" },
-        h("h2", { text: "Daily log" }), h("span", { class: "lock", text: "Premium · in-app purchase" }),
+        h("h2", { text: "Care log" }), h("span", { class: "lock", text: "Premium · in-app purchase" }),
         h("ul", {},
-          h("li", { text: "One-tap feed, nappy and sleep logging for each twin" }),
-          h("li", { text: "See which twin fed last and how long ago" }),
-          h("li", { text: "Daily totals to show the health visitor" }),
-          h("li", { text: "Both parents log from their own phone, in real time" })),
+          h("li", { text: "One-tap feed, nappy and sleep logging for babies" }),
+          h("li", { text: "Medicine doses and reminders for anyone in the group" }),
+          h("li", { text: "Daily totals to share with a health visitor, doctor or carer" }),
+          h("li", { text: "Everyone logs from their own phone, in real time" })),
         h("p", { class: "ev-note", style: "margin-top:12px", text: "Not built yet. This is a preview of the planned premium feature." }))));
   }
 
@@ -663,15 +688,15 @@ textarea{resize:vertical;min-height:70px}
     const slot = $("#filterSlot"); slot.replaceChildren();
     if (S.tab !== "upcoming" && S.tab !== "month") return;
     slot.append(h("div", { class: "filters", role: "group", "aria-label": "Show entries for" },
-      [["all", "Everyone"], ["a", kidName("a")], ["b", kidName("b")], ["fam", "Family"]].map(([k, lbl]) =>
-        h("button", { type: "button", class: `chip k-${k}`, "aria-pressed": String(S.filter === k), onclick: () => { S.filter = k; render(); } },
+      [["all", "Everything"], ...profiles().map(p => [p.id, p.name]), ["fam", "Whole group"]].map(([k, lbl]) =>
+        h("button", { type: "button", class: "chip", kcolor: k === "all" ? null : profileColor(k), "aria-pressed": String(S.filter === k), onclick: () => { S.filter = k; render(); } },
           k !== "all" ? h("span", { class: "dot" }) : null, lbl))));
     const people = peopleOrder().filter(id => accessOf(id).active && (S.personal.get(id)?.size));
     if (S.filter === "all" && people.length) {
       const toggle = id => { S.hidden.has(id) ? S.hidden.delete(id) : S.hidden.add(id); store.set("tp-hidden-cals", [...S.hidden]); render(); };
       slot.append(h("div", { class: "calrow", role: "group", "aria-label": "Calendars shown" },
         h("span", { class: "legend", text: "Calendars" }),
-        h("button", { type: "button", class: "chip cal k-fam", "aria-pressed": String(!S.hidden.has("family")), onclick: () => toggle("family") }, h("span", { class: "dot" }), "Family"),
+        h("button", { type: "button", class: "chip cal k-fam", "aria-pressed": String(!S.hidden.has("family")), onclick: () => toggle("family") }, h("span", { class: "dot" }), groupLabel()),
         people.map(id => h("button", { type: "button", class: "chip cal", kcolor: personColor(id), "aria-pressed": String(!S.hidden.has(id)), onclick: () => toggle(id) }, h("span", { class: "dot" }), shortName(id)))));
     }
   }
@@ -688,6 +713,7 @@ textarea{resize:vertical;min-height:70px}
 
   function render() {
     $$(".tab").forEach(b => b.setAttribute("aria-selected", String(b.dataset.tab === S.tab)));
+    $("#groupTitle").textContent = S.settings.groupName || "Circle Planner";
     const view = $("#view"); view.replaceChildren();
     if (locked()) {
       $("#addBtn").hidden = true; $("#bannerSlot").replaceChildren(); $("#filterSlot").replaceChildren();
@@ -698,7 +724,7 @@ textarea{resize:vertical;min-height:70px}
     }
     $("#addBtn").hidden = !S.canWrite || S.tab === "log";
     renderBanner(); renderFilters();
-    ({ upcoming: renderUpcoming, month: renderMonth, twins: renderTwins, people: renderPeople, log: renderLog })[S.tab](view);
+    ({ upcoming: renderUpcoming, month: renderMonth, profiles: renderProfiles, people: renderPeople, log: renderLog })[S.tab](view);
   }
 
   function setStatus(text, s) { const el = $("#status"); el.textContent = text; el.dataset.s = s; }
@@ -709,7 +735,7 @@ textarea{resize:vertical;min-height:70px}
     const [col, id] = [path.split("/").slice(0, -1).join("/"), path.split("/").pop()];
     if (col === "members") S.members.set(id, body);
     else if (col === "access") S.access.set(id, body);
-    else if (col === "family") S.settings = body;
+    else if (col === "family") S.settings = normalizeSettings(body);
     else if (col === "events") S.events.set(id, { id, cal: "family", ...body });
     else if (col.startsWith("cals/")) { const owner = col.split("/")[1]; if (!S.personal.has(owner)) S.personal.set(owner, new Map()); S.personal.get(owner).set(id, { id, cal: owner, ...body }); }
     render();
@@ -725,17 +751,18 @@ textarea{resize:vertical;min-height:70px}
 
   // ---------- dialog: event ----------
   const evDlg = $("#evDlg");
-  function buildPickers() {
+  function buildPickers(current) {
     const who = $("#fWho"); who.replaceChildren();
-    for (const k of ["a", "b", "fam"]) who.append(h("label", { class: `k-${k}` }, h("input", { type: "checkbox", name: "who", value: k }), h("span", { class: "dot" }), k === "fam" ? "Us / family" : kidName(k)));
+    for (const k of [...profiles().map(p => p.id), "fam"]) who.append(h("label", { kcolor: profileColor(k) }, h("input", { type: "checkbox", name: "who", value: k }), h("span", { class: "dot" }), kidName(k)));
     const own = $("#fOwner"); own.replaceChildren();
-    for (const [v, l] of [["", "Not decided"], ["p1", ownerName("p1")], ["p2", ownerName("p2")], ["both", "Both of us"]])
-      own.append(h("label", {}, h("input", { type: "radio", name: "owner", value: v }), l));
+    const opts = [["", "Not decided"], ...peopleOrder().filter(id => accessOf(id).active).map(id => [id, shortName(id)]), ["all", "Everyone"]];
+    if (current && !opts.some(o => o[0] === current)) opts.splice(1, 0, [current, ownerName(current)]);
+    for (const [v, l] of opts) own.append(h("label", {}, h("input", { type: "radio", name: "owner", value: v }), l));
   }
   const syncCalFields = () => {
     const fam = ($('#fCal input:checked')?.value || "family") === "family";
     $$(".famOnly", evDlg).forEach(el => el.hidden = !fam);
-    $("#fTitle").placeholder = fam ? "e.g. 16-week vaccinations" : "e.g. Work trip, Gym, Dinner with friends";
+    $("#fTitle").placeholder = fam ? "e.g. Dentist, School play, Bin day" : "e.g. Work trip, Gym, Dinner with friends";
   };
   $$('#fCal input').forEach(i => i.addEventListener("change", syncCalFields));
   function getEvent(cal, id) { return cal === "family" ? S.events.get(id) : S.personal.get(cal)?.get(id); }
@@ -744,13 +771,13 @@ textarea{resize:vertical;min-height:70px}
     const mine = !ev || ev.cal === "family" || ev.cal === S.me;
     const editable = S.canWrite && mine;
     if (!ev && !S.canWrite) return;
-    buildPickers();
+    buildPickers(ev?.owner || "");
     S.editing = ev ? { cal: ev.cal, id: ev.id } : null;
     $("#evDlgTitle").textContent = ev ? (editable ? "Edit entry" : `${shortName(ev.cal)}'s entry`) : "New entry";
     $("#calField").hidden = !!ev || !S.me;
     $$('#fCal input').forEach(i => i.checked = i.value === "family");
     $("#fTitle").value = ev?.title || "";
-    const who = ev?.who || (S.filter !== "all" ? [S.filter] : ["a", "b"]);
+    const who = ev?.who || (S.filter !== "all" ? [S.filter] : ["fam"]);
     $$('#fWho input').forEach(i => i.checked = who.includes(i.value));
     $$('#fType input').forEach(i => i.checked = i.value === (ev?.type || "appointment"));
     $("#fDate").value = ev?.date || presetDate || todayStr();
@@ -794,7 +821,7 @@ textarea{resize:vertical;min-height:70px}
       updatedAt: new Date().toISOString()
     };
     $("#saveBtn").disabled = true;
-    try { await writeDoc(evPath(cal, S.editing?.id || uid()), body); evDlg.close(); toast(prev ? "Saved" : fam ? "Added to the family calendar" : "Added to your calendar"); }
+    try { await writeDoc(evPath(cal, S.editing?.id || uid()), body); evDlg.close(); toast(prev ? "Saved" : fam ? "Added to the group calendar" : "Added to your calendar"); }
     catch (err) { handleWriteError(err, $("#fErr")); }
     finally { $("#saveBtn").disabled = false; }
   });
@@ -807,20 +834,46 @@ textarea{resize:vertical;min-height:70px}
 
   // ---------- dialog: names ----------
   const setDlg = $("#setDlg");
-  $("#settingsBtn").addEventListener("click", () => {
-    $("#sKidA").value = S.settings.kids.a; $("#sKidB").value = S.settings.kids.b;
-    $("#sP1").value = S.settings.parents.p1; $("#sP2").value = S.settings.parents.p2;
-    setDlg.querySelectorAll("input").forEach(i => i.disabled = !S.canWrite);
+  let draft = [];
+  function drawProfileEditor() {
+    const box = $("#sProfiles"); box.replaceChildren();
+    if (!draft.length) box.append(h("p", { class: "hint", text: "No one added yet." }));
+    draft.forEach((p, i) => {
+      const inp = h("input", { type: "text", maxlength: "30", "aria-label": `Name ${i + 1}`, placeholder: "Name", disabled: !S.canWrite }); inp.value = p.name;
+      inp.addEventListener("input", () => p.name = inp.value);
+      const used = [...S.events.values()].filter(e => (e.who || []).includes(p.id)).length;
+      const rm = h("button", { type: "button", class: "btn danger", text: "Remove", disabled: !S.canWrite });
+      rm.addEventListener("click", () => {
+        if (used && !rm.classList.contains("armed")) { rm.classList.add("armed"); rm.textContent = `Remove (${used} entr${used > 1 ? "ies" : "y"})`; return; }
+        draft.splice(i, 1); drawProfileEditor();
+      });
+      box.append(h("div", { class: "prof-edit" },
+        h("button", { type: "button", class: "swatch", kcolor: `var(--c${p.color % 6})`, "aria-label": "Change colour", title: "Change colour", disabled: !S.canWrite, onclick: () => { p.color = (p.color + 1) % 6; drawProfileEditor(); } }),
+        inp, rm));
+    });
+  }
+  function openSettings() {
+    $("#sGroup").value = S.settings.groupName || "";
+    draft = profiles().map(p => ({ ...p }));
+    drawProfileEditor();
+    $("#sGroup").disabled = !S.canWrite; $("#sAddProfile").hidden = !S.canWrite;
     $("#exampleBox").hidden = !S.canWrite || ![...S.events.values()].some(e => e.example);
     $("#sErr").textContent = "";
     setDlg.showModal();
+  }
+  $("#settingsBtn").addEventListener("click", openSettings);
+  $("#sAddProfile").addEventListener("click", () => {
+    const usedColors = draft.map(p => p.color);
+    const color = [0, 1, 2, 3, 4, 5].find(c => !usedColors.includes(c)) ?? draft.length % 6;
+    draft.push({ id: uid(), name: "", color }); drawProfileEditor();
+    $("#sProfiles").querySelector(".prof-edit:last-child input")?.focus();
   });
   $("#setForm").addEventListener("submit", async e => {
     e.preventDefault();
     if (!S.canWrite) return setDlg.close();
-    const val = (id, d) => $(id).value.trim() || d;
-    const next = { kids: { a: val("#sKidA", "Twin A"), b: val("#sKidB", "Twin B") }, parents: { p1: val("#sP1", "Dad"), p2: val("#sP2", "Mum") } };
-    try { await writeDoc("family/settings", next); setDlg.close(); toast("Names saved"); }
+    const list = draft.map((p, i) => ({ id: p.id, name: p.name.trim() || `Person ${i + 1}`, color: p.color }));
+    const next = { groupName: $("#sGroup").value.trim(), profiles: list, parents: S.settings.parents || {} };
+    try { await writeDoc("family/settings", next); setDlg.close(); toast("Saved"); }
     catch (err) { handleWriteError(err, $("#sErr")); }
   });
   $("#clearEx").addEventListener("click", async () => {
@@ -861,10 +914,13 @@ textarea{resize:vertical;min-height:70px}
     S.access.set("sam", { role: "visitor", until: addDays(t, 23) });
     S.access.set("jo", { role: "family", until: null });
     const add = (cal, e) => { const id = uid(), ev = { id, cal, example: true, who: [], notes: "", outcome: "", time: "", owner: "", type: "appointment", yearly: false, done: false, ...e }; if (cal === "family") S.events.set(id, ev); else { if (!S.personal.has(cal)) S.personal.set(cal, new Map()); S.personal.get(cal).set(id, ev); } };
-    add("family", { title: "Health visitor home visit", who: ["a", "b"], date: addDays(t, 2), time: "11:00", owner: "both" });
-    add("family", { title: "16-week vaccinations", who: ["a", "b"], date: addDays(t, 4), time: "10:30", owner: "p2", notes: "Bring both red books." });
-    add("family", { title: "Hip scan", who: ["a"], date: addDays(t, 10), time: "14:00" });
-    add("family", { title: "Clinic weigh-in", who: ["b"], date: addDays(t, -5), time: "09:30", owner: "p1", done: true, outcome: "6.1 kg, on track." });
+    S.settings = normalizeSettings({ groupName: "The Example family", profiles: [{ id: "a", name: "Mia", color: 0 }, { id: "b", name: "Leo", color: 1 }, { id: "g", name: "Grandma", color: 2 }] });
+    add("family", { title: "Parents' evening", who: ["a"], date: addDays(t, 2), time: "17:30", owner: "all" });
+    add("family", { title: "Dentist check-ups", who: ["a", "b"], date: addDays(t, 4), time: "10:30", owner: "partner", notes: "Both kids, back to back." });
+    add("family", { title: "Eye appointment", who: ["g"], date: addDays(t, 6), time: "11:15", owner: "me" });
+    add("family", { title: "Bin day", who: ["fam"], type: "reminder", date: addDays(t, 1) });
+    add("family", { title: "Swimming lesson", who: ["b"], date: addDays(t, 10), time: "16:00" });
+    add("family", { title: "GP check-up", who: ["b"], date: addDays(t, -5), time: "09:30", owner: "me", done: true, outcome: "All fine. Follow-up in 6 months." });
     add("me", { title: "Office day", date: addDays(t, 1), time: "09:00" });
     add("sam", { title: "Arriving: pick up from the airport", date: addDays(t, 1), time: "16:40" });
     add("sam", { title: "Free to babysit", date: addDays(t, 3), time: "18:00" });
@@ -894,7 +950,7 @@ textarea{resize:vertical;min-height:70px}
     }, () => { clearTimeout(timer); setStatus("Not syncing. Reopen to retry", "warn"); });
     db.doc("family/settings").onSnapshot(snap => {
       const d = snap.exists ? snap.data() : null;
-      S.settings = { kids: { ...DEFAULT_SETTINGS.kids, ...(d?.kids || {}) }, parents: { ...DEFAULT_SETTINGS.parents, ...(d?.parents || {}) } };
+      S.settings = normalizeSettings(d);
       render();
     }, () => {});
     db.collection("access").onSnapshot(snap => { S.access = new Map(snap.docs.map(d => [d.id, d.data()])); render(); }, () => {});
