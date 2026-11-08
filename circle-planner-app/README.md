@@ -46,7 +46,12 @@ Data: `events` (group calendar), `cals/<personId>/events` (personal calendars), 
 Access rules: anyone with access reads everything. Each person writes only their own `members` and `cals` entries. Only the owner writes `access` and `family/premium`.
 
 ## Inviting people
-Share the artifact from the Share menu and invite them by email as an **Editor**. They appear under People the first time they open it.
+Tap **More → Invite people**, or the invite card on Home or People. The invite sheet walks through it:
+1. In Claude's **Share** menu (outside the app), add their email address as an **Editor** ("Can edit"). Viewers can look but can't add anything.
+2. Copy the ready-made **invite message**, which has the link and a note that they need a free Claude account with that email, and send it on WhatsApp, text or email.
+3. When they first open the planner they appear under **More → People**. Set them as Family (ongoing) or Visitor until a date.
+
+The page itself can't add people: claude.ai's Share menu controls who can open it. A standalone app would use in-app invite links or codes instead.
 
 Limitation: claude.ai's Share menu decides who can open the page. A visitor's end date hides the calendars inside the app, but it doesn't revoke their claude.ai access, so the app reminds the owner to remove them in Share as well. A standalone product would need its own backend to enforce expiry on the server.
 
