@@ -210,6 +210,30 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
 .prof-edit{display:flex;gap:8px;align-items:center}
 .prof-edit input{flex:1 1 auto}
 .swatch{width:30px;height:30px;border-radius:50%;border:2px solid var(--surface);box-shadow:0 0 0 1px var(--line);background:var(--k);flex:none}
+/* home dashboard */
+.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:16px}
+@media (max-width:560px){.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.tile{display:flex;flex-direction:column;gap:2px;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;min-width:0}
+.tile b{font-family:var(--display);font-size:1.9rem;line-height:1.1;font-variant-numeric:tabular-nums}
+.tile span{font-size:.8rem;color:var(--muted)}
+.tile.warn{border-color:color-mix(in srgb,var(--warn) 45%,transparent)}
+.tile.warn b{color:var(--warn)}
+.dsec{margin-top:22px}
+.dsec > .section-title{margin:0 0 8px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.dsec > .section-title button{border:0;background:none;color:var(--accent);font-weight:700;font-size:.78rem;text-transform:none;letter-spacing:0;padding:0}
+.lrow{display:grid;grid-template-columns:1fr auto;gap:4px 12px;align-items:center;width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:11px 14px}
+.lrow .lt{font-weight:600;overflow-wrap:anywhere;min-width:0}
+.lrow .pct{font-family:var(--display);font-weight:700;font-size:1.2rem;font-variant-numeric:tabular-nums;grid-row:span 2}
+.lrow .pct.full{color:var(--c0)}
+.lrow .ls{font-size:.8rem;color:var(--muted)}
+.lrow .bar{grid-column:1 / -1}
+.notice{display:flex;gap:10px;align-items:flex-start;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:11px 14px;font-size:.9rem}
+.notice.warn{border-color:color-mix(in srgb,var(--warn) 45%,transparent)}
+.kd{display:flex;justify-content:space-between;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:11px 14px;width:100%;text-align:left}
+.kd .in{color:var(--muted);font-size:.85rem;white-space:nowrap;font-variant-numeric:tabular-nums}
+.linkbox{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;align-items:center}
+.linkbox select{flex:1 1 200px;width:auto}
+.smallbtn{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 11px;font-size:.8rem;font-weight:600}
 /* lists */
 .lhead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:16px}
 .lhead h2{font-family:var(--display);font-weight:500;font-size:1.25rem;margin:0}
@@ -250,7 +274,8 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
       <button class="iconbtn" id="settingsBtn" type="button">Group</button>
     </div>
     <div class="tabs" role="tablist" aria-label="Views">
-      <button class="tab" role="tab" data-tab="upcoming" aria-selected="true">Upcoming</button>
+      <button class="tab" role="tab" data-tab="home" aria-selected="true">Home</button>
+      <button class="tab" role="tab" data-tab="upcoming" aria-selected="false">Upcoming</button>
       <button class="tab" role="tab" data-tab="month" aria-selected="false">Month</button>
       <button class="tab" role="tab" data-tab="lists" aria-selected="false">Lists</button>
       <button class="tab" role="tab" data-tab="profiles" aria-selected="false">Profiles</button>
@@ -286,7 +311,7 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
       <label class="check"><input type="checkbox" id="fYearly"> Repeats every year (birthdays, anniversaries)</label>
       <label class="check"><input type="checkbox" id="fNeeds"> Someone needs to take them or sort it out</label>
       <div class="field" id="ownerField" hidden><span class="legend">Who's doing it</span><div class="pick" id="fOwner"></div></div>
-      <label class="check" id="listField"><input type="checkbox" id="fList"> Add a shared list (shopping, packing, things to bring)</label>
+      <label class="field" id="listField"><span>Shared list</span><select id="fListSel"></select></label>
       <div id="openListWrap" hidden><button type="button" class="btn" id="openListBtn">Open list</button></div>
       <label class="field"><span>Notes</span><textarea id="fNotes" maxlength="2000" placeholder="Address, what to bring, questions to ask"></textarea></label>
       <label class="field" id="outcomeField"><span>What happened (after)</span><textarea id="fOutcome" maxlength="2000" placeholder="Weight, what the doctor said, follow-ups"></textarea></label>
@@ -367,7 +392,7 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
     access: new Map(),            // uid -> {role, until}
     profiles: {},
     settings: structuredClone(DEFAULT_SETTINGS),
-    tab: "upcoming", filter: "all", month: null, selDay: todayStr(), kidView: null, peopleDay: todayStr(),
+    tab: "home", filter: "all", month: null, selDay: todayStr(), kidView: null, peopleDay: todayStr(),
     hidden: new Set(store.get("tp-hidden-cals", [])),
     mode: "connecting", canWrite: true, db: null, user: null, me: null, isOwner: false, editing: null
   };
@@ -474,7 +499,7 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
       else if (ev.notes) main.append(h("span", { class: "ev-note", text: ev.notes }));
     }
     const btn = h("button", { class: "ev", type: "button", onclick: () => busy ? toast(`${shortName(ev.createdBy || ev.cal)} keeps this private`) : openEvent(ev.cal, ev.id) },
-      h("span", { class: "ev-time" }, ev.time || "All day", date && S.tab !== "upcoming" ? h("small", { text: fmtDay(date, { day: "numeric", month: "short" }) }) : null),
+      h("span", { class: "ev-time" }, ev.time || "All day", date && S.tab !== "upcoming" && S.tab !== "home" ? h("small", { text: fmtDay(date, { day: "numeric", month: "short" }) }) : null),
       main);
     btn.style.setProperty("--stripe", stripeFor(ev));
     return btn;
@@ -689,9 +714,103 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
       S.isOwner || S.mode === "preview" ? null : h("p", { class: "hint", text: "Only the planner's owner can invite people and set how long they can see it." })));
   }
 
+  // ----- Home dashboard -----
+  function occAll(from, to) { const f = S.filter; S.filter = "all"; const o = occurrences(from, to); S.filter = f; return o; }
+  function renderHome(view) {
+    const t = todayStr(), tm = addDays(t, 1), wk = addDays(t, 6);
+    const soon = occAll(t, addDays(t, 30)).filter(o => !(o.ev.done && !o.ev.yearly));
+    const today = soon.filter(o => o.date === t), tomorrow = soon.filter(o => o.date === tm), week = soon.filter(o => o.date <= wk);
+    const needs = soon.filter(o => needsSomeone(o.ev));
+    const lists = [...S.lists.values()].map(l => ({ l, c: listCounts(l.id), ev: linkedEvent(l) }));
+    const open = lists.filter(x => !x.c.total || x.c.got < x.c.total);
+    const go = (tab, extra = {}) => () => { Object.assign(S, { tab, ...extra }); render(); window.scrollTo(0, 0); };
+    view.append(h("div", { class: "tiles" },
+      h("button", { type: "button", class: "tile", onclick: go("upcoming") }, h("b", { text: String(today.length) }), h("span", { text: today.length === 1 ? "thing today" : "things today" })),
+      h("button", { type: "button", class: "tile", onclick: go("upcoming") }, h("b", { text: String(week.length) }), h("span", { text: "in the next 7 days" })),
+      h("button", { type: "button", class: `tile${needs.length ? " warn" : ""}`, onclick: () => $("#needsSec")?.scrollIntoView({ behavior: "smooth" }) }, h("b", { text: String(needs.length) }), h("span", { text: needs.length === 1 ? "needs someone" : "need someone" })),
+      h("button", { type: "button", class: "tile", onclick: go("lists", { openList: null }) }, h("b", { text: String(open.length) }), h("span", { text: open.length === 1 ? "list to finish" : "lists to finish" }))));
+
+    // owner reminders about visits
+    if (S.isOwner) {
+      const notes = [];
+      for (const id of S.members.keys()) {
+        const a = S.access.get(id);
+        if (a?.role !== "visitor" || !a.until) continue;
+        const left = daysBetween(t, a.until);
+        if (left < 0) notes.push(h("div", { class: "notice warn" }, `${shortName(id)}'s visit ended on ${fmtDay(a.until, { day: "numeric", month: "short" })}. Remove them in the Share menu so they can't open the planner.`));
+        else if (left <= 7) notes.push(h("div", { class: "notice" }, `${shortName(id)}'s visit ends ${left === 0 ? "today" : left === 1 ? "tomorrow" : "in " + left + " days"}. Extend it under People if they're staying longer.`));
+      }
+      if (notes.length) view.append(h("section", { class: "dsec" }, h("div", { class: "section-title", text: "Sharing" }), h("div", { class: "list" }, notes)));
+    }
+
+    const daySec = (label, items, tab) => {
+      const box = h("div", { class: "list" });
+      items.forEach(o => box.append(eventCard(o.ev, o.date)));
+      return h("section", { class: "dsec" },
+        h("div", { class: "section-title" }, h("span", { text: label }), tab ? h("button", { type: "button", text: "See all", onclick: go(tab) }) : null),
+        items.length ? box : h("p", { class: "hint", style: "margin:0", text: "Nothing planned." }));
+    };
+    view.append(daySec(`Today · ${fmtDay(t, { weekday: "long", day: "numeric", month: "short" })}`, today, "upcoming"));
+    view.append(daySec(`Tomorrow · ${fmtDay(tm, { weekday: "long", day: "numeric", month: "short" })}`, tomorrow));
+
+    if (needs.length) {
+      const box = h("div", { class: "list" }); needs.slice(0, 5).forEach(o => box.append(eventCard(o.ev, o.date)));
+      view.append(h("section", { class: "dsec", id: "needsSec" }, h("div", { class: "section-title", text: "Needs someone to step in" }), box));
+    }
+
+    // lists with completion
+    const sec = h("section", { class: "dsec" }, h("div", { class: "section-title" }, h("span", { text: "Lists" }), h("button", { type: "button", text: "All lists", onclick: go("lists", { openList: null }) })));
+    if (!lists.length) sec.append(h("p", { class: "hint", style: "margin:0", text: "No lists yet. Make one under Lists, or add one when you create an event." }));
+    const sorted = lists.sort((a, b) => {
+      const doneA = a.c.total && a.c.got === a.c.total, doneB = b.c.total && b.c.got === b.c.total;
+      if (doneA !== doneB) return doneA ? 1 : -1;
+      const da = a.ev ? (a.ev.yearly ? nextYearly(a.ev.date, t) : a.ev.date) : "9999", dbb = b.ev ? (b.ev.yearly ? nextYearly(b.ev.date, t) : b.ev.date) : "9999";
+      return da.localeCompare(dbb);
+    });
+    const box = h("div", { class: "list" });
+    sorted.slice(0, 6).forEach(({ l, c, ev }) => {
+      const pct = c.total ? Math.round(c.got / c.total * 100) : 0, full = c.total && c.got === c.total;
+      box.append(h("button", { type: "button", class: "lrow", onclick: go("lists", { openList: l.id }) },
+        h("span", { class: "lt", text: l.title }),
+        h("span", { class: `pct${full ? " full" : ""}`, text: `${pct}%` }),
+        h("span", { class: "ls", text: [ev ? evWhen(ev) : "No date", c.total ? (full ? "All done" : `${c.total - c.got} left of ${c.total}`) : "Empty"].join(" · ") }),
+        h("div", { class: "bar" }, h("i", { style: `width:${pct}%` }))));
+    });
+    if (lists.length) sec.append(box);
+    view.append(sec);
+
+    // key dates in the next 60 days
+    const keys = occAll(t, addDays(t, 60)).filter(o => o.ev.type === "keydate" || o.ev.yearly).slice(0, 5);
+    if (keys.length) {
+      const kb = h("div", { class: "list" });
+      keys.forEach(o => { const n = daysBetween(t, o.date); kb.append(h("button", { type: "button", class: "kd", onclick: () => isBusyOnly(o.ev) ? null : openEvent(o.ev.cal, o.ev.id) },
+        h("span", {}, h("span", { class: "ev-title", text: shownTitle(o.ev) }), " ", h("span", { class: "hint", text: fmtDay(o.date, { day: "numeric", month: "short" }) })),
+        h("span", { class: "in", text: n === 0 ? "Today" : n === 1 ? "Tomorrow" : `in ${n} days` }))); });
+      view.append(h("section", { class: "dsec" }, h("div", { class: "section-title", text: "Key dates coming up" }), kb));
+    }
+  }
+
   // ----- Lists -----
   const listCounts = id => { const m = S.items.get(id); const all = m ? [...m.values()] : []; return { total: all.length, got: all.filter(i => i.done).length }; };
-  const linkedEvent = l => l.eventId ? S.events.get(l.eventId) : null;
+  const findEvent = id => id ? (S.events.get(id) || [...S.personal.values()].map(m => m.get(id)).find(Boolean) || null) : null;
+  const linkedEvent = l => findEvent(l.eventId);
+  const docBody = o => { const { id, cal, ...rest } = o; if (cal && cal !== "family") delete rest.who; return rest; };
+  // keep list.eventId and event.listId pointing at each other
+  async function linkList(listId, ev) {
+    const L = S.lists.get(listId); if (!L) return;
+    const old = findEvent(L.eventId);
+    if (old && old.listId === listId && (!ev || old.id !== ev.id)) await writeDoc(evPath(old.cal, old.id), { ...docBody(old), listId: "" });
+    if (ev) {
+      if (ev.listId && ev.listId !== listId && S.lists.has(ev.listId)) await writeDoc(`lists/${ev.listId}`, { ...docBody(S.lists.get(ev.listId)), eventId: "" });
+      await writeDoc(evPath(ev.cal, ev.id), { ...docBody(ev), listId });
+    }
+    await writeDoc(`lists/${listId}`, { ...docBody(L), eventId: ev ? ev.id : "" });
+  }
+  const linkableEvents = () => {
+    const t = todayStr();
+    return allEvents().filter(ev => visibleEv(ev) && !isBusyOnly(ev) && !(ev.done && !ev.yearly) && (ev.yearly || ev.date >= t))
+      .map(ev => ({ ev, date: ev.yearly ? nextYearly(ev.date, t) : ev.date })).sort(sortOcc).slice(0, 60);
+  };
   const evWhen = ev => { const d = ev.yearly ? nextYearly(ev.date, todayStr()) : ev.date; return `${fmtDay(d, { weekday: "short", day: "numeric", month: "short" })}${ev.time ? " · " + ev.time : ""}`; };
   function renderLists(view) {
     const open = S.openList && S.lists.get(S.openList);
@@ -738,9 +857,30 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
     const got = items.filter(i => i.done).sort((a, b) => (a.addedAt || "").localeCompare(b.addedAt || ""));
     const err = h("div", { class: "err", role: "alert" });
     view.append(h("div", { class: "ldetail" },
-      h("button", { type: "button", class: "back", onclick: () => { S.openList = null; render(); } }, "‹ All lists"),
+      h("button", { type: "button", class: "back", onclick: () => { S.openList = null; S.linking = false; render(); } }, "‹ All lists"),
       h("h2", { text: l.title }),
       ev ? h("button", { type: "button", class: "linkev", text: `For: ${ev.title}, ${evWhen(ev)}`, onclick: () => openEvent(ev.cal, ev.id) }) : h("span", { class: "hint", text: "Not linked to a date" })));
+    if (S.canWrite) {
+      if (!S.linking) {
+        view.append(h("div", { class: "linkbox" },
+          h("button", { type: "button", class: "smallbtn", text: ev ? "Change date" : "Link to a calendar entry", onclick: () => { S.linking = true; render(); } }),
+          ev ? h("button", { type: "button", class: "smallbtn", text: "Unlink", onclick: async () => { try { await linkList(l.id, null); toast("Unlinked"); } catch (er) { handleWriteError(er, err); } } }) : null));
+      } else {
+        const sel = h("select", { id: "linkSel", "aria-label": "Calendar entry" },
+          h("option", { value: "", text: "Choose an entry…" }),
+          h("option", { value: "__new", text: "+ New calendar entry for this list" }),
+          linkableEvents().map(o => h("option", { value: `${o.ev.cal}|${o.ev.id}`, text: `${fmtDay(o.date, { weekday: "short", day: "numeric", month: "short" })}${o.ev.time ? " " + o.ev.time : ""} · ${o.ev.title}${o.ev.listId && o.ev.listId !== l.id && S.lists.has(o.ev.listId) ? " (has a list)" : ""}` })));
+        if (ev) sel.value = `${ev.cal}|${ev.id}`;
+        view.append(h("div", { class: "linkbox" }, sel,
+          h("button", { type: "button", class: "btn primary", text: "Link", onclick: async () => {
+            const v = sel.value; if (!v) return;
+            if (v === "__new") { S.linking = false; openEvent(null, null, null, { title: l.title, listId: l.id }); return; }
+            const [c, i] = v.split("|"), target = getEvent(c, i);
+            try { await linkList(l.id, target); S.linking = false; toast("Linked"); render(); } catch (er) { handleWriteError(er, err); }
+          } }),
+          h("button", { type: "button", class: "btn", text: "Cancel", onclick: () => { S.linking = false; render(); } })));
+      }
+    }
     if (S.canWrite) {
       const inp = h("input", { type: "text", id: "itemInput", maxlength: "120", placeholder: "Add an item, e.g. Milk", "aria-label": "New item", autocomplete: "off", enterkeyhint: "done" });
       view.append(h("form", { class: "additem", onsubmit: async e => {
@@ -843,7 +983,7 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
     }
     $("#addBtn").hidden = !S.canWrite || S.tab === "log" || S.tab === "lists";
     renderBanner(); renderFilters();
-    ({ upcoming: renderUpcoming, month: renderMonth, lists: renderLists, profiles: renderProfiles, people: renderPeople, log: renderLog })[S.tab](view);
+    ({ home: renderHome, upcoming: renderUpcoming, month: renderMonth, lists: renderLists, profiles: renderProfiles, people: renderPeople, log: renderLog })[S.tab](view);
     const back = keep && document.getElementById(keep.id);
     if (back) { back.value = keep.v; back.focus(); try { back.setSelectionRange(keep.a, keep.b); } catch {} }
     if (S.focusItem) { S.focusItem = false; $("#itemInput")?.focus(); }
@@ -894,7 +1034,7 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
   $("#fWho").addEventListener("change", syncFields);
   $("#fNeeds").addEventListener("change", syncFields);
   function getEvent(cal, id) { return cal === "family" ? S.events.get(id) : S.personal.get(cal)?.get(id); }
-  function openEvent(cal, id, presetDate) {
+  function openEvent(cal, id, presetDate, preset = {}) {
     const ev = id ? getEvent(cal, id) : null;
     const mine = !ev || ((ev.cal === "family" || ev.cal === S.me) && (!ev.private || ev.createdBy === S.me));
     const editable = S.canWrite && mine;
@@ -902,7 +1042,7 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
     buildPickers(ev?.owner || "");
     S.editing = ev ? { cal: ev.cal, id: ev.id } : null;
     $("#evDlgTitle").textContent = ev ? (editable ? "Edit entry" : `${shortName(ev.createdBy || ev.cal)}'s entry`) : "New entry";
-    $("#fTitle").value = ev?.title || "";
+    $("#fTitle").value = ev?.title || preset.title || "";
     const who = ev?.who || (S.filter !== "all" ? [S.filter] : S.me ? [S.me] : ["fam"]);
     $$('#fWho input').forEach(i => i.checked = who.includes(i.value));
     $$('#fType input').forEach(i => i.checked = i.value === (ev?.type || "appointment"));
@@ -918,8 +1058,14 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
     $("#outcomeField").hidden = !ev; $("#doneField").hidden = !ev;
     syncFields();
     const hasList = !!(ev?.listId && S.lists.has(ev.listId));
-    $("#fList").checked = false;
-    $("#listField").hidden = hasList || !editable;
+    const lsel = $("#fListSel"); lsel.replaceChildren(
+      h("option", { value: "", text: "No list" }),
+      h("option", { value: "__new", text: "+ Create a new list" }),
+      ...[...S.lists.values()].filter(l => !linkedEvent(l) || l.id === ev?.listId || l.id === preset.listId).sort((a, b) => a.title.localeCompare(b.title))
+        .map(l => h("option", { value: l.id, text: l.title })));
+    lsel.value = hasList ? ev.listId : (preset.listId && S.lists.has(preset.listId) ? preset.listId : "");
+    lsel.disabled = !editable;
+    $("#listField").hidden = !editable && !hasList;
     $("#openListWrap").hidden = !hasList;
     if (hasList) { const c = listCounts(ev.listId); $("#openListBtn").textContent = c.total ? `Open list (${c.got} of ${c.total} done)` : "Open list (empty)"; $("#openListBtn").disabled = false; }
     const del = $("#delBtn"); del.hidden = !ev || !editable; del.classList.remove("armed"); del.textContent = "Delete";
@@ -948,7 +1094,7 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
       owner: $("#fNeeds").checked ? ($('#fOwner input:checked')?.value || "") : "",
       private: $("#fPrivate").checked && !!S.me && who.length === 1 && who[0] === S.me,
       createdBy: prev?.createdBy || S.me || "",
-      listId: prev?.listId && S.lists.has(prev.listId) ? prev.listId : "",
+      listId: "",
       notes: $("#fNotes").value.trim(),
       outcome: $("#fOutcome").value.trim(),
       done: $("#fDone").checked,
@@ -958,12 +1104,20 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
     };
     $("#saveBtn").disabled = true;
     const evId = S.editing?.id || uid();
-    const makeList = $("#fList").checked && !body.listId;
+    const choice = $("#fListSel").value, makeList = choice === "__new";
+    const prevList = prev?.listId && S.lists.has(prev.listId) ? prev.listId : "";
+    body.listId = makeList ? uid() : choice;
     try {
-      if (makeList) { body.listId = uid(); await writeDoc(`lists/${body.listId}`, { title, eventId: evId, createdBy: S.me || "", createdAt: new Date().toISOString() }); }
+      if (makeList) await writeDoc(`lists/${body.listId}`, { title, eventId: evId, createdBy: S.me || "", createdAt: new Date().toISOString() });
+      else if (body.listId) {
+        const L = S.lists.get(body.listId), other = findEvent(L.eventId);
+        if (other && other.id !== evId && other.listId === body.listId) await writeDoc(evPath(other.cal, other.id), { ...docBody(other), listId: "" });
+        if (L.eventId !== evId) await writeDoc(`lists/${body.listId}`, { ...docBody(L), eventId: evId });
+      }
+      if (prevList && prevList !== body.listId) await writeDoc(`lists/${prevList}`, { ...docBody(S.lists.get(prevList)), eventId: "" });
       await writeDoc(evPath(cal, evId), body); evDlg.close();
       if (makeList) { S.tab = "lists"; S.openList = body.listId; S.focusItem = true; render(); toast("List created. Add the first items"); }
-      else toast(prev ? "Saved" : "Added");
+      else { if (S.openList && S.tab === "lists") render(); toast(prev ? "Saved" : "Added"); }
     }
     catch (err) { handleWriteError(err, $("#fErr")); }
     finally { $("#saveBtn").disabled = false; }

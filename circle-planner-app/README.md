@@ -5,9 +5,10 @@ A shared planner for any family or group: a household, parents and grandparents,
 Live app: https://claude.ai/artifact/NQsiQw4pRcLMxmWEQnKTk4
 
 ## Features
+- **Home dashboard**: tiles for things today, the next 7 days, entries that need someone, and lists to finish. Below them: today's and tomorrow's plans, entries needing someone, every list with its completion percentage, key dates in the next 60 days, and (for the owner) visits that are ending or have ended.
 - **One shared calendar**: each entry has who it's for, a type (event, key date or reminder), a date and optional time, whether it repeats yearly, notes, and what happened afterwards.
 - **Who is it for**: lists everyone, both the people who use the app and the profiles, plus "Whole group". To add your own plans, pick yourself.
-- **Shared lists**: a list can stand on its own (packing, party prep) or be attached to an event. Tick "Add a shared list" when you add one, for example "Food shop, Sunday 18:00". Everyone with access can add items, tick them off and remove them, and each item shows who added it and who got it. Each item is its own document, so people adding at the same time don't overwrite each other.
+- **Shared lists**: a list can stand on its own (packing, party prep) or be attached to an event. Link a list in either direction: pick an existing list (or "Create a new list") in an entry's *Shared list* menu, or open a list and use *Link to a calendar entry*, where you can also make a new entry for it. Lists can be moved to another entry or unlinked. Everyone with access can add items, tick them off and remove them, and each item shows who added it and who got it. Each item is its own document, so people adding at the same time don't overwrite each other.
 - **Profiles**: people the group plans for who don't use the app themselves (young kids, grandparents, pets). You can add any number, each with a colour. Each profile has a page showing what's coming up and a history with outcome notes.
 - **Someone needs to sort it**: optional. Tick it when someone has to take or drive a person, or deal with something, then pick who's doing it. Only these entries get a "Needs someone" flag.
 - **Private**: when an entry is only for you, you can mark it private. Others see "Busy".
