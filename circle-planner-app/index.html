@@ -210,6 +210,32 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
 .prof-edit{display:flex;gap:8px;align-items:center}
 .prof-edit input{flex:1 1 auto}
 .swatch{width:30px;height:30px;border-radius:50%;border:2px solid var(--surface);box-shadow:0 0 0 1px var(--line);background:var(--k);flex:none}
+/* lists */
+.lhead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:16px}
+.lhead h2{font-family:var(--display);font-weight:500;font-size:1.25rem;margin:0}
+.lcard{display:flex;flex-direction:column;gap:8px;width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:13px 14px}
+.lcard .lt{font-weight:600;font-size:1rem;overflow-wrap:anywhere}
+.lcard .ls{font-size:.82rem;color:var(--muted);display:flex;gap:8px;flex-wrap:wrap;justify-content:space-between}
+.bar{height:6px;border-radius:999px;background:var(--sunk);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--c0);border-radius:999px}
+.newlist{display:flex;gap:8px;margin-top:10px}
+.newlist input{flex:1 1 auto}
+.back{border:0;background:none;color:var(--accent);font-weight:700;padding:12px 0 0;display:inline-flex;gap:4px}
+.ldetail h2{font-family:var(--display);font-weight:700;font-size:1.45rem;margin:6px 0 2px;overflow-wrap:anywhere}
+.linkev{border:0;background:none;padding:0;color:var(--muted);font-size:.88rem;text-decoration:underline;text-underline-offset:3px}
+.additem{display:flex;gap:8px;margin:14px 0 10px}
+.additem input{flex:1 1 auto;font-size:1rem}
+.items{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-top:1px solid var(--line)}
+.item:first-child{border-top:0}
+.item label{display:flex;align-items:center;gap:11px;flex:1 1 auto;min-width:0;cursor:pointer}
+.item input[type=checkbox]{width:22px;height:22px;flex:none;accent-color:var(--c0)}
+.item .it{overflow-wrap:anywhere}
+.item .by{display:block;font-size:.74rem;color:var(--muted)}
+.item.got .it{text-decoration:line-through;color:var(--muted)}
+.item .x{border:0;background:none;color:var(--muted);font-size:1.2rem;line-height:1;padding:6px 8px;border-radius:8px}
+.item .x:hover{background:var(--sunk)}
+.lactions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
 .gate h2{font-family:var(--display);margin:0 0 6px}
 @media (max-width:480px){.srow{grid-template-columns:1fr;gap:6px}}
 </style>
@@ -226,6 +252,7 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
     <div class="tabs" role="tablist" aria-label="Views">
       <button class="tab" role="tab" data-tab="upcoming" aria-selected="true">Upcoming</button>
       <button class="tab" role="tab" data-tab="month" aria-selected="false">Month</button>
+      <button class="tab" role="tab" data-tab="lists" aria-selected="false">Lists</button>
       <button class="tab" role="tab" data-tab="profiles" aria-selected="false">Profiles</button>
       <button class="tab" role="tab" data-tab="people" aria-selected="false">People</button>
       <button class="tab" role="tab" data-tab="log" aria-selected="false">Daily log <span class="lock">Premium</span></button>
@@ -259,6 +286,8 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
       <label class="check"><input type="checkbox" id="fYearly"> Repeats every year (birthdays, anniversaries)</label>
       <label class="check"><input type="checkbox" id="fNeeds"> Someone needs to take them or sort it out</label>
       <div class="field" id="ownerField" hidden><span class="legend">Who's doing it</span><div class="pick" id="fOwner"></div></div>
+      <label class="check" id="listField"><input type="checkbox" id="fList"> Add a shared list (shopping, packing, things to bring)</label>
+      <div id="openListWrap" hidden><button type="button" class="btn" id="openListBtn">Open list</button></div>
       <label class="field"><span>Notes</span><textarea id="fNotes" maxlength="2000" placeholder="Address, what to bring, questions to ask"></textarea></label>
       <label class="field" id="outcomeField"><span>What happened (after)</span><textarea id="fOutcome" maxlength="2000" placeholder="Weight, what the doctor said, follow-ups"></textarea></label>
       <label class="check" id="doneField"><input type="checkbox" id="fDone"> Done</label>
@@ -332,6 +361,7 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
   });
   const S = {
     events: new Map(),            // family calendar
+    lists: new Map(), items: new Map(), openList: null, newListOpen: false,
     personal: new Map(),          // uid -> Map(id -> ev)
     members: new Map(),           // uid -> {nickname, shareMode, isOwner, joinedAt}
     access: new Map(),            // uid -> {role, until}
@@ -432,6 +462,7 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
       !busy && ev.owner ? h("span", { class: "tag", text: `${ownerName(ev.owner)} on it` }) : null,
       needsSomeone(ev) ? h("span", { class: "tag warn", text: "Needs someone" }) : null,
       ev.private && !busy ? h("span", { class: "tag", text: "Private" }) : null,
+      !busy && ev.listId && S.lists.has(ev.listId) ? (() => { const c = listCounts(ev.listId); return h("span", { class: "tag", text: c.total ? `List · ${c.got}/${c.total}` : "List · empty" }); })() : null,
       !busy && ev.type && ev.type !== "appointment" ? h("span", { class: "tag", text: TYPE_LBL[ev.type] || "" }) : null,
       !busy && ev.yearly ? h("span", { class: "tag", text: "Every year" }) : null,
       ev.done ? h("span", { class: "tag done", text: "Done" }) : null,
@@ -658,6 +689,104 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
       S.isOwner || S.mode === "preview" ? null : h("p", { class: "hint", text: "Only the planner's owner can invite people and set how long they can see it." })));
   }
 
+  // ----- Lists -----
+  const listCounts = id => { const m = S.items.get(id); const all = m ? [...m.values()] : []; return { total: all.length, got: all.filter(i => i.done).length }; };
+  const linkedEvent = l => l.eventId ? S.events.get(l.eventId) : null;
+  const evWhen = ev => { const d = ev.yearly ? nextYearly(ev.date, todayStr()) : ev.date; return `${fmtDay(d, { weekday: "short", day: "numeric", month: "short" })}${ev.time ? " · " + ev.time : ""}`; };
+  function renderLists(view) {
+    const open = S.openList && S.lists.get(S.openList);
+    if (open) return renderListDetail(view, open);
+    S.openList = null;
+    view.append(h("div", { class: "lhead" }, h("h2", { text: "Shared lists" }),
+      S.canWrite ? h("button", { class: "iconbtn", type: "button", text: S.newListOpen ? "Cancel" : "New list", onclick: () => { S.newListOpen = !S.newListOpen; render(); if (S.newListOpen) $("#newListName")?.focus(); } }) : null));
+    if (S.newListOpen) {
+      const err = h("div", { class: "err", role: "alert" });
+      const inp = h("input", { type: "text", id: "newListName", maxlength: "80", placeholder: "e.g. Holiday packing, Party prep", "aria-label": "List name" });
+      view.append(h("form", { class: "newlist", onsubmit: async e => {
+        e.preventDefault();
+        const title = inp.value.trim(); if (!title) { err.textContent = "Give the list a name."; return; }
+        const id = uid();
+        try { await writeDoc(`lists/${id}`, { title, eventId: "", createdBy: S.me || "", createdAt: new Date().toISOString() }); S.newListOpen = false; S.openList = id; render(); }
+        catch (er) { handleWriteError(er, err); }
+      } }, inp, h("button", { class: "btn primary", type: "submit", text: "Create" })), err);
+    }
+    const lists = [...S.lists.values()].sort((a, b) => {
+      const ea = linkedEvent(a), eb = linkedEvent(b);
+      const da = ea ? (ea.yearly ? nextYearly(ea.date, todayStr()) : ea.date) + (ea.time || "") : "9999";
+      const dbb = eb ? (eb.yearly ? nextYearly(eb.date, todayStr()) : eb.date) + (eb.time || "") : "9999";
+      return da.localeCompare(dbb) || (a.createdAt || "").localeCompare(b.createdAt || "");
+    });
+    if (!lists.length) {
+      view.append(h("div", { class: "empty" }, h("h3", { text: "No lists yet" }),
+        h("p", { text: "Make one for the food shop, a packing list or party prep, or tick \"Add a shared list\" when you add an event. Everyone in the group can add to it." })));
+      return;
+    }
+    const wrap = h("div", { class: "list", style: "margin-top:14px" });
+    for (const l of lists) {
+      const c = listCounts(l.id), ev = linkedEvent(l);
+      const bar = h("div", { class: "bar" }, h("i", { style: `width:${c.total ? Math.round(c.got / c.total * 100) : 0}%` }));
+      wrap.append(h("button", { type: "button", class: "lcard", onclick: () => { S.openList = l.id; render(); window.scrollTo(0, 0); } },
+        h("span", { class: "lt", text: l.title }),
+        h("span", { class: "ls" }, h("span", { text: ev ? evWhen(ev) : "No date" }), h("span", { text: c.total ? `${c.got} of ${c.total} done` : "Empty" }), l.example ? h("span", { class: "ex", text: "Example" }) : null),
+        bar));
+    }
+    view.append(wrap);
+  }
+  function renderListDetail(view, l) {
+    const ev = linkedEvent(l), items = [...(S.items.get(l.id)?.values() || [])];
+    const todo = items.filter(i => !i.done).sort((a, b) => (a.addedAt || "").localeCompare(b.addedAt || ""));
+    const got = items.filter(i => i.done).sort((a, b) => (a.addedAt || "").localeCompare(b.addedAt || ""));
+    const err = h("div", { class: "err", role: "alert" });
+    view.append(h("div", { class: "ldetail" },
+      h("button", { type: "button", class: "back", onclick: () => { S.openList = null; render(); } }, "‹ All lists"),
+      h("h2", { text: l.title }),
+      ev ? h("button", { type: "button", class: "linkev", text: `For: ${ev.title}, ${evWhen(ev)}`, onclick: () => openEvent(ev.cal, ev.id) }) : h("span", { class: "hint", text: "Not linked to a date" })));
+    if (S.canWrite) {
+      const inp = h("input", { type: "text", id: "itemInput", maxlength: "120", placeholder: "Add an item, e.g. Milk", "aria-label": "New item", autocomplete: "off", enterkeyhint: "done" });
+      view.append(h("form", { class: "additem", onsubmit: async e => {
+        e.preventDefault();
+        const text = inp.value.trim(); if (!text) return;
+        inp.value = ""; S.focusItem = true;
+        try { await writeDoc(`lists/${l.id}/items/${uid()}`, { text, done: false, addedBy: S.me || "", addedAt: new Date().toISOString() }); }
+        catch (er) { inp.value = text; handleWriteError(er, err); }
+      } }, inp, h("button", { class: "btn primary", type: "submit", text: "Add" })));
+    }
+    view.append(err);
+    const row = it => h("div", { class: `item${it.done ? " got" : ""}` },
+      h("label", {},
+        h("input", { type: "checkbox", checked: it.done, disabled: !S.canWrite, onchange: async e => {
+          try { await writeDoc(`lists/${l.id}/items/${it.id}`, { text: it.text, addedBy: it.addedBy || "", addedAt: it.addedAt || "", done: e.target.checked, doneBy: e.target.checked ? (S.me || "") : "" }); }
+          catch (er) { e.target.checked = !e.target.checked; handleWriteError(er, err); }
+        } }),
+        h("span", {}, h("span", { class: "it", text: it.text }),
+          h("span", { class: "by", text: [it.addedBy ? `Added by ${kidName(it.addedBy)}` : "", it.done && it.doneBy ? `got by ${kidName(it.doneBy)}` : ""].filter(Boolean).join(" · ") }))),
+      S.canWrite ? h("button", { type: "button", class: "x", "aria-label": `Remove ${it.text}`, title: "Remove", onclick: async () => {
+        try { await deleteDoc(`lists/${l.id}/items/${it.id}`); } catch (er) { handleWriteError(er, err); }
+      } }, "×") : null);
+    if (!items.length) view.append(h("p", { class: "hint", text: "Nothing on the list yet. Anyone sharing the planner can add items." }));
+    if (todo.length) { const box = h("div", { class: "items" }); todo.forEach(i => box.append(row(i))); view.append(box); }
+    else if (items.length) view.append(h("p", { class: "hint", text: "Everything's ticked off." }));
+    if (got.length) {
+      view.append(h("div", { class: "section-title", text: `Done (${got.length})` }));
+      const box = h("div", { class: "items" }); got.forEach(i => box.append(row(i))); view.append(box);
+    }
+    if (S.canWrite) {
+      const del = h("button", { type: "button", class: "btn danger", text: "Delete list" });
+      del.addEventListener("click", async () => {
+        if (!del.classList.contains("armed")) { del.classList.add("armed"); del.textContent = "Tap again to delete"; return; }
+        try { await deleteList(l.id); S.openList = null; toast("List deleted"); render(); } catch (er) { handleWriteError(er, err); }
+      });
+      view.append(h("div", { class: "lactions" },
+        got.length ? h("button", { type: "button", class: "btn", text: "Clear done items", onclick: async () => {
+          try { for (const i of got) await deleteDoc(`lists/${l.id}/items/${i.id}`); toast("Cleared"); } catch (er) { handleWriteError(er, err); }
+        } }) : null, del));
+    }
+  }
+  async function deleteList(id) {
+    for (const i of [...(S.items.get(id)?.values() || [])]) await deleteDoc(`lists/${id}/items/${i.id}`);
+    await deleteDoc(`lists/${id}`);
+  }
+
   function renderLog(view) {
     view.append(h("div", { class: "premium" },
       h("div", { class: "mock", "aria-hidden": "true" },
@@ -703,6 +832,7 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
   function render() {
     $$(".tab").forEach(b => b.setAttribute("aria-selected", String(b.dataset.tab === S.tab)));
     $("#groupTitle").textContent = S.settings.groupName || "Circle Planner";
+    const act = document.activeElement, keep = act && act.id && /^(INPUT|TEXTAREA)$/.test(act.tagName) && !act.closest("dialog") ? { id: act.id, v: act.value, a: act.selectionStart, b: act.selectionEnd } : null;
     const view = $("#view"); view.replaceChildren();
     if (locked()) {
       $("#addBtn").hidden = true; $("#bannerSlot").replaceChildren(); $("#filterSlot").replaceChildren();
@@ -711,9 +841,12 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
         h("p", { class: "hint", text: a?.role === "removed" ? "Ask the planner's owner if you think this is a mistake." : `Shared access ended on ${fmtDay(a.until, { weekday: "long", day: "numeric", month: "long" })}. Ask the planner's owner to extend it.` })));
       return;
     }
-    $("#addBtn").hidden = !S.canWrite || S.tab === "log";
+    $("#addBtn").hidden = !S.canWrite || S.tab === "log" || S.tab === "lists";
     renderBanner(); renderFilters();
-    ({ upcoming: renderUpcoming, month: renderMonth, profiles: renderProfiles, people: renderPeople, log: renderLog })[S.tab](view);
+    ({ upcoming: renderUpcoming, month: renderMonth, lists: renderLists, profiles: renderProfiles, people: renderPeople, log: renderLog })[S.tab](view);
+    const back = keep && document.getElementById(keep.id);
+    if (back) { back.value = keep.v; back.focus(); try { back.setSelectionRange(keep.a, keep.b); } catch {} }
+    if (S.focusItem) { S.focusItem = false; $("#itemInput")?.focus(); }
   }
 
   function setStatus(text, s) { const el = $("#status"); el.textContent = text; el.dataset.s = s; }
@@ -726,6 +859,8 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
     else if (col === "access") S.access.set(id, body);
     else if (col === "family") S.settings = normalizeSettings(body);
     else if (col === "events") S.events.set(id, { id, cal: "family", ...body });
+    else if (col === "lists") S.lists.set(id, { id, ...body });
+    else if (/^lists\/[^/]+\/items$/.test(col)) { const lid = col.split("/")[1]; if (!S.items.has(lid)) S.items.set(lid, new Map()); S.items.get(lid).set(id, { id, ...body }); }
     else if (col.startsWith("cals/")) { const owner = col.split("/")[1]; if (!S.personal.has(owner)) S.personal.set(owner, new Map()); S.personal.get(owner).set(id, { ...body, id, cal: owner, who: [owner] }); }
     render();
   }
@@ -733,6 +868,8 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
     if (S.db) return S.db.doc(path).delete();
     const parts = path.split("/"), id = parts.pop(), col = parts.join("/");
     if (col === "events") S.events.delete(id);
+    else if (col === "lists") { S.lists.delete(id); S.items.delete(id); }
+    else if (/^lists\/[^/]+\/items$/.test(col)) S.items.get(parts[1])?.delete(id);
     else if (col.startsWith("cals/")) S.personal.get(parts[1])?.delete(id);
     render();
   }
@@ -780,6 +917,11 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
     $("#fDone").checked = !!ev?.done;
     $("#outcomeField").hidden = !ev; $("#doneField").hidden = !ev;
     syncFields();
+    const hasList = !!(ev?.listId && S.lists.has(ev.listId));
+    $("#fList").checked = false;
+    $("#listField").hidden = hasList || !editable;
+    $("#openListWrap").hidden = !hasList;
+    if (hasList) { const c = listCounts(ev.listId); $("#openListBtn").textContent = c.total ? `Open list (${c.got} of ${c.total} done)` : "Open list (empty)"; $("#openListBtn").disabled = false; }
     const del = $("#delBtn"); del.hidden = !ev || !editable; del.classList.remove("armed"); del.textContent = "Delete";
     $("#saveBtn").hidden = !editable;
     evDlg.querySelectorAll("input,textarea").forEach(el => el.disabled = !editable);
@@ -806,6 +948,7 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
       owner: $("#fNeeds").checked ? ($('#fOwner input:checked')?.value || "") : "",
       private: $("#fPrivate").checked && !!S.me && who.length === 1 && who[0] === S.me,
       createdBy: prev?.createdBy || S.me || "",
+      listId: prev?.listId && S.lists.has(prev.listId) ? prev.listId : "",
       notes: $("#fNotes").value.trim(),
       outcome: $("#fOutcome").value.trim(),
       done: $("#fDone").checked,
@@ -814,7 +957,14 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
       updatedAt: new Date().toISOString()
     };
     $("#saveBtn").disabled = true;
-    try { await writeDoc(evPath(cal, S.editing?.id || uid()), body); evDlg.close(); toast(prev ? "Saved" : "Added"); }
+    const evId = S.editing?.id || uid();
+    const makeList = $("#fList").checked && !body.listId;
+    try {
+      if (makeList) { body.listId = uid(); await writeDoc(`lists/${body.listId}`, { title, eventId: evId, createdBy: S.me || "", createdAt: new Date().toISOString() }); }
+      await writeDoc(evPath(cal, evId), body); evDlg.close();
+      if (makeList) { S.tab = "lists"; S.openList = body.listId; S.focusItem = true; render(); toast("List created. Add the first items"); }
+      else toast(prev ? "Saved" : "Added");
+    }
     catch (err) { handleWriteError(err, $("#fErr")); }
     finally { $("#saveBtn").disabled = false; }
   });
@@ -823,6 +973,11 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
     if (!b.classList.contains("armed")) { b.classList.add("armed"); b.textContent = "Tap again to delete"; return; }
     try { await deleteDoc(evPath(S.editing.cal, S.editing.id)); evDlg.close(); toast("Deleted"); }
     catch (err) { handleWriteError(err, $("#fErr")); }
+  });
+
+  $("#openListBtn").addEventListener("click", () => {
+    const ev = S.editing && getEvent(S.editing.cal, S.editing.id); if (!ev?.listId) return;
+    evDlg.close(); S.tab = "lists"; S.openList = ev.listId; render(); window.scrollTo(0, 0);
   });
 
   // ---------- dialog: names ----------
@@ -850,7 +1005,7 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
     draft = profiles().map(p => ({ ...p }));
     drawProfileEditor();
     $("#sGroup").disabled = !S.canWrite; $("#sAddProfile").hidden = !S.canWrite;
-    $("#exampleBox").hidden = !S.canWrite || ![...S.events.values()].some(e => e.example);
+    $("#exampleBox").hidden = !S.canWrite || !([...S.events.values()].some(e => e.example) || [...S.lists.values()].some(l => l.example));
     $("#sErr").textContent = "";
     setDlg.showModal();
   }
@@ -871,7 +1026,8 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
   });
   $("#clearEx").addEventListener("click", async () => {
     const ids = [...S.events.values()].filter(e => e.example).map(e => e.id);
-    try { for (const id of ids) await deleteDoc(`events/${id}`); setDlg.close(); toast(`Removed ${ids.length} examples`); }
+    const lids = [...S.lists.values()].filter(l => l.example).map(l => l.id);
+    try { for (const id of ids) await deleteDoc(`events/${id}`); for (const id of lids) await deleteList(id); setDlg.close(); toast("Examples removed"); }
     catch (err) { handleWriteError(err, $("#sErr")); }
   });
   $$("[data-close]").forEach(b => b.addEventListener("click", () => b.closest("dialog").close()));
@@ -917,6 +1073,10 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
     add("family", { title: "Office day", who: ["me"], date: addDays(t, 1), time: "09:00", createdBy: "me" });
     add("family", { title: "Cinema with friends", who: ["partner"], date: addDays(t, 1), time: "18:30", createdBy: "partner" });
     add("family", { title: "Arriving: needs a lift from the airport", who: ["sam"], date: addDays(t, 1), time: "16:40", needsOwner: true, createdBy: "sam" });
+    { const sun = addDays(t, (7 - parse(t).getDay()) % 7 || 7), eid = uid(), lid = uid();
+      S.events.set(eid, { id: eid, cal: "family", title: "Food shop", who: ["fam"], type: "appointment", date: sun, time: "18:00", needsOwner: true, owner: "partner", listId: lid, example: true, notes: "", outcome: "" });
+      S.lists.set(lid, { id: lid, title: "Food shop", eventId: eid, example: true });
+      S.items.set(lid, new Map([["Milk x2", "me", false], ["Nappies size 4", "partner", false], ["Bananas", "sam", true], ["Bread", "me", false], ["Birthday candles", "jo", false]].map(([text, by, done], i) => { const id = "i" + i; return [id, { id, text, addedBy: by, done, doneBy: done ? "partner" : "", addedAt: "2026-01-0" + (i + 1) }]; }))); }
     add("family", { title: "Doctor", who: ["jo"], date: addDays(t, 2), time: "08:00", private: true, createdBy: "jo" });
     render();
   }
@@ -944,6 +1104,15 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
     db.doc("family/settings").onSnapshot(snap => {
       const d = snap.exists ? snap.data() : null;
       S.settings = normalizeSettings(d);
+      render();
+    }, () => {});
+    const itemSubs = new Map();
+    db.collection("lists").onSnapshot(snap => {
+      S.lists = new Map(snap.docs.map(d => [d.id, { id: d.id, ...d.data() }]));
+      for (const id of S.lists.keys()) if (!itemSubs.has(id)) itemSubs.set(id, db.collection(`lists/${id}/items`).onSnapshot(s2 => {
+        S.items.set(id, new Map(s2.docs.map(d => [d.id, { id: d.id, ...d.data() }]))); render();
+      }, () => {}));
+      for (const [id, un] of itemSubs) if (!S.lists.has(id)) { un(); itemSubs.delete(id); S.items.delete(id); }
       render();
     }, () => {});
     db.collection("access").onSnapshot(snap => { S.access = new Map(snap.docs.map(d => [d.id, d.data()])); render(); }, () => {});
