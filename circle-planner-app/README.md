@@ -73,3 +73,6 @@ If you open `index.html` straight from disk, it runs in preview mode with sample
 ## Colours
 The palette comes from Kenya's lilac-breasted roller (*Coracias caudatus*): lilac breast, turquoise belly, ultramarine flight feathers (the main accent), cinnamon back and olive crown. The bird's dark eye-stripe is used for text. Neutrals carry a faint lilac tint, and a thin "plumage" stripe runs across the top of the app. Each colour has a lighter version for dark mode.
 Each person can pick **Auto**, **Light** or **Dark** with the theme button in the header, or under Group → Appearance. The choice is saved on that device only. Auto follows the claude.ai theme setting, then the device's own setting.
+
+## Public demo
+`demo.html` is a copy of the app that always runs on example data and never uses the planner's shared storage. It's for feedback from people who don't have a Claude account. Nothing is saved, and it resets on reload. It's published as its own page (https://claude.ai/artifact/QFU5KkxTmnZtyyvuu9V64u) and made public from Claude's Share menu. Rebuild it from `index.html` whenever the app changes.
