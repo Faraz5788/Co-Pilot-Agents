@@ -258,6 +258,47 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
 .k-feed{--k:var(--c0)} .k-nappy{--k:var(--fam)} .k-sleep{--k:var(--c3)} .k-med{--k:var(--c2)}
 .ownerbar{margin-top:12px;padding:12px 14px;border-radius:var(--r);background:color-mix(in srgb,var(--accent) 12%,var(--surface));border:1px solid color-mix(in srgb,var(--accent) 30%,transparent);display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;font-size:.88rem}
 .ownerbar b{color:var(--ink)}
+/* key dates */
+.kdhero{margin-top:16px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center;width:100%;text-align:left}
+.kdhero .big{font-family:var(--display);font-weight:700;font-size:3rem;line-height:1;color:var(--k,var(--accent));font-variant-numeric:tabular-nums;text-align:center;min-width:72px}
+.kdhero .big small{display:block;font-family:var(--body);font-size:.75rem;font-weight:600;color:var(--muted)}
+.kdhero h3{font-family:var(--display);font-weight:700;font-size:1.25rem;margin:0;overflow-wrap:anywhere}
+.kdhero p{margin:3px 0 0;color:var(--muted);font-size:.88rem}
+.kdrow{display:grid;grid-template-columns:64px 1fr;gap:12px;align-items:center;width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:10px 12px}
+.kdrow .cd{text-align:center;border-radius:10px;padding:6px 2px;background:color-mix(in srgb,var(--k,var(--accent)) 14%,transparent)}
+.kdrow .cd b{display:block;font-family:var(--display);font-size:1.3rem;line-height:1.1;font-variant-numeric:tabular-nums}
+.kdrow .cd span{font-size:.68rem;color:var(--muted)}
+.kdrow .tx{min-width:0;display:flex;flex-direction:column;gap:3px}
+.kdrow .tx b{overflow-wrap:anywhere}
+.kdrow .tx span{font-size:.82rem;color:var(--muted)}
+/* trips */
+.trip{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;display:flex;flex-direction:column;gap:9px}
+.trip h3{font-family:var(--display);font-weight:700;font-size:1.2rem;margin:0;overflow-wrap:anywhere}
+.trip .when{font-size:.86rem;color:var(--muted)}
+.trip .acts{display:flex;gap:8px;flex-wrap:wrap}
+.vote[aria-pressed="true"]{background:color-mix(in srgb,var(--c2) 16%,var(--surface));border-color:var(--c2);color:var(--ink)}
+/* chat */
+.chat{display:flex;flex-direction:column;gap:6px;margin-top:14px}
+.cday{align-self:center;font-size:.72rem;color:var(--muted);background:var(--sunk);padding:3px 10px;border-radius:999px;margin:8px 0 2px}
+.bub{max-width:78%;align-self:flex-start;background:var(--surface);border:1px solid var(--line);border-radius:16px 16px 16px 4px;padding:8px 12px;overflow-wrap:anywhere;position:relative}
+.bub.me{align-self:flex-end;background:color-mix(in srgb,var(--accent) 16%,var(--surface));border-color:color-mix(in srgb,var(--accent) 30%,transparent);border-radius:16px 16px 4px 16px}
+.bub .nm{display:block;font-size:.74rem;font-weight:700;color:var(--k,var(--muted));margin-bottom:2px}
+.bub .tm2{font-size:.68rem;color:var(--muted);margin-left:8px;white-space:nowrap}
+.bub .del{border:0;background:none;color:var(--muted);font-size:.72rem;padding:0 0 0 8px;text-decoration:underline}
+.composer{position:sticky;bottom:calc(env(safe-area-inset-bottom,0px) + 10px);display:flex;gap:8px;margin-top:12px;background:var(--bg);padding-block:8px}
+.composer input{flex:1 1 auto;font-size:1rem}
+.badge{background:var(--warn);color:#fff;border-radius:999px;font-size:.66rem;padding:1px 6px;font-weight:700}
+/* setup */
+.setup{margin-top:20px}
+.setup h2{font-family:var(--display);font-weight:700;font-size:1.6rem;margin:0 0 4px;text-wrap:balance}
+.setup > p{color:var(--muted);margin:0 0 16px}
+.types{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media (max-width:420px){.types{grid-template-columns:1fr}}
+.type{display:flex;flex-direction:column;gap:4px;text-align:left;background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:14px}
+.type b{font-size:1rem}
+.type span{font-size:.84rem;color:var(--muted)}
+.type small{font-size:.74rem;color:var(--muted);margin-top:4px}
+.type[aria-pressed="true"]{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,var(--surface))}
 /* lists */
 .lhead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:16px}
 .lhead h2{font-family:var(--display);font-weight:500;font-size:1.25rem;margin:0}
@@ -301,7 +342,10 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
       <button class="tab" role="tab" data-tab="home" aria-selected="true">Home</button>
       <button class="tab" role="tab" data-tab="upcoming" aria-selected="false">Upcoming</button>
       <button class="tab" role="tab" data-tab="month" aria-selected="false">Month</button>
+      <button class="tab" role="tab" data-tab="dates" aria-selected="false">Dates</button>
       <button class="tab" role="tab" data-tab="lists" aria-selected="false">Lists</button>
+      <button class="tab" role="tab" data-tab="trips" aria-selected="false">Trips</button>
+      <button class="tab" role="tab" data-tab="chat" aria-selected="false">Chat <span class="badge" id="chatBadge" hidden></span></button>
       <button class="tab" role="tab" data-tab="profiles" aria-selected="false">Profiles</button>
       <button class="tab" role="tab" data-tab="people" aria-selected="false">People</button>
       <button class="tab" role="tab" data-tab="log" aria-selected="false">Care log <span class="lock" id="logLock">Premium</span></button>
@@ -332,7 +376,10 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
         <label class="field"><span>Date</span><input type="date" id="fDate"></label>
         <label class="field"><span>Time (optional)</span><input type="time" id="fTime"></label>
       </div>
-      <label class="check"><input type="checkbox" id="fYearly"> Repeats every year (birthdays, anniversaries)</label>
+      <div class="row">
+        <label class="field"><span>Repeats</span><select id="fRepeat"><option value="">Doesn't repeat</option><option value="weekly">Every week</option><option value="yearly">Every year</option></select></label>
+        <label class="field" id="kindField" hidden><span>Kind of date</span><select id="fKind"><option value="birthday">Birthday</option><option value="anniversary">Anniversary</option><option value="other">Other</option></select></label>
+      </div>
       <label class="check"><input type="checkbox" id="fNeeds"> Someone needs to take them or sort it out</label>
       <div class="field" id="ownerField" hidden><span class="legend">Who's doing it</span><div class="pick" id="fOwner"></div></div>
       <label class="field" id="listField"><span>Shared list</span><select id="fListSel"></select></label>
@@ -358,15 +405,49 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
   </form>
 </dialog>
 
+<dialog id="tripDlg" aria-labelledby="tripDlgTitle">
+  <form class="dlg" id="tripForm" novalidate>
+    <header><h2 id="tripDlgTitle">Trip</h2><button type="button" class="iconbtn" data-close>Close</button></header>
+    <div class="body">
+      <label class="field"><span>Where</span><input type="text" id="tDest" maxlength="80" placeholder="e.g. Lisbon, Lake District, Japan" autocomplete="off"></label>
+      <div class="field"><span class="legend">Status</span>
+        <div class="pick" id="tStatus">
+          <label><input type="radio" name="tstatus" value="wish" checked>Wish list</label>
+          <label><input type="radio" name="tstatus" value="planned">Planned</label>
+          <label><input type="radio" name="tstatus" value="done">Been</label>
+        </div>
+      </div>
+      <div class="row">
+        <label class="field"><span>From (optional)</span><input type="date" id="tStart"></label>
+        <label class="field"><span>To (optional)</span><input type="date" id="tEnd"></label>
+      </div>
+      <div class="field"><span class="legend">Who's going</span><div class="pick" id="tWho"></div></div>
+      <label class="field"><span>Notes</span><textarea id="tNotes" maxlength="2000" placeholder="Ideas, links to look up, rough budget"></textarea></label>
+      <div class="err" id="tErr" role="alert"></div>
+    </div>
+    <footer>
+      <button type="button" class="btn danger" id="tDel" hidden>Delete</button>
+      <span></span>
+      <button type="submit" class="btn primary" id="tSave">Save</button>
+    </footer>
+  </form>
+</dialog>
+
 <dialog id="setDlg" aria-labelledby="setDlgTitle">
   <form class="dlg" id="setForm" novalidate>
     <header><h2 id="setDlgTitle">Group settings</h2><button type="button" class="iconbtn" data-close>Close</button></header>
     <div class="body">
       <label class="field"><span>Group name</span><input type="text" id="sGroup" maxlength="40" placeholder="e.g. The Tak family, Flat 4, Book club"></label>
+      <label class="field"><span>Planner type</span><select id="sType"></select></label>
       <div class="field"><span class="legend">People you plan for</span>
         <p class="hint" style="margin:0">Kids, grandparents, pets, anyone who has appointments but doesn't use the app. People who share the planner are under People.</p>
         <div id="sProfiles" class="plist"></div>
         <div><button type="button" class="btn" id="sAddProfile">Add someone</button></div>
+      </div>
+      <div class="field" id="importBox"><span class="legend">Import a calendar</span>
+        <p class="hint" style="margin:0">Add a .ics file, such as a uni timetable or an export from Google, Outlook or Apple Calendar. Entries are added as yours.</p>
+        <input type="file" id="sIcs" accept=".ics,text/calendar">
+        <div class="hint" id="sIcsMsg" role="status"></div>
       </div>
       <div id="exampleBox" hidden>
         <p class="ev-note">Some entries are examples to show how the planner works.</p>
@@ -413,6 +494,7 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
   // older saves kept two fixed names under `kids`; read them as profiles
   const normalizeSettings = d => ({
     groupName: d?.groupName || "",
+    groupType: d?.groupType || "",
     profiles: Array.isArray(d?.profiles) ? d.profiles : d?.kids ? [{ id: "a", name: d.kids.a || "Person 1", color: 0 }, { id: "b", name: d.kids.b || "Person 2", color: 1 }] : [],
     parents: d?.parents || {}
   });
@@ -420,6 +502,7 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
     events: new Map(),            // family calendar
     lists: new Map(), items: new Map(), openList: null, newListOpen: false,
     care: new Map(), premium: false, careKid: null,
+    trips: new Map(), tripTab: "wish", msgs: new Map(), settingsLoaded: false, setup: false, setupType: "",
     personal: new Map(),          // uid -> Map(id -> ev)
     members: new Map(),           // uid -> {nickname, shareMode, isOwner, joinedAt}
     access: new Map(),            // uid -> {role, until}
@@ -431,6 +514,17 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
   };
   { const t = parse(todayStr()); S.month = new Date(t.getFullYear(), t.getMonth(), 1); }
 
+  const ALL_TABS = ["home", "upcoming", "month", "dates", "lists", "trips", "chat", "profiles", "people", "log"];
+  const TYPES = {
+    kids: { label: "Parents with kids", desc: "School runs, appointments, birthdays and baby care", tabs: ALL_TABS, profiles: "Kids", profileHint: "Your children" },
+    care: { label: "Caring for someone", desc: "Appointments, medicine and visits for a parent or relative", tabs: ["home", "upcoming", "month", "dates", "lists", "chat", "profiles", "people", "log"], profiles: "Cared for", profileHint: "The people you look after" },
+    couple: { label: "Couple", desc: "Your plans, anniversaries, trips and the food shop", tabs: ["home", "upcoming", "month", "dates", "lists", "trips", "chat", "people"] },
+    friends: { label: "Friends", desc: "Meet-ups, trips, birthdays and who's bringing what", tabs: ["home", "upcoming", "month", "trips", "dates", "lists", "chat", "people"] },
+    students: { label: "Students / study group", desc: "Timetables, deadlines, exams and study sessions", tabs: ["home", "upcoming", "month", "dates", "lists", "chat", "people"], dates: "Deadlines" },
+    house: { label: "Housemates", desc: "Bills, cleaning rota, shopping and who's around", tabs: ["home", "upcoming", "month", "lists", "dates", "chat", "people"] },
+    other: { label: "Something else", desc: "Pick and mix: everything except the care log", tabs: ALL_TABS.filter(t => t !== "log"), profiles: "Profiles" }
+  };
+  const cfg = () => TYPES[S.settings.groupType] || TYPES.other;
   const profiles = () => S.settings.profiles || [];
   const profileOf = k => profiles().find(p => p.id === k);
   const isMember = k => S.members.has(k);
@@ -473,6 +567,12 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
   // dates an event lands on within [from, to]
   function datesFor(ev, from, to) {
     if (!ev.date) return [];
+    if (ev.weekly) {
+      const out = []; let d = ev.date;
+      if (d < from) { const gap = daysBetween(d, from); d = addDays(d, Math.ceil(gap / 7) * 7); }
+      for (let i = 0; d <= to && i < 600; i++, d = addDays(d, 7)) out.push(d);
+      return out;
+    }
     if (!ev.yearly) return ev.date >= from && ev.date <= to ? [ev.date] : [];
     const out = [];
     for (let y = parse(from).getFullYear(); y <= parse(to).getFullYear(); y++) {
@@ -523,6 +623,7 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
       !busy && ev.listId && S.lists.has(ev.listId) ? (() => { const c = listCounts(ev.listId); return h("span", { class: "tag", text: c.total ? `List · ${c.got}/${c.total}` : "List · empty" }); })() : null,
       !busy && ev.type && ev.type !== "appointment" ? h("span", { class: "tag", text: TYPE_LBL[ev.type] || "" }) : null,
       !busy && ev.yearly ? h("span", { class: "tag", text: "Every year" }) : null,
+      !busy && ev.weekly ? h("span", { class: "tag", text: `Every ${fmtDay(ev.date, { weekday: "long" })}` }) : null,
       ev.done ? h("span", { class: "tag done", text: "Done" }) : null,
       ev.example ? h("span", { class: "ex", text: "Example" }) : null
     );
@@ -540,7 +641,7 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
 
   function renderUpcoming(view) {
     const t = todayStr(), end = addDays(t, 90);
-    const occ = occurrences(t, end).filter(o => !(o.ev.done && !o.ev.yearly));
+    const occ = occurrences(t, end).filter(o => !(o.ev.done && !isRepeat(o.ev)));
     const week = occ.filter(o => o.date <= addDays(t, 6));
     const unassigned = occ.filter(o => needsSomeone(o.ev)).length;
     view.append(h("div", { class: "summary" },
@@ -615,8 +716,8 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
       list.map(p => h("button", { type: "button", kcolor: profileColor(p.id), "aria-pressed": String(p.id === k), onclick: () => { S.kidView = p.id; render(); } }, h("span", { class: "dot" }), p.name))));
     const all = [...S.events.values()].filter(e => (e.who || []).includes(k));
     const t = todayStr();
-    const next = all.map(e => ({ ev: e, date: e.yearly ? nextYearly(e.date, t) : e.date })).filter(o => o.date >= t && !(o.ev.done && !o.ev.yearly)).sort(sortOcc);
-    const past = all.filter(e => !e.yearly && (e.date < t || e.done)).sort((a, b) => b.date.localeCompare(a.date));
+    const next = all.map(e => ({ ev: e, date: nextOcc(e, t) })).filter(o => o.date >= t && !(o.ev.done && !isRepeat(o.ev))).sort(sortOcc);
+    const past = all.filter(e => !isRepeat(e) && (e.date < t || e.done)).sort((a, b) => b.date.localeCompare(a.date));
     const appts = all.filter(e => e.type === "appointment");
     const nextAppt = next.find(o => o.ev.type === "appointment");
     view.append(h("div", { class: "profile", kcolor: profileColor(k) },
@@ -634,6 +735,8 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
     const l2 = h("div", { class: "list" }); past.forEach(e => l2.append(eventCard(e, e.date)));
     view.append(past.length ? l2 : h("p", { class: "ev-note", text: "Past appointments and what happened at them will collect here." }));
   }
+  const isRepeat = ev => !!(ev.yearly || ev.weekly);
+  const nextOcc = (ev, from) => ev.weekly ? (datesFor(ev, from, addDays(from, 7))[0] || ev.date) : ev.yearly ? nextYearly(ev.date, from) : ev.date;
   function nextYearly(date, from) {
     const y = parse(from).getFullYear(); let d = `${y}-${date.slice(5)}`;
     if (d < from) d = `${y + 1}-${date.slice(5)}`;
@@ -747,11 +850,228 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
       S.isOwner || S.mode === "preview" ? null : h("p", { class: "hint", text: "Only the planner's owner can invite people and set how long they can see it." })));
   }
 
+  // ----- First-run setup: pick the kind of group -----
+  function renderSetup(view) {
+    const pick = S.setupType || S.settings.groupType || "";
+    const err = h("div", { class: "err", role: "alert" });
+    const name = h("input", { type: "text", id: "setupName", maxlength: "40", placeholder: "e.g. The Tak family, Flat 4, Year 2 Law" }); name.value = S.settings.groupName || "";
+    view.append(h("div", { class: "setup" },
+      h("h2", { text: "What's this planner for?" }),
+      h("p", { text: "Pick the closest match. It sets which pages you see and how they're worded. You can change it later under Group." }),
+      h("div", { class: "types", role: "group", "aria-label": "Planner type" },
+        Object.entries(TYPES).map(([k, t]) => h("button", { type: "button", class: "type", "aria-pressed": String(pick === k), onclick: () => { S.setupType = k; render(); } },
+          h("b", { text: t.label }), h("span", { text: t.desc }),
+          h("small", { text: t.tabs.filter(x => !["home", "upcoming", "month", "people"].includes(x)).map(x => ({ dates: t.dates || "Dates", lists: "Lists", trips: "Trips", chat: "Chat", profiles: t.profiles || "Profiles", log: "Care log" })[x]).join(" · ") })))),
+      h("label", { class: "field", style: "margin-top:16px" }, h("span", { text: "Group name" }), name),
+      err,
+      h("div", { style: "display:flex;gap:8px;margin-top:14px;flex-wrap:wrap" },
+        h("button", { type: "button", class: "btn primary", text: "Start planning", disabled: !pick, onclick: async () => {
+          try {
+            await writeDoc("family/settings", { ...S.settings, groupName: name.value.trim(), groupType: pick });
+            S.setup = false; S.setupType = ""; S.tab = "home"; render();
+            if (TYPES[pick].profiles && !profiles().length) { toast(`Now add ${TYPES[pick].profileHint?.toLowerCase() || "the people you plan for"}`); openSettings(); }
+          } catch (er) { handleWriteError(er, err); }
+        } }),
+        S.settings.groupType ? h("button", { type: "button", class: "btn", text: "Cancel", onclick: () => { S.setup = false; S.setupType = ""; render(); } }) : null)));
+  }
+
+  // ----- Key dates / deadlines -----
+  const ord = n => n + (["th", "st", "nd", "rd"][(n % 100 - 20) % 10] || ["th", "st", "nd", "rd"][n % 100] || "th");
+  function keyDateInfo(ev, t) {
+    const next = isRepeat(ev) ? nextOcc(ev, t) : ev.date;
+    const days = daysBetween(t, next);
+    const yrs = ev.yearly ? parse(next).getFullYear() - parse(ev.date).getFullYear() : 0;
+    let extra = "";
+    if (yrs > 0) extra = ev.kind === "birthday" ? `Turns ${yrs}` : ev.kind === "anniversary" ? `${ord(yrs)} anniversary` : `${yrs} year${yrs > 1 ? "s" : ""}`;
+    return { next, days, extra };
+  }
+  const daysLabel = d => d === 0 ? "Today" : d === 1 ? "Tomorrow" : `${d} days`;
+  function renderDates(view) {
+    const t = todayStr(), label = cfg().dates || "Key dates";
+    const items = allEvents().filter(ev => visibleEv(ev) && (ev.type === "keydate" || ev.yearly) && !isBusyOnly(ev))
+      .map(ev => ({ ev, ...keyDateInfo(ev, t) })).filter(x => x.days >= 0).sort((a, b) => a.days - b.days || a.ev.title.localeCompare(b.ev.title));
+    view.append(h("div", { class: "lhead" }, h("h2", { text: label })));
+    if (!items.length) {
+      view.append(h("div", { class: "empty" }, h("h3", { text: S.settings.groupType === "students" ? "No deadlines yet" : "No key dates yet" }),
+        h("p", { text: S.settings.groupType === "students" ? "Add essay deadlines, exams and presentations to see how many days are left." : "Add birthdays, anniversaries and other dates that matter. Each shows a countdown, and birthdays show the age they'll turn." })));
+      return;
+    }
+    const colorOf = ev => profileColor((ev.who || [])[0] || "fam");
+    const [first, ...rest] = items;
+    view.append(h("button", { type: "button", class: "kdhero", kcolor: colorOf(first.ev), onclick: () => openEvent(first.ev.cal, first.ev.id) },
+      h("span", { class: "big" }, first.days === 0 ? "Today" : String(first.days), first.days ? h("small", { text: first.days === 1 ? "day to go" : "days to go" }) : null),
+      h("span", {}, h("span", { class: "section-title", style: "margin:0", text: "Next up" }), h("h3", { text: first.ev.title }),
+        h("p", { text: [fmtDay(first.next, { weekday: "long", day: "numeric", month: "long", year: "numeric" }), first.extra].filter(Boolean).join(" · ") }))));
+    const groups = [["Next 30 days", x => x.days <= 30], ["Later this year", x => x.days > 30 && x.days <= 365], ["Further ahead", x => x.days > 365]];
+    for (const [g, fn] of groups) {
+      const list = rest.filter(fn); if (!list.length) continue;
+      const box = h("div", { class: "list" });
+      list.forEach(x => box.append(h("button", { type: "button", class: "kdrow", kcolor: colorOf(x.ev), onclick: () => openEvent(x.ev.cal, x.ev.id) },
+        h("span", { class: "cd" }, h("b", { text: x.days <= 1 ? (x.days ? "1" : "0") : String(x.days) }), h("span", { text: x.days === 0 ? "today" : x.days === 1 ? "day" : "days" })),
+        h("span", { class: "tx" }, h("b", { text: x.ev.title }),
+          h("span", { text: [fmtDay(x.next, { weekday: "short", day: "numeric", month: "short", year: x.days > 300 ? "numeric" : undefined }), x.extra || (x.ev.kind === "birthday" ? "Birthday" : x.ev.kind === "anniversary" ? "Anniversary" : "")].filter(Boolean).join(" · ") })))));
+      view.append(h("section", { class: "dsec" }, h("div", { class: "section-title", text: g }), box));
+    }
+  }
+
+  // ----- Trips -----
+  const tripVotes = tr => Object.entries(tr.votes || {}).filter(([, v]) => v).map(([k]) => k);
+  function renderTrips(view) {
+    const t = todayStr(), all = [...S.trips.values()];
+    const by = st => all.filter(x => (x.status || "wish") === st);
+    view.append(h("div", { class: "lhead" }, h("h2", { text: "Trips" }),
+      S.canWrite ? h("button", { class: "iconbtn", type: "button", text: "Add trip", onclick: () => openTrip(null) }) : null));
+    view.append(h("div", { class: "seg", role: "group", "aria-label": "Trip status", style: "flex-wrap:wrap" },
+      [["wish", "Wish list"], ["planned", "Planned"], ["done", "Been"]].map(([k, l]) => h("button", { type: "button", "aria-pressed": String(S.tripTab === k), onclick: () => { S.tripTab = k; render(); } }, `${l} (${by(k).length})`))));
+    let list = by(S.tripTab);
+    if (S.tripTab === "wish") list.sort((a, b) => tripVotes(b).length - tripVotes(a).length || a.dest.localeCompare(b.dest));
+    else if (S.tripTab === "planned") list.sort((a, b) => (a.start || "9999").localeCompare(b.start || "9999"));
+    else list.sort((a, b) => (b.start || "").localeCompare(a.start || ""));
+    if (!list.length) {
+      view.append(h("div", { class: "empty" }, h("h3", { text: { wish: "Where would you love to go?", planned: "No trips booked yet", done: "No past trips yet" }[S.tripTab] }),
+        h("p", { text: { wish: "Add places to the wish list. Everyone can say they want to go, so you can see the favourites.", planned: "Move a wish-list trip here once it has dates. You'll see a countdown and can add a packing list.", done: "Trips you've been on end up here." }[S.tripTab] })));
+      return;
+    }
+    const err = h("div", { class: "err", role: "alert" });
+    const box = h("div", { class: "list", style: "margin-top:14px" });
+    for (const tr of list) {
+      const votes = tripVotes(tr), mine = S.me && votes.includes(S.me);
+      const dates = tr.start ? `${fmtDay(tr.start, { day: "numeric", month: "short", year: "numeric" })}${tr.end && tr.end !== tr.start ? " – " + fmtDay(tr.end, { day: "numeric", month: "short", year: "numeric" }) : ""}` : "No dates yet";
+      const away = tr.start && tr.start >= t ? daysBetween(t, tr.start) : null;
+      const L = tr.listId && S.lists.get(tr.listId), lc = L ? listCounts(L.id) : null;
+      box.append(h("div", { class: "trip" },
+        h("h3", { text: tr.dest }),
+        h("span", { class: "when", text: [dates, away != null ? (away === 0 ? "Today!" : `in ${away} day${away > 1 ? "s" : ""}`) : "", tr.end && tr.start ? `${daysBetween(tr.start, tr.end) + 1} days` : ""].filter(Boolean).join(" · ") }),
+        (tr.who || []).length ? h("span", { class: "ev-meta" }, whoChips(tr.who)) : null,
+        tr.notes ? h("span", { class: "ev-note", text: tr.notes }) : null,
+        S.tripTab === "wish" ? h("span", { class: "hint", text: votes.length ? `${votes.map(kidName).join(", ")} ${votes.length > 1 ? "want" : "wants"} to go` : "No votes yet" }) : null,
+        h("div", { class: "acts" },
+          S.tripTab === "wish" && S.me && S.canWrite ? h("button", { type: "button", class: "smallbtn vote", "aria-pressed": String(!!mine), text: mine ? "You want to go" : "I want to go", onclick: async () => {
+            try { await updateDoc(`trips/${tr.id}`, { votes: { [S.me]: !mine } }); } catch (er) { handleWriteError(er, err); }
+          } }) : null,
+          L ? h("button", { type: "button", class: "smallbtn", text: `Packing list · ${lc.got}/${lc.total}`, onclick: () => { S.tab = "lists"; S.openList = L.id; render(); window.scrollTo(0, 0); } })
+            : (S.canWrite && S.tripTab !== "done" ? h("button", { type: "button", class: "smallbtn", text: "Add packing list", onclick: async () => {
+              const lid = uid();
+              try { await writeDoc(`lists/${lid}`, { title: `Packing: ${tr.dest}`, eventId: "", tripId: tr.id, createdBy: S.me || "", createdAt: new Date().toISOString() }); await updateDoc(`trips/${tr.id}`, { listId: lid }); S.tab = "lists"; S.openList = lid; S.focusItem = true; render(); }
+              catch (er) { handleWriteError(er, err); }
+            } }) : null),
+          S.canWrite ? h("button", { type: "button", class: "smallbtn", text: "Edit", onclick: () => openTrip(tr) }) : null)));
+    }
+    view.append(box, err);
+  }
+  const tripDlg = $("#tripDlg"); let tripEditing = null;
+  function openTrip(tr) {
+    tripEditing = tr;
+    $("#tripDlgTitle").textContent = tr ? "Edit trip" : "New trip";
+    $("#tDest").value = tr?.dest || "";
+    $$('#tStatus input').forEach(i => i.checked = i.value === (tr?.status || S.tripTab || "wish"));
+    $("#tStart").value = tr?.start || ""; $("#tEnd").value = tr?.end || "";
+    const who = $("#tWho"); who.replaceChildren();
+    for (const k of [...peopleOrder().filter(id => accessOf(id).active), ...profiles().map(p => p.id)]) who.append(h("label", { kcolor: profileColor(k) }, h("input", { type: "checkbox", name: "twho", value: k, checked: (tr?.who || []).includes(k) }), h("span", { class: "dot" }), kidName(k)));
+    $("#tNotes").value = tr?.notes || "";
+    const del = $("#tDel"); del.hidden = !tr; del.classList.remove("armed"); del.textContent = "Delete";
+    $("#tErr").textContent = "";
+    tripDlg.showModal(); if (!tr) $("#tDest").focus();
+  }
+  $("#tripForm").addEventListener("submit", async e => {
+    e.preventDefault();
+    const dest = $("#tDest").value.trim(); if (!dest) { $("#tErr").textContent = "Add where you want to go."; return; }
+    const start = $("#tStart").value, end = $("#tEnd").value;
+    if (start && end && end < start) { $("#tErr").textContent = "The end date is before the start date."; return; }
+    const status = $('#tStatus input:checked')?.value || "wish";
+    const body = { ...(tripEditing ? docBody(tripEditing) : { votes: {}, listId: "", createdBy: S.me || "", createdAt: new Date().toISOString() }),
+      dest, status, start, end, who: $$('#tWho input:checked').map(i => i.value), notes: $("#tNotes").value.trim() };
+    try { await writeDoc(`trips/${tripEditing?.id || uid()}`, body); tripDlg.close(); S.tripTab = status; render(); toast(tripEditing ? "Saved" : "Trip added"); }
+    catch (er) { handleWriteError(er, $("#tErr")); }
+  });
+  $("#tDel").addEventListener("click", async () => {
+    const b = $("#tDel");
+    if (!b.classList.contains("armed")) { b.classList.add("armed"); b.textContent = "Tap again to delete"; return; }
+    try { await deleteDoc(`trips/${tripEditing.id}`); tripDlg.close(); toast("Trip deleted"); } catch (er) { handleWriteError(er, $("#tErr")); }
+  });
+
+  // ----- Group chat -----
+  const chatSeen = () => store.get("cp-chat-seen", "");
+  const unreadCount = () => { const seen = chatSeen(); return [...S.msgs.values()].filter(m => m.at > seen && m.by !== S.me).length; };
+  const markChatSeen = () => { const last = [...S.msgs.values()].reduce((a, m) => m.at > a ? m.at : a, ""); if (last && last > chatSeen()) store.set("cp-chat-seen", last); };
+  function renderChat(view) {
+    const msgs = [...S.msgs.values()].sort((a, b) => a.at.localeCompare(b.at));
+    const box = h("div", { class: "chat", "aria-live": "polite" });
+    if (!msgs.length) box.append(h("div", { class: "empty" }, h("h3", { text: "Start the conversation" }), h("p", { text: "Messages here go to everyone who shares the planner." })));
+    let day = "";
+    for (const m of msgs) {
+      const d = ymd(new Date(m.at));
+      if (d !== day) { day = d; const n = daysBetween(d, todayStr()); box.append(h("span", { class: "cday", text: n === 0 ? "Today" : n === 1 ? "Yesterday" : fmtDay(d, { weekday: "short", day: "numeric", month: "short" }) })); }
+      const me = m.by && m.by === S.me;
+      box.append(h("div", { class: `bub${me ? " me" : ""}`, kcolor: m.by ? profileColor(m.by) : null },
+        me ? null : h("span", { class: "nm", text: m.by ? kidName(m.by) : "Someone" }),
+        m.text,
+        h("span", { class: "tm2", text: hhmm(m.at) }),
+        me && S.canWrite ? h("button", { type: "button", class: "del", text: "Delete", onclick: async () => { try { await deleteDoc(`messages/${m.id}`); } catch {} } }) : null));
+    }
+    box.append(h("span", { id: "chatEnd" }));
+    view.append(box);
+    if (S.canWrite) {
+      const err = h("div", { class: "err", role: "alert" });
+      const inp = h("input", { type: "text", id: "chatInput", maxlength: "1000", placeholder: "Message the group", "aria-label": "Message", autocomplete: "off", enterkeyhint: "send" });
+      view.append(h("form", { class: "composer", onsubmit: async e => {
+        e.preventDefault();
+        const text = inp.value.trim(); if (!text) return;
+        inp.value = ""; S.scrollChat = true;
+        try { await writeDoc(`messages/${uid()}`, { text, by: S.me || "", at: new Date().toISOString() }); }
+        catch (er) { inp.value = text; handleWriteError(er, err); }
+      } }, inp, h("button", { class: "btn primary", type: "submit", text: "Send" })), err);
+    }
+  }
+
+  // ----- .ics import -----
+  function parseIcs(text) {
+    const lines = text.replace(/\r?\n[ \t]/g, "").split(/\r?\n/);
+    const out = []; let cur = null;
+    const unesc = v => v.replace(/\\n/gi, " ").replace(/\\([,;\\])/g, "$1").trim();
+    for (const line of lines) {
+      if (line === "BEGIN:VEVENT") { cur = {}; continue; }
+      if (line === "END:VEVENT") { if (cur?.start && cur.title) out.push(cur); cur = null; continue; }
+      if (!cur) continue;
+      const i = line.indexOf(":"); if (i < 0) continue;
+      const key = line.slice(0, i), val = line.slice(i + 1), name = key.split(";")[0].toUpperCase();
+      if (name === "SUMMARY") cur.title = unesc(val).slice(0, 120);
+      else if (name === "LOCATION") cur.notes = unesc(val).slice(0, 300);
+      else if (name === "RRULE") { const f = /FREQ=(\w+)/.exec(val)?.[1]; cur.weekly = f === "WEEKLY"; cur.yearly = f === "YEARLY"; }
+      else if (name === "DTSTART") {
+        const m = /^(\d{4})(\d{2})(\d{2})(?:T(\d{2})(\d{2})(\d{2})(Z)?)?/.exec(val); if (!m) continue;
+        if (!m[4]) { cur.start = `${m[1]}-${m[2]}-${m[3]}`; cur.time = ""; }
+        else {
+          const d = m[7] ? new Date(Date.UTC(+m[1], +m[2] - 1, +m[3], +m[4], +m[5])) : new Date(+m[1], +m[2] - 1, +m[3], +m[4], +m[5]);
+          cur.start = ymd(d); cur.time = `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+        }
+      }
+    }
+    return out;
+  }
+  $("#sIcs").addEventListener("change", async e => {
+    const f = e.target.files?.[0]; if (!f) return;
+    const msg = $("#sIcsMsg");
+    try {
+      const evs = parseIcs(await f.text());
+      const cutoff = addDays(todayStr(), -1);
+      const keep = evs.filter(x => x.weekly || x.yearly || x.start >= cutoff).slice(0, 200);
+      if (!keep.length) { msg.textContent = evs.length ? "Everything in that file is in the past, so nothing was added." : "No events found in that file."; return; }
+      msg.textContent = `Adding ${keep.length} entries…`;
+      let n = 0;
+      for (const x of keep) {
+        await writeDoc(`events/${uid()}`, { title: x.title, who: S.me ? [S.me] : ["fam"], date: x.start, time: x.time || "", type: "appointment", yearly: !!x.yearly, weekly: !!x.weekly, kind: "", needsOwner: false, owner: "", private: false, createdBy: S.me || "", listId: "", notes: x.notes || "", outcome: "", done: false, imported: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() });
+        n++; if (n % 10 === 0) msg.textContent = `Added ${n} of ${keep.length}…`;
+      }
+      msg.textContent = `Added ${n} entries${evs.length > keep.length ? ` (skipped ${evs.length - keep.length} past or extra entries)` : ""}.`;
+    } catch (er) { msg.textContent = er?.code ? "Couldn't save the entries. Check you can edit this planner." : "That file couldn't be read. Make sure it's a .ics calendar file."; }
+  });
+
   // ----- Home dashboard -----
   function occAll(from, to) { const f = S.filter; S.filter = "all"; const o = occurrences(from, to); S.filter = f; return o; }
   function renderHome(view) {
     const t = todayStr(), tm = addDays(t, 1), wk = addDays(t, 6);
-    const soon = occAll(t, addDays(t, 30)).filter(o => !(o.ev.done && !o.ev.yearly));
+    const soon = occAll(t, addDays(t, 30)).filter(o => !(o.ev.done && !isRepeat(o.ev)));
     const today = soon.filter(o => o.date === t), tomorrow = soon.filter(o => o.date === tm), week = soon.filter(o => o.date <= wk);
     const needs = soon.filter(o => needsSomeone(o.ev));
     const lists = [...S.lists.values()].map(l => ({ l, c: listCounts(l.id), ev: linkedEvent(l) }));
@@ -760,7 +1080,10 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
     view.append(h("div", { class: "tiles" },
       h("button", { type: "button", class: "tile", onclick: go("upcoming") }, h("b", { text: String(today.length) }), h("span", { text: today.length === 1 ? "thing today" : "things today" })),
       h("button", { type: "button", class: "tile", onclick: go("upcoming") }, h("b", { text: String(week.length) }), h("span", { text: "in the next 7 days" })),
-      h("button", { type: "button", class: `tile${needs.length ? " warn" : ""}`, onclick: () => $("#needsSec")?.scrollIntoView({ behavior: "smooth" }) }, h("b", { text: String(needs.length) }), h("span", { text: needs.length === 1 ? "needs someone" : "need someone" })),
+      ["kids", "care"].includes(S.settings.groupType) || needs.length
+        ? h("button", { type: "button", class: `tile${needs.length ? " warn" : ""}`, onclick: () => $("#needsSec")?.scrollIntoView({ behavior: "smooth" }) }, h("b", { text: String(needs.length) }), h("span", { text: needs.length === 1 ? "needs someone" : "need someone" }))
+        : (() => { const kd = allEvents().filter(ev => visibleEv(ev) && (ev.type === "keydate" || ev.yearly)).map(ev => keyDateInfo(ev, t)).filter(x => x.days >= 0).sort((a, b) => a.days - b.days)[0];
+            return h("button", { type: "button", class: "tile", onclick: go("dates") }, h("b", { text: kd ? String(kd.days) : "–" }), h("span", { text: kd ? (cfg().dates === "Deadlines" ? "days to next deadline" : "days to next key date") : "no key dates yet" })); })(),
       h("button", { type: "button", class: "tile", onclick: go("lists", { openList: null }) }, h("b", { text: String(open.length) }), h("span", { text: open.length === 1 ? "list to finish" : "lists to finish" }))));
 
     // owner reminders about visits
@@ -797,7 +1120,7 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
     const sorted = lists.sort((a, b) => {
       const doneA = a.c.total && a.c.got === a.c.total, doneB = b.c.total && b.c.got === b.c.total;
       if (doneA !== doneB) return doneA ? 1 : -1;
-      const da = a.ev ? (a.ev.yearly ? nextYearly(a.ev.date, t) : a.ev.date) : "9999", dbb = b.ev ? (b.ev.yearly ? nextYearly(b.ev.date, t) : b.ev.date) : "9999";
+      const da = a.ev ? (nextOcc(a.ev, t)) : "9999", dbb = b.ev ? (nextOcc(b.ev, t)) : "9999";
       return da.localeCompare(dbb);
     });
     const box = h("div", { class: "list" });
@@ -806,12 +1129,20 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
       box.append(h("button", { type: "button", class: "lrow", onclick: go("lists", { openList: l.id }) },
         h("span", { class: "lt", text: l.title }),
         h("span", { class: `pct${full ? " full" : ""}`, text: `${pct}%` }),
-        h("span", { class: "ls", text: [ev ? evWhen(ev) : "No date", c.total ? (full ? "All done" : `${c.total - c.got} left of ${c.total}`) : "Empty"].join(" · ") }),
+        h("span", { class: "ls", text: [listWhen(l), c.total ? (full ? "All done" : `${c.total - c.got} left of ${c.total}`) : "Empty"].join(" · ") }),
         h("div", { class: "bar" }, h("i", { style: `width:${pct}%` }))));
     });
     if (lists.length) sec.append(box);
     view.append(sec);
 
+    // unread chat + next trip
+    const unread = unreadCount();
+    if (unread && cfg().tabs.includes("chat")) view.append(h("section", { class: "dsec" }, h("button", { type: "button", class: "notice", style: "width:100%;text-align:left", onclick: go("chat") }, `${unread} new message${unread > 1 ? "s" : ""} in the group chat`)));
+    if (cfg().tabs.includes("trips")) {
+      const nextTrip = [...S.trips.values()].filter(x => x.status === "planned" && x.start && x.start >= t).sort((a, b) => a.start.localeCompare(b.start))[0];
+      if (nextTrip) { const n = daysBetween(t, nextTrip.start); view.append(h("section", { class: "dsec" }, h("div", { class: "section-title", text: "Next trip" }),
+        h("button", { type: "button", class: "kd", onclick: go("trips", { tripTab: "planned" }) }, h("span", {}, h("span", { class: "ev-title", text: nextTrip.dest }), " ", h("span", { class: "hint", text: fmtDay(nextTrip.start, { day: "numeric", month: "short" }) })), h("span", { class: "in", text: n === 0 ? "Today" : `in ${n} days` })))); }
+    }
     // key dates in the next 60 days
     const keys = occAll(t, addDays(t, 60)).filter(o => o.ev.type === "keydate" || o.ev.yearly).slice(0, 5);
     if (keys.length) {
@@ -819,7 +1150,7 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
       keys.forEach(o => { const n = daysBetween(t, o.date); kb.append(h("button", { type: "button", class: "kd", onclick: () => isBusyOnly(o.ev) ? null : openEvent(o.ev.cal, o.ev.id) },
         h("span", {}, h("span", { class: "ev-title", text: shownTitle(o.ev) }), " ", h("span", { class: "hint", text: fmtDay(o.date, { day: "numeric", month: "short" }) })),
         h("span", { class: "in", text: n === 0 ? "Today" : n === 1 ? "Tomorrow" : `in ${n} days` }))); });
-      view.append(h("section", { class: "dsec" }, h("div", { class: "section-title", text: "Key dates coming up" }), kb));
+      view.append(h("section", { class: "dsec" }, h("div", { class: "section-title" }, h("span", { text: cfg().dates ? `${cfg().dates} coming up` : "Key dates coming up" }), cfg().tabs.includes("dates") ? h("button", { type: "button", text: "See all", onclick: go("dates") }) : null), kb));
     }
   }
 
@@ -827,6 +1158,7 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
   const listCounts = id => { const m = S.items.get(id); const all = m ? [...m.values()] : []; return { total: all.length, got: all.filter(i => i.done).length }; };
   const findEvent = id => id ? (S.events.get(id) || [...S.personal.values()].map(m => m.get(id)).find(Boolean) || null) : null;
   const linkedEvent = l => findEvent(l.eventId);
+  const listWhen = l => { const ev = linkedEvent(l); if (ev) return evWhen(ev); const tr = l.tripId && S.trips.get(l.tripId); return tr ? `Trip: ${tr.dest}` : "No date"; };
   const docBody = o => { const { id, cal, ...rest } = o; if (cal && cal !== "family") delete rest.who; return rest; };
   // keep list.eventId and event.listId pointing at each other
   async function linkList(listId, ev) {
@@ -841,10 +1173,10 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
   }
   const linkableEvents = () => {
     const t = todayStr();
-    return allEvents().filter(ev => visibleEv(ev) && !isBusyOnly(ev) && !(ev.done && !ev.yearly) && (ev.yearly || ev.date >= t))
-      .map(ev => ({ ev, date: ev.yearly ? nextYearly(ev.date, t) : ev.date })).sort(sortOcc).slice(0, 60);
+    return allEvents().filter(ev => visibleEv(ev) && !isBusyOnly(ev) && !(ev.done && !isRepeat(ev)) && (isRepeat(ev) || ev.date >= t))
+      .map(ev => ({ ev, date: nextOcc(ev, t) })).sort(sortOcc).slice(0, 60);
   };
-  const evWhen = ev => { const d = ev.yearly ? nextYearly(ev.date, todayStr()) : ev.date; return `${fmtDay(d, { weekday: "short", day: "numeric", month: "short" })}${ev.time ? " · " + ev.time : ""}`; };
+  const evWhen = ev => { const d = nextOcc(ev, todayStr()); return `${fmtDay(d, { weekday: "short", day: "numeric", month: "short" })}${ev.time ? " · " + ev.time : ""}`; };
   function renderLists(view) {
     const open = S.openList && S.lists.get(S.openList);
     if (open) return renderListDetail(view, open);
@@ -864,8 +1196,8 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
     }
     const lists = [...S.lists.values()].sort((a, b) => {
       const ea = linkedEvent(a), eb = linkedEvent(b);
-      const da = ea ? (ea.yearly ? nextYearly(ea.date, todayStr()) : ea.date) + (ea.time || "") : "9999";
-      const dbb = eb ? (eb.yearly ? nextYearly(eb.date, todayStr()) : eb.date) + (eb.time || "") : "9999";
+      const da = ea ? (nextOcc(ea, todayStr())) + (ea.time || "") : "9999";
+      const dbb = eb ? (nextOcc(eb, todayStr())) + (eb.time || "") : "9999";
       return da.localeCompare(dbb) || (a.createdAt || "").localeCompare(b.createdAt || "");
     });
     if (!lists.length) {
@@ -879,7 +1211,7 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
       const bar = h("div", { class: "bar" }, h("i", { style: `width:${c.total ? Math.round(c.got / c.total * 100) : 0}%` }));
       wrap.append(h("button", { type: "button", class: "lcard", onclick: () => { S.openList = l.id; render(); window.scrollTo(0, 0); } },
         h("span", { class: "lt", text: l.title }),
-        h("span", { class: "ls" }, h("span", { text: ev ? evWhen(ev) : "No date" }), h("span", { text: c.total ? `${c.got} of ${c.total} done` : "Empty" }), l.example ? h("span", { class: "ex", text: "Example" }) : null),
+        h("span", { class: "ls" }, h("span", { text: listWhen(l) }), h("span", { text: c.total ? `${c.got} of ${c.total} done` : "Empty" }), l.example ? h("span", { class: "ex", text: "Example" }) : null),
         bar));
     }
     view.append(wrap);
@@ -1150,7 +1482,12 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
   }
 
   function render() {
-    $$(".tab").forEach(b => b.setAttribute("aria-selected", String(b.dataset.tab === S.tab)));
+    const c = cfg();
+    if (!c.tabs.includes(S.tab)) S.tab = "home";
+    $$(".tab").forEach(b => { b.setAttribute("aria-selected", String(b.dataset.tab === S.tab)); b.hidden = !c.tabs.includes(b.dataset.tab); });
+    $('.tab[data-tab="dates"]').firstChild.textContent = c.dates || "Dates";
+    $('.tab[data-tab="profiles"]').textContent = c.profiles || "Profiles";
+    const unread = unreadCount(); $("#chatBadge").hidden = !unread || S.tab === "chat"; $("#chatBadge").textContent = String(unread);
     $("#groupTitle").textContent = S.settings.groupName || "Circle Planner";
     $("#logLock").hidden = canCare() && S.premium;
     const act = document.activeElement, keep = act && act.id && /^(INPUT|TEXTAREA)$/.test(act.tagName) && !act.closest("dialog") ? { id: act.id, v: act.value, a: act.selectionStart, b: act.selectionEnd } : null;
@@ -1162,9 +1499,16 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
         h("p", { class: "hint", text: a?.role === "removed" ? "Ask the planner's owner if you think this is a mistake." : `Shared access ended on ${fmtDay(a.until, { weekday: "long", day: "numeric", month: "long" })}. Ask the planner's owner to extend it.` })));
       return;
     }
-    $("#addBtn").hidden = !S.canWrite || S.tab === "log" || S.tab === "lists";
+    if (S.setup || (S.isOwner && S.settingsLoaded && !S.settings.groupType)) {
+      $("#addBtn").hidden = true; $(".tabs").hidden = true; $("#bannerSlot").replaceChildren(); $("#filterSlot").replaceChildren();
+      renderSetup(view); return;
+    }
+    $(".tabs").hidden = false;
+    $("#addBtn").hidden = !S.canWrite || ["log", "lists", "chat", "trips"].includes(S.tab);
+    $("#addBtn").lastChild.textContent = S.tab === "dates" ? "Add date" : "Add";
     renderBanner(); renderFilters();
-    ({ home: renderHome, upcoming: renderUpcoming, month: renderMonth, lists: renderLists, profiles: renderProfiles, people: renderPeople, log: renderLog })[S.tab](view);
+    ({ home: renderHome, upcoming: renderUpcoming, month: renderMonth, dates: renderDates, lists: renderLists, trips: renderTrips, chat: renderChat, profiles: renderProfiles, people: renderPeople, log: renderLog })[S.tab](view);
+    if (S.tab === "chat") { markChatSeen(); if (S.scrollChat !== false) { S.scrollChat = false; requestAnimationFrame(() => $("#chatEnd")?.scrollIntoView({ block: "end" })); } }
     const back = keep && document.getElementById(keep.id);
     if (back) { back.value = keep.v; back.focus(); try { back.setSelectionRange(keep.a, keep.b); } catch {} }
     if (S.focusItem) { S.focusItem = false; $("#itemInput")?.focus(); }
@@ -1181,10 +1525,19 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
     else if (col === "family" && id === "premium") S.premium = !!body.enabled;
     else if (col === "family") S.settings = normalizeSettings(body);
     else if (col === "carelog") S.care.set(id, { id, ...body });
+    else if (col === "trips") S.trips.set(id, { id, ...body });
+    else if (col === "messages") S.msgs.set(id, { id, ...body });
     else if (col === "events") S.events.set(id, { id, cal: "family", ...body });
     else if (col === "lists") S.lists.set(id, { id, ...body });
     else if (/^lists\/[^/]+\/items$/.test(col)) { const lid = col.split("/")[1]; if (!S.items.has(lid)) S.items.set(lid, new Map()); S.items.get(lid).set(id, { id, ...body }); }
     else if (col.startsWith("cals/")) { const owner = col.split("/")[1]; if (!S.personal.has(owner)) S.personal.set(owner, new Map()); S.personal.get(owner).set(id, { ...body, id, cal: owner, who: [owner] }); }
+    render();
+  }
+  // merge-write (nested objects merge), e.g. one person's vote
+  async function updateDoc(path, patch) {
+    if (S.db) return S.db.doc(path).update(patch);
+    const [col, id] = [path.split("/").slice(0, -1).join("/"), path.split("/").pop()];
+    if (col === "trips") { const cur = S.trips.get(id) || { id }; S.trips.set(id, { ...cur, ...patch, votes: { ...(cur.votes || {}), ...(patch.votes || {}) } }); }
     render();
   }
   async function deleteDoc(path) {
@@ -1192,6 +1545,8 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
     const parts = path.split("/"), id = parts.pop(), col = parts.join("/");
     if (col === "events") S.events.delete(id);
     else if (col === "carelog") S.care.delete(id);
+    else if (col === "trips") S.trips.delete(id);
+    else if (col === "messages") S.msgs.delete(id);
     else if (col === "lists") { S.lists.delete(id); S.items.delete(id); }
     else if (/^lists\/[^/]+\/items$/.test(col)) S.items.get(parts[1])?.delete(id);
     else if (col.startsWith("cals/")) S.personal.get(parts[1])?.delete(id);
@@ -1211,12 +1566,14 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
   }
   const pickedWho = () => $$('#fWho input:checked').map(i => i.value);
   const syncFields = () => {
+    $("#kindField").hidden = ($('#fType input:checked')?.value || "") !== "keydate";
     $("#ownerField").hidden = !$("#fNeeds").checked;
     const w = pickedWho();
     $("#privField").hidden = !(S.me && w.length === 1 && w[0] === S.me);
   };
   $("#fWho").addEventListener("change", syncFields);
   $("#fNeeds").addEventListener("change", syncFields);
+  $("#fType").addEventListener("change", () => { syncFields(); if ($('#fType input:checked')?.value === "keydate" && !$("#fRepeat").value && !S.editing) $("#fRepeat").value = "yearly"; });
   function getEvent(cal, id) { return cal === "family" ? S.events.get(id) : S.personal.get(cal)?.get(id); }
   function openEvent(cal, id, presetDate, preset = {}) {
     const ev = id ? getEvent(cal, id) : null;
@@ -1232,7 +1589,9 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
     $$('#fType input').forEach(i => i.checked = i.value === (ev?.type || "appointment"));
     $("#fDate").value = ev?.date || presetDate || todayStr();
     $("#fTime").value = ev?.time || "";
-    $("#fYearly").checked = !!ev?.yearly;
+    $("#fRepeat").value = ev?.weekly ? "weekly" : ev?.yearly ? "yearly" : (preset.repeat || "");
+    $("#fKind").value = ev?.kind || preset.kind || "birthday";
+    if (!ev && preset.type) $$('#fType input').forEach(i => i.checked = i.value === preset.type);
     $$('#fOwner input').forEach(i => i.checked = i.value === (ev?.owner || ""));
     $("#fNeeds").checked = !!(ev?.needsOwner || ev?.owner);
     $("#fPrivate").checked = !!ev?.private;
@@ -1273,7 +1632,9 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
       title, who, date,
       type: $('#fType input:checked')?.value || "appointment",
       time: $("#fTime").value || "",
-      yearly: $("#fYearly").checked,
+      yearly: $("#fRepeat").value === "yearly",
+      weekly: $("#fRepeat").value === "weekly",
+      kind: ($('#fType input:checked')?.value === "keydate") ? $("#fKind").value : "",
       needsOwner: $("#fNeeds").checked,
       owner: $("#fNeeds").checked ? ($('#fOwner input:checked')?.value || "") : "",
       private: $("#fPrivate").checked && !!S.me && who.length === 1 && who[0] === S.me,
@@ -1340,6 +1701,9 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
   }
   function openSettings() {
     $("#sGroup").value = S.settings.groupName || "";
+    $("#sType").replaceChildren(...Object.entries(TYPES).map(([k, t]) => h("option", { value: k, text: t.label })));
+    $("#sType").value = S.settings.groupType || "other"; $("#sType").disabled = !S.isOwner;
+    $("#importBox").hidden = !S.canWrite; $("#sIcsMsg").textContent = ""; $("#sIcs").value = "";
     draft = profiles().map(p => ({ ...p }));
     drawProfileEditor();
     $("#sGroup").disabled = !S.canWrite; $("#sAddProfile").hidden = !S.canWrite;
@@ -1358,7 +1722,7 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
     e.preventDefault();
     if (!S.canWrite) return setDlg.close();
     const list = draft.map((p, i) => ({ id: p.id, name: p.name.trim() || `Person ${i + 1}`, color: p.color }));
-    const next = { groupName: $("#sGroup").value.trim(), profiles: list, parents: S.settings.parents || {} };
+    const next = { groupName: $("#sGroup").value.trim(), groupType: S.isOwner ? $("#sType").value : (S.settings.groupType || ""), profiles: list, parents: S.settings.parents || {} };
     try { await writeDoc("family/settings", next); setDlg.close(); toast("Saved"); }
     catch (err) { handleWriteError(err, $("#sErr")); }
   });
@@ -1385,7 +1749,7 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
 
   // ---------- wiring ----------
   $$(".tab").forEach(b => b.addEventListener("click", () => { S.tab = b.dataset.tab; render(); }));
-  $("#addBtn").addEventListener("click", () => openEvent(null, null, S.tab === "month" ? S.selDay : S.tab === "people" ? S.peopleDay : null));
+  $("#addBtn").addEventListener("click", () => S.tab === "dates" ? openEvent(null, null, null, { type: "keydate", repeat: S.settings.groupType === "students" ? "" : "yearly", kind: S.settings.groupType === "students" ? "other" : "birthday" }) : openEvent(null, null, S.tab === "month" ? S.selDay : S.tab === "people" ? S.peopleDay : null));
   $("#todayLbl").textContent = new Date().toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" });
 
   // Preview fallback (only when the shared store isn't available, e.g. opening the file directly)
@@ -1400,8 +1764,8 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
     S.access.set("partner", { role: "family", until: null });
     S.access.set("sam", { role: "visitor", until: addDays(t, 23) });
     S.access.set("jo", { role: "family", until: null });
-    const add = (cal, e) => { const id = uid(), ev = { id, cal, example: true, who: [], notes: "", outcome: "", time: "", owner: "", type: "appointment", yearly: false, done: false, ...e }; if (cal === "family") S.events.set(id, ev); else { if (!S.personal.has(cal)) S.personal.set(cal, new Map()); S.personal.get(cal).set(id, ev); } };
-    S.settings = normalizeSettings({ groupName: "The Example family", profiles: [{ id: "a", name: "Mia", color: 0 }, { id: "b", name: "Leo", color: 1 }, { id: "g", name: "Grandma", color: 2 }] });
+    const add = (cal, e) => { const id = uid(), ev = { id, cal, example: true, who: [], notes: "", outcome: "", time: "", owner: "", type: "appointment", yearly: false, weekly: false, done: false, ...e }; if (cal === "family") S.events.set(id, ev); else { if (!S.personal.has(cal)) S.personal.set(cal, new Map()); S.personal.get(cal).set(id, ev); } };
+    S.settings = normalizeSettings({ groupName: "The Example family", groupType: "kids", profiles: [{ id: "a", name: "Mia", color: 0 }, { id: "b", name: "Leo", color: 1 }, { id: "g", name: "Grandma", color: 2 }] });
     add("family", { title: "Parents' evening", who: ["a"], date: addDays(t, 2), time: "17:30", needsOwner: true, owner: "all" });
     add("family", { title: "Dentist check-ups", who: ["a", "b"], date: addDays(t, 4), time: "10:30", needsOwner: true, owner: "partner", notes: "Both kids, back to back." });
     add("family", { title: "Eye appointment", who: ["g"], date: addDays(t, 6), time: "11:15", needsOwner: true, owner: "me" });
@@ -1420,10 +1784,22 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
       [["feed", 95, { type: "bottle", ml: 120 }, "partner"], ["nappy", 70, { type: "wet" }, "me"], ["feed", 300, { type: "breast", side: "Left", mins: 15 }, "partner"], ["nappy", 260, { type: "both" }, "partner"], ["med", 240, { name: "Calpol", dose: "2.5 ml" }, "me"]]
         .forEach(([kind, m, detail, by], i) => { const at = mAgo(m); S.care.set("c" + i, { id: "c" + i, profile: "a", kind, at: at.toISOString(), date: ymd(at), endAt: "", detail, note: "", by }); });
       const sl = mAgo(50); S.care.set("cs", { id: "cs", profile: "a", kind: "sleep", at: sl.toISOString(), date: ymd(sl), endAt: "", detail: {}, note: "", by: "partner" }); }
+    { const y = parse(t).getFullYear();
+      add("family", { title: "Mia's birthday", who: ["a"], type: "keydate", kind: "birthday", yearly: true, date: `${y - 6}-${addDays(t, 19).slice(5)}` });
+      add("family", { title: "Our anniversary", who: ["me", "partner"], type: "keydate", kind: "anniversary", yearly: true, date: `${y - 9}-${addDays(t, 74).slice(5)}` });
+      add("family", { title: "Grandma's birthday", who: ["g"], type: "keydate", kind: "birthday", yearly: true, date: `${y - 81}-${addDays(t, 140).slice(5)}` });
+      add("family", { title: "Leo's football", who: ["b"], weekly: true, date: addDays(t, -6), time: "17:00", needsOwner: true, owner: "partner" }); }
+    S.trips.set("t1", { id: "t1", dest: "Lisbon", status: "wish", votes: { me: true, partner: true, sam: true }, who: [], notes: "Spring? Look at family-friendly places near Cascais." });
+    S.trips.set("t2", { id: "t2", dest: "Lake District", status: "wish", votes: { partner: true }, who: [], notes: "" });
+    S.trips.set("t3", { id: "t3", dest: "Cornwall", status: "planned", start: addDays(t, 41), end: addDays(t, 47), votes: {}, who: ["me", "partner", "a", "b"], notes: "Cottage booked. Check-in 4pm." });
+    S.trips.set("t4", { id: "t4", dest: "Edinburgh", status: "done", start: addDays(t, -120), end: addDays(t, -116), votes: {}, who: ["me", "partner"], notes: "" });
+    { const mAgo = m => new Date(Date.now() - m * 60000).toISOString();
+      [["partner", "Can someone grab nappies on the way home?", 180], ["me", "On it, added to the food shop list", 175], ["sam", "Landing at 16:40 tomorrow!", 60]].forEach(([by, text, m], i) => S.msgs.set("m" + i, { id: "m" + i, by, text, at: mAgo(m) })); }
     render();
   }
 
   async function start() {
+    if (location.hash === "#setup") S.setup = true;
     render();
     const c = window.claude;
     const db = c?.use ? await c.use("db").catch(() => null) : null;
@@ -1450,6 +1826,7 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
     db.doc("family/settings").onSnapshot(snap => {
       const d = snap.exists ? snap.data() : null;
       S.settings = normalizeSettings(d);
+      if (!snap.metadata.fromCache) S.settingsLoaded = true;
       render();
     }, () => {});
     const itemSubs = new Map();
@@ -1460,6 +1837,11 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
       }, () => {}));
       for (const [id, un] of itemSubs) if (!S.lists.has(id)) { un(); itemSubs.delete(id); S.items.delete(id); }
       render();
+    }, () => {});
+    db.collection("trips").onSnapshot(snap => { S.trips = new Map(snap.docs.map(d => [d.id, { id: d.id, ...d.data() }])); render(); }, () => {});
+    db.collection("messages").orderBy("at", "desc").limit(300).onSnapshot(snap => {
+      const before = S.msgs.size; S.msgs = new Map(snap.docs.map(d => [d.id, { id: d.id, ...d.data() }]));
+      if (S.tab === "chat" && S.msgs.size > before) S.scrollChat = true; render();
     }, () => {});
     db.collection("access").onSnapshot(snap => { S.access = new Map(snap.docs.map(d => [d.id, d.data()])); render(); }, () => {});
     const calSubs = new Map();
