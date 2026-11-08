@@ -14,15 +14,16 @@ Live app: https://claude.ai/artifact/NQsiQw4pRcLMxmWEQnKTk4
 - **Private**: when an entry is only for you, you can mark it private. Others see "Busy".
 - **People**: a "who's around" view, similar to Outlook's scheduling view. Pick a day to see every calendar side by side.
 - **Ongoing or temporary sharing**: the owner sets each person as *Family · ongoing* or *Visitor until a date*. When the date passes, the visitor stops seeing the calendars. The owner can also remove people.
-- **Care log (Premium)**: a locked preview of the planned in-app purchase for feed, nappy, sleep and medicine tracking. Not built yet.
+- **Care log (Premium)**: one-tap logging of feeds (bottle ml, breast side and minutes, solids), nappies (wet, dirty, both), sleep (start, then "Woke up") and medicine (name and dose, with a "last given" warning). For each person you plan for, it shows cards for time since the last feed, nappy and medicine, and how long they've been asleep or awake. It also shows today's totals (feeds, ml, wet and dirty nappies, sleep time) and a timeline for today and yesterday with who logged each entry.
+  - The **owner always has access** (owner preview). Everyone else sees the locked Premium page until the owner taps **Turn on for everyone**. That switch stands in for the future in-app purchase; real payments can't run inside a claude.ai artifact.
 - **Group** settings: the group's name and its profiles.
 
 ## How it's built
 A single-page claude.ai Artifact using the shared database (`db`) and `user` capabilities.
 
-Data: `events` (group calendar), `cals/<personId>/events` (personal calendars), `members/<personId>` (name and sharing choice), `access/<personId>` (family/visitor/removed with end date), and `lists/<listId>` (title and linked event) with `lists/<listId>/items/<itemId>` (text, done, added by, got by), and `family/settings` (group name and profiles; older saves with fixed `kids` names are read as two profiles).
+Data: `events` (group calendar), `cals/<personId>/events` (personal calendars), `members/<personId>` (name and sharing choice), `access/<personId>` (family/visitor/removed with end date), and `carelog/<logId>` (profile, kind, time, date, end time for sleep, details, logged by), `family/premium` (on/off, owner-only), `lists/<listId>` (title and linked event) with `lists/<listId>/items/<itemId>` (text, done, added by, got by), and `family/settings` (group name and profiles; older saves with fixed `kids` names are read as two profiles).
 
-Access rules: anyone with access reads everything. Each person writes only their own `members` and `cals` entries. Only the owner writes `access`.
+Access rules: anyone with access reads everything. Each person writes only their own `members` and `cals` entries. Only the owner writes `access` and `family/premium`.
 
 ## Inviting people
 Share the artifact from the Share menu and invite them by email as an **Editor**. They appear under People the first time they open it.

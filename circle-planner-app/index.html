@@ -234,6 +234,30 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
 .linkbox{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;align-items:center}
 .linkbox select{flex:1 1 200px;width:auto}
 .smallbtn{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 11px;font-size:.8rem;font-weight:600}
+/* care log */
+.cstat{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:14px}
+.cstat .tile b{font-size:1.45rem}
+.cstat .tile small{font-size:.78rem;color:var(--muted);overflow-wrap:anywhere}
+.cstat .tile.live{border-color:color-mix(in srgb,var(--c3) 50%,transparent)}
+.cstat .tile.live b{color:var(--c3)}
+.qa{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:14px}
+.qa button{border:0;border-radius:14px;padding:14px 6px;font-weight:700;font-size:.92rem;background:color-mix(in srgb,var(--k) 16%,var(--surface));color:var(--ink);display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0}
+.qa button i{width:28px;height:28px;border-radius:50%;background:var(--k);display:block;opacity:.85}
+.qa .q-feed{--k:var(--c0)} .qa .q-nappy{--k:var(--fam)} .qa .q-sleep{--k:var(--c3)} .qa .q-med{--k:var(--c2)}
+@media (max-width:380px){.qa{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.totals{display:flex;gap:16px;flex-wrap:wrap;margin-top:16px;font-size:.9rem;color:var(--muted)}
+.totals strong{color:var(--ink);font-variant-numeric:tabular-nums}
+.tline{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.tl{display:grid;grid-template-columns:52px 10px 1fr auto;gap:10px;align-items:center;padding:10px 12px;border-top:1px solid var(--line)}
+.tl:first-child{border-top:0}
+.tl .tm{font-variant-numeric:tabular-nums;font-weight:600;font-size:.88rem}
+.tl .kd2{width:10px;height:10px;border-radius:50%;background:var(--k)}
+.tl .tx{min-width:0;overflow-wrap:anywhere}
+.tl .tx small{display:block;color:var(--muted);font-size:.75rem}
+.tl .x{border:0;background:none;color:var(--muted);font-size:1.2rem;padding:6px 8px;border-radius:8px}
+.k-feed{--k:var(--c0)} .k-nappy{--k:var(--fam)} .k-sleep{--k:var(--c3)} .k-med{--k:var(--c2)}
+.ownerbar{margin-top:12px;padding:12px 14px;border-radius:var(--r);background:color-mix(in srgb,var(--accent) 12%,var(--surface));border:1px solid color-mix(in srgb,var(--accent) 30%,transparent);display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;font-size:.88rem}
+.ownerbar b{color:var(--ink)}
 /* lists */
 .lhead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:16px}
 .lhead h2{font-family:var(--display);font-weight:500;font-size:1.25rem;margin:0}
@@ -280,7 +304,7 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
       <button class="tab" role="tab" data-tab="lists" aria-selected="false">Lists</button>
       <button class="tab" role="tab" data-tab="profiles" aria-selected="false">Profiles</button>
       <button class="tab" role="tab" data-tab="people" aria-selected="false">People</button>
-      <button class="tab" role="tab" data-tab="log" aria-selected="false">Daily log <span class="lock">Premium</span></button>
+      <button class="tab" role="tab" data-tab="log" aria-selected="false">Care log <span class="lock" id="logLock">Premium</span></button>
     </div>
   </div>
   <div id="bannerSlot"></div>
@@ -323,6 +347,14 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
       <span></span>
       <button type="submit" class="btn primary" id="saveBtn">Save</button>
     </footer>
+  </form>
+</dialog>
+
+<dialog id="careDlg" aria-labelledby="careDlgTitle">
+  <form class="dlg" id="careForm" novalidate>
+    <header><h2 id="careDlgTitle">Log</h2><button type="button" class="iconbtn" data-close>Close</button></header>
+    <div class="body" id="careBody"></div>
+    <footer><span></span><button type="submit" class="btn primary" id="careSave">Save</button></footer>
   </form>
 </dialog>
 
@@ -387,6 +419,7 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
   const S = {
     events: new Map(),            // family calendar
     lists: new Map(), items: new Map(), openList: null, newListOpen: false,
+    care: new Map(), premium: false, careKid: null,
     personal: new Map(),          // uid -> Map(id -> ev)
     members: new Map(),           // uid -> {nickname, shareMode, isOwner, joinedAt}
     access: new Map(),            // uid -> {role, until}
@@ -927,7 +960,21 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
     await deleteDoc(`lists/${id}`);
   }
 
-  function renderLog(view) {
+  // ----- Care log (premium) -----
+  const canCare = () => S.isOwner || S.premium;
+  const ago = iso => { const m = Math.max(0, Math.round((Date.now() - new Date(iso)) / 60000)); return m < 1 ? "just now" : m < 60 ? `${m}m ago` : `${Math.floor(m / 60)}h ${m % 60}m ago`; };
+  const dur = ms => { const m = Math.max(0, Math.round(ms / 60000)); return m < 60 ? `${m}m` : `${Math.floor(m / 60)}h ${m % 60}m`; };
+  const hhmm = iso => { const d = new Date(iso); return `${pad(d.getHours())}:${pad(d.getMinutes())}`; };
+  const CARE_LBL = { feed: "Feed", nappy: "Nappy", sleep: "Sleep", med: "Medicine" };
+  function careText(l) {
+    const d = l.detail || {};
+    if (l.kind === "feed") return d.type === "bottle" ? `Bottle${d.ml ? " · " + d.ml + " ml" : ""}` : d.type === "breast" ? `Breast${d.side ? " · " + d.side : ""}${d.mins ? " · " + d.mins + " min" : ""}` : `Solids${d.what ? " · " + d.what : ""}`;
+    if (l.kind === "nappy") return { wet: "Wet nappy", dirty: "Dirty nappy", both: "Wet and dirty nappy" }[d.type] || "Nappy";
+    if (l.kind === "sleep") return l.endAt ? `Slept ${dur(new Date(l.endAt) - new Date(l.at))}` : `Asleep since ${hhmm(l.at)}`;
+    if (l.kind === "med") return `${d.name || "Medicine"}${d.dose ? " · " + d.dose : ""}`;
+    return CARE_LBL[l.kind] || "";
+  }
+  function renderLogTeaser(view) {
     view.append(h("div", { class: "premium" },
       h("div", { class: "mock", "aria-hidden": "true" },
         h("div", {}, h("b", { text: "2h 10m" }), `${profiles()[0]?.name || "Baby"}: since last feed`),
@@ -938,11 +985,144 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
         h("h2", { text: "Care log" }), h("span", { class: "lock", text: "Premium · in-app purchase" }),
         h("ul", {},
           h("li", { text: "One-tap feed, nappy and sleep logging for babies" }),
-          h("li", { text: "Medicine doses and reminders for anyone in the group" }),
+          h("li", { text: "Medicine doses for anyone in the group" }),
           h("li", { text: "Daily totals to share with a health visitor, doctor or carer" }),
           h("li", { text: "Everyone logs from their own phone, in real time" })),
-        h("p", { class: "ev-note", style: "margin-top:12px", text: "Not built yet. This is a preview of the planned premium feature." }))));
+        h("p", { class: "ev-note", style: "margin-top:12px", text: "Ask the planner's owner to turn on Premium for the group." }))));
   }
+  function renderLog(view) {
+    if (!canCare()) return renderLogTeaser(view);
+    const err = h("div", { class: "err", role: "alert" });
+    if (S.isOwner) view.append(h("div", { class: "ownerbar" },
+      h("span", {}, h("b", { text: S.premium ? "Premium is on for everyone. " : "Owner preview. " }),
+        S.premium ? "Everyone in the group can use the care log." : "Only you can see this. Others see the locked Premium page."),
+      h("button", { type: "button", class: "btn", text: S.premium ? "Turn off for others" : "Turn on for everyone", onclick: async () => {
+        try { await writeDoc("family/premium", { enabled: !S.premium, changedAt: new Date().toISOString() }); toast(S.premium ? "Premium on for everyone" : "Premium off for others"); }
+        catch (er) { handleWriteError(er, err); }
+      } })), err);
+    const list = profiles();
+    if (!list.length) {
+      view.append(h("div", { class: "empty" }, h("h3", { text: "Who are you logging for?" }),
+        h("p", { text: "Add the baby or person you care for under Group, then log feeds, nappies, sleep and medicine here." }),
+        S.canWrite ? h("button", { class: "btn primary", type: "button", text: "Add someone", onclick: openSettings }) : null));
+      return;
+    }
+    if (!profileOf(S.careKid)) S.careKid = list[0].id;
+    const k = S.careKid, t = todayStr();
+    view.append(h("div", { class: "seg", role: "group", "aria-label": "Logging for", style: "flex-wrap:wrap" },
+      list.map(p => h("button", { type: "button", kcolor: profileColor(p.id), "aria-pressed": String(p.id === k), onclick: () => { S.careKid = p.id; render(); } }, h("span", { class: "dot" }), p.name))));
+    const logs = [...S.care.values()].filter(l => l.profile === k).sort((a, b) => b.at.localeCompare(a.at));
+    const last = kind => logs.find(l => l.kind === kind);
+    const lf = last("feed"), ln = last("nappy"), lm = last("med");
+    const openSleep = logs.find(l => l.kind === "sleep" && !l.endAt);
+    const lastSleep = logs.find(l => l.kind === "sleep" && l.endAt);
+    view.append(h("div", { class: "cstat" },
+      h("div", { class: "tile" }, h("span", { text: "Last feed" }), h("b", { text: lf ? ago(lf.at).replace(" ago", "") : "None" }), h("small", { text: lf ? `${careText(lf)} at ${hhmm(lf.at)}` : "Nothing logged yet" })),
+      h("div", { class: "tile" }, h("span", { text: "Last nappy" }), h("b", { text: ln ? ago(ln.at).replace(" ago", "") : "None" }), h("small", { text: ln ? `${careText(ln)} at ${hhmm(ln.at)}` : "Nothing logged yet" })),
+      openSleep
+        ? h("div", { class: "tile live" }, h("span", { text: "Asleep" }), h("b", { text: dur(Date.now() - new Date(openSleep.at)) }), h("small", { text: `Since ${hhmm(openSleep.at)}` }))
+        : h("div", { class: "tile" }, h("span", { text: "Awake" }), h("b", { text: lastSleep ? ago(lastSleep.endAt).replace(" ago", "") : "–" }), h("small", { text: lastSleep ? `Woke at ${hhmm(lastSleep.endAt)}` : "No sleep logged yet" })),
+      h("div", { class: "tile" }, h("span", { text: "Last medicine" }), h("b", { text: lm ? ago(lm.at).replace(" ago", "") : "None" }), h("small", { text: lm ? `${careText(lm)} at ${hhmm(lm.at)}` : "Nothing logged yet" }))));
+    if (S.canWrite) view.append(h("div", { class: "qa" },
+      h("button", { type: "button", class: "q-feed", onclick: () => openCare("feed") }, h("i"), "Feed"),
+      h("button", { type: "button", class: "q-nappy", onclick: () => openCare("nappy") }, h("i"), "Nappy"),
+      h("button", { type: "button", class: "q-sleep", onclick: () => openCare("sleep", openSleep) }, h("i"), openSleep ? "Woke up" : "Sleep"),
+      h("button", { type: "button", class: "q-med", onclick: () => openCare("med") }, h("i"), "Medicine")));
+    // today's totals
+    const dayStart = parse(t).getTime(), now = Date.now();
+    const today = logs.filter(l => l.date === t);
+    const feeds = today.filter(l => l.kind === "feed"), ml = feeds.reduce((a, l) => a + (Number(l.detail?.ml) || 0), 0);
+    const naps = today.filter(l => l.kind === "nappy");
+    const sleepMs = logs.filter(l => l.kind === "sleep").reduce((a, l) => { const s0 = Math.max(new Date(l.at).getTime(), dayStart), e0 = Math.min(l.endAt ? new Date(l.endAt).getTime() : now, now); return a + Math.max(0, e0 - s0); }, 0);
+    view.append(h("div", { class: "totals" },
+      h("span", {}, "Today: ", h("strong", { text: String(feeds.length) }), ` feed${feeds.length === 1 ? "" : "s"}${ml ? ` (${ml} ml)` : ""}`),
+      h("span", {}, h("strong", { text: String(naps.length) }), ` nappies (${naps.filter(n => n.detail?.type !== "dirty").length} wet, ${naps.filter(n => n.detail?.type !== "wet").length} dirty)`),
+      h("span", {}, h("strong", { text: dur(sleepMs) }), " sleep")));
+    // timeline (today + yesterday)
+    const sec = (label, items) => {
+      if (!items.length) return null;
+      const box = h("div", { class: "tline" });
+      items.forEach(l => box.append(h("div", { class: `tl k-${l.kind}` },
+        h("span", { class: "tm", text: hhmm(l.at) }), h("span", { class: "kd2" }),
+        h("span", { class: "tx" }, careText(l), h("small", { text: [l.note, l.by ? `by ${kidName(l.by)}` : ""].filter(Boolean).join(" · ") })),
+        S.canWrite ? h("button", { type: "button", class: "x", "aria-label": "Delete entry", title: "Delete", onclick: async () => { try { await deleteDoc(`carelog/${l.id}`); toast("Deleted"); } catch (er) { handleWriteError(er, err); } } }, "×") : h("span"))));
+      return h("div", {}, h("div", { class: "section-title", text: label }), box);
+    };
+    const yest = addDays(t, -1);
+    const todayList = sec("Today", today), yList = sec("Yesterday", logs.filter(l => l.date === yest));
+    if (!todayList && !yList) view.append(h("p", { class: "hint", style: "margin-top:18px", text: "Nothing logged yet. Tap Feed, Nappy, Sleep or Medicine above. Everyone sharing the care log sees it straight away." }));
+    if (todayList) view.append(todayList);
+    if (yList) view.append(yList);
+  }
+
+  // care dialog
+  const careDlg = $("#careDlg");
+  let careCtx = null;
+  function openCare(kind, openSleep) {
+    careCtx = { kind, openSleep };
+    const body = $("#careBody"); body.replaceChildren();
+    const now = new Date();
+    const timeIn = h("input", { type: "time", id: "cTime" }); timeIn.value = `${pad(now.getHours())}:${pad(now.getMinutes())}`;
+    const radio = (name, opts, val) => h("div", { class: "pick" }, opts.map(([v, l]) => h("label", {}, h("input", { type: "radio", name, value: v, checked: v === val }), l)));
+    const field = (label, el) => h("label", { class: "field" }, h("span", { text: label }), el);
+    const who = profileOf(S.careKid)?.name || "";
+    if (kind === "feed") {
+      $("#careDlgTitle").textContent = `Feed · ${who}`;
+      const ml = h("input", { type: "number", id: "cMl", min: "0", max: "500", step: "5", inputmode: "numeric", placeholder: "e.g. 120" });
+      const side = radio("cSide", [["Left", "Left"], ["Right", "Right"], ["Both", "Both"]], "Left");
+      const mins = h("input", { type: "number", id: "cMins", min: "0", max: "120", inputmode: "numeric", placeholder: "e.g. 15" });
+      const what = h("input", { type: "text", id: "cWhat", maxlength: "80", placeholder: "e.g. Banana and porridge" });
+      const bottleBox = h("div", { class: "field" }, field("Amount (ml)", ml));
+      const breastBox = h("div", { class: "field", hidden: true }, h("span", { class: "legend", text: "Side" }), side, field("Minutes", mins));
+      const solidBox = h("div", { class: "field", hidden: true }, field("What", what));
+      const type = radio("cType", [["bottle", "Bottle"], ["breast", "Breast"], ["solids", "Solids"]], "bottle");
+      type.addEventListener("change", () => { const v = $('input[name="cType"]:checked').value; bottleBox.hidden = v !== "bottle"; breastBox.hidden = v !== "breast"; solidBox.hidden = v !== "solids"; });
+      body.append(h("div", { class: "field" }, h("span", { class: "legend", text: "Type" }), type), bottleBox, breastBox, solidBox);
+    } else if (kind === "nappy") {
+      $("#careDlgTitle").textContent = `Nappy · ${who}`;
+      body.append(h("div", { class: "field" }, h("span", { class: "legend", text: "What was it" }), radio("cNappy", [["wet", "Wet"], ["dirty", "Dirty"], ["both", "Both"]], "wet")));
+    } else if (kind === "sleep") {
+      $("#careDlgTitle").textContent = openSleep ? `Woke up · ${who}` : `Sleep · ${who}`;
+      body.append(h("p", { class: "hint", style: "margin:0", text: openSleep ? `Asleep since ${hhmm(openSleep.at)}. Set the time they woke up.` : "Set when they fell asleep. Tap \"Woke up\" later to finish it." }));
+    } else if (kind === "med") {
+      $("#careDlgTitle").textContent = `Medicine · ${who}`;
+      const lastMed = [...S.care.values()].filter(l => l.profile === S.careKid && l.kind === "med").sort((a, b) => b.at.localeCompare(a.at))[0];
+      const name = h("input", { type: "text", id: "cMedName", maxlength: "60", placeholder: "e.g. Calpol" }); name.value = lastMed?.detail?.name || "";
+      const dose = h("input", { type: "text", id: "cDose", maxlength: "40", placeholder: "e.g. 2.5 ml" }); dose.value = lastMed?.detail?.dose || "";
+      body.append(h("div", { class: "row" }, field("Medicine", name), field("Dose", dose)));
+      if (lastMed) body.append(h("p", { class: "hint warn", style: "margin:0", text: `Last given ${ago(lastMed.at)} (${careText(lastMed)}). Check the dosing guidance before giving more.` }));
+    }
+    body.append(field(kind === "sleep" ? (openSleep ? "Woke up at" : "Fell asleep at") : "Time", timeIn));
+    body.append(field("Note (optional)", h("input", { type: "text", id: "cNote", maxlength: "140" })));
+    body.append(h("div", { class: "err", id: "cErr", role: "alert" }));
+    careDlg.showModal();
+  }
+  $("#careForm").addEventListener("submit", async e => {
+    e.preventDefault();
+    const { kind, openSleep } = careCtx || {};
+    const tv = $("#cTime").value; if (!tv) { $("#cErr").textContent = "Set a time."; return; }
+    const [hh, mm] = tv.split(":").map(Number);
+    const at = new Date(); at.setHours(hh, mm, 0, 0);
+    if (at.getTime() > Date.now() + 5 * 60000) at.setDate(at.getDate() - 1); // a later time means yesterday evening
+    const note = $("#cNote").value.trim();
+    try {
+      if (kind === "sleep" && openSleep) {
+        if (at <= new Date(openSleep.at)) { $("#cErr").textContent = "Wake-up time must be after they fell asleep."; return; }
+        await writeDoc(`carelog/${openSleep.id}`, { ...docBody(openSleep), endAt: at.toISOString(), note: [openSleep.note, note].filter(Boolean).join(" · ") });
+      } else {
+        let detail = {};
+        if (kind === "feed") {
+          const type = $('input[name="cType"]:checked').value;
+          detail = type === "bottle" ? { type, ml: Number($("#cMl").value) || 0 } : type === "breast" ? { type, side: $('input[name="cSide"]:checked')?.value || "", mins: Number($("#cMins").value) || 0 } : { type, what: $("#cWhat").value.trim() };
+        } else if (kind === "nappy") detail = { type: $('input[name="cNappy"]:checked').value };
+        else if (kind === "med") { const name = $("#cMedName").value.trim(); if (!name) { $("#cErr").textContent = "Add the medicine name."; return; } detail = { name, dose: $("#cDose").value.trim() }; }
+        await writeDoc(`carelog/${uid()}`, { profile: S.careKid, kind, at: at.toISOString(), date: ymd(at), endAt: "", detail, note, by: S.me || "" });
+      }
+      careDlg.close(); toast(kind === "sleep" ? (openSleep ? "Woke up logged" : "Sleep started") : `${CARE_LBL[kind]} logged`);
+    } catch (er) { handleWriteError(er, $("#cErr")); }
+  });
+  // keep "x minutes ago" fresh while the care log or home is open
+  setInterval(() => { if (S.tab === "log" && !document.querySelector("dialog[open]")) render(); }, 60000);
 
   function emptyState() {
     return h("div", { class: "empty" },
@@ -972,6 +1152,7 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
   function render() {
     $$(".tab").forEach(b => b.setAttribute("aria-selected", String(b.dataset.tab === S.tab)));
     $("#groupTitle").textContent = S.settings.groupName || "Circle Planner";
+    $("#logLock").hidden = canCare() && S.premium;
     const act = document.activeElement, keep = act && act.id && /^(INPUT|TEXTAREA)$/.test(act.tagName) && !act.closest("dialog") ? { id: act.id, v: act.value, a: act.selectionStart, b: act.selectionEnd } : null;
     const view = $("#view"); view.replaceChildren();
     if (locked()) {
@@ -997,7 +1178,9 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
     const [col, id] = [path.split("/").slice(0, -1).join("/"), path.split("/").pop()];
     if (col === "members") S.members.set(id, body);
     else if (col === "access") S.access.set(id, body);
+    else if (col === "family" && id === "premium") S.premium = !!body.enabled;
     else if (col === "family") S.settings = normalizeSettings(body);
+    else if (col === "carelog") S.care.set(id, { id, ...body });
     else if (col === "events") S.events.set(id, { id, cal: "family", ...body });
     else if (col === "lists") S.lists.set(id, { id, ...body });
     else if (/^lists\/[^/]+\/items$/.test(col)) { const lid = col.split("/")[1]; if (!S.items.has(lid)) S.items.set(lid, new Map()); S.items.get(lid).set(id, { id, ...body }); }
@@ -1008,6 +1191,7 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
     if (S.db) return S.db.doc(path).delete();
     const parts = path.split("/"), id = parts.pop(), col = parts.join("/");
     if (col === "events") S.events.delete(id);
+    else if (col === "carelog") S.care.delete(id);
     else if (col === "lists") { S.lists.delete(id); S.items.delete(id); }
     else if (/^lists\/[^/]+\/items$/.test(col)) S.items.get(parts[1])?.delete(id);
     else if (col.startsWith("cals/")) S.personal.get(parts[1])?.delete(id);
@@ -1232,6 +1416,10 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
       S.lists.set(lid, { id: lid, title: "Food shop", eventId: eid, example: true });
       S.items.set(lid, new Map([["Milk x2", "me", false], ["Nappies size 4", "partner", false], ["Bananas", "sam", true], ["Bread", "me", false], ["Birthday candles", "jo", false]].map(([text, by, done], i) => { const id = "i" + i; return [id, { id, text, addedBy: by, done, doneBy: done ? "partner" : "", addedAt: "2026-01-0" + (i + 1) }]; }))); }
     add("family", { title: "Doctor", who: ["jo"], date: addDays(t, 2), time: "08:00", private: true, createdBy: "jo" });
+    { const mAgo = m => new Date(Date.now() - m * 60000);
+      [["feed", 95, { type: "bottle", ml: 120 }, "partner"], ["nappy", 70, { type: "wet" }, "me"], ["feed", 300, { type: "breast", side: "Left", mins: 15 }, "partner"], ["nappy", 260, { type: "both" }, "partner"], ["med", 240, { name: "Calpol", dose: "2.5 ml" }, "me"]]
+        .forEach(([kind, m, detail, by], i) => { const at = mAgo(m); S.care.set("c" + i, { id: "c" + i, profile: "a", kind, at: at.toISOString(), date: ymd(at), endAt: "", detail, note: "", by }); });
+      const sl = mAgo(50); S.care.set("cs", { id: "cs", profile: "a", kind: "sleep", at: sl.toISOString(), date: ymd(sl), endAt: "", detail: {}, note: "", by: "partner" }); }
     render();
   }
 
@@ -1255,6 +1443,10 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
       if (!snap.metadata.fromCache) { loaded = true; clearTimeout(timer); setStatus("Shared · up to date", "live"); }
       render();
     }, () => { clearTimeout(timer); setStatus("Not syncing. Reopen to retry", "warn"); });
+    db.doc("family/premium").onSnapshot(snap => { S.premium = !!(snap.exists && snap.data().enabled); render(); }, () => {});
+    db.collection("carelog").where("date", ">=", addDays(todayStr(), -2)).onSnapshot(snap => {
+      S.care = new Map(snap.docs.map(d => [d.id, { id: d.id, ...d.data() }])); render();
+    }, () => {});
     db.doc("family/settings").onSnapshot(snap => {
       const d = snap.exists ? snap.data() : null;
       S.settings = normalizeSettings(d);
