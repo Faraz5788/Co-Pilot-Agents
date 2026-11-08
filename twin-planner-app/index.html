@@ -1,0 +1,629 @@
+<title>Twin Planner</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: one-column phone-first app shell (max 760px) — sticky header + tabs, content panel, floating Add button */
+:root{
+  --bg:#F2F5F7; --surface:#FFFFFF; --sunk:#E6ECF1; --ink:#1A2836; --muted:#5A6B7A; --line:#D3DCE4;
+  --accent:#1F4E79; --accent-ink:#FFFFFF;
+  --kid-a:#23867C; --kid-b:#8656BF; --fam:#B97C12; --warn:#B4532A;
+  --display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --body:"Figtree","Segoe UI",system-ui,-apple-system,sans-serif;
+  --r:12px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0E1620; --surface:#16212C; --sunk:#1E2B38; --ink:#E5ECF2; --muted:#93A4B3; --line:#2A3A49;
+  --accent:#86B6E6; --accent-ink:#0E1620; --kid-a:#4FC2B6; --kid-b:#B590EA; --fam:#E4AE4C; --warn:#EC8B62; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0E1620; --surface:#16212C; --sunk:#1E2B38; --ink:#E5ECF2; --muted:#93A4B3; --line:#2A3A49;
+  --accent:#86B6E6; --accent-ink:#0E1620; --kid-a:#4FC2B6; --kid-b:#B590EA; --fam:#E4AE4C; --warn:#EC8B62; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.45}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.app{max-width:760px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 110px}
+
+/* header */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:14px 0}
+.brand{display:flex;align-items:center;gap:12px;justify-content:space-between}
+.brand h1{font-family:var(--display);font-weight:700;font-size:1.55rem;letter-spacing:-.01em;margin:0;line-height:1.1}
+.brand h1 .pair{display:inline-flex;gap:3px;margin-right:8px;vertical-align:middle}
+.brand h1 .pair i{width:10px;height:10px;border-radius:50%;display:block}
+.sub{color:var(--muted);font-size:.85rem;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.status{display:inline-flex;align-items:center;gap:6px}
+.status::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--muted)}
+.status[data-s="live"]::before{background:var(--kid-a)}
+.status[data-s="warn"]::before{background:var(--warn)}
+.iconbtn{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:7px 12px;font-size:.85rem;font-weight:600}
+.tabs{display:flex;gap:4px;margin-top:12px;border-bottom:1px solid var(--line);overflow-x:auto;scrollbar-width:none}
+.tab{border:0;background:none;padding:10px 12px;font-weight:600;color:var(--muted);border-bottom:2.5px solid transparent;white-space:nowrap;display:inline-flex;gap:6px;align-items:center}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+.lock{font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;background:var(--sunk);color:var(--muted);padding:2px 6px;border-radius:999px}
+
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 4px}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 12px;font-size:.85rem;font-weight:600;display:inline-flex;gap:7px;align-items:center}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.dot{width:9px;height:9px;border-radius:50%;flex:none}
+.k-a{--k:var(--kid-a)} .k-b{--k:var(--kid-b)} .k-fam{--k:var(--fam)}
+.dot{background:var(--k,var(--muted))}
+
+.banner{margin-top:12px;padding:10px 12px;border-radius:var(--r);background:var(--sunk);font-size:.88rem;color:var(--muted)}
+.banner b{color:var(--ink)}
+
+/* summary */
+.summary{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0 6px;font-size:.9rem;color:var(--muted)}
+.summary strong{color:var(--ink);font-variant-numeric:tabular-nums}
+.summary .warnpill{color:var(--warn);font-weight:600}
+
+/* agenda */
+.day{margin-top:18px}
+.dayhead{display:flex;align-items:baseline;gap:10px;margin:0 0 8px}
+.dayhead h3{font-family:var(--display);font-weight:500;font-size:1.05rem;margin:0}
+.dayhead span{color:var(--muted);font-size:.82rem}
+.list{display:flex;flex-direction:column;gap:8px}
+.ev{display:grid;grid-template-columns:58px 1fr;gap:10px;text-align:left;width:100%;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:11px 12px;position:relative;overflow:hidden}
+.ev::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--stripe,var(--line))}
+.ev-time{font-variant-numeric:tabular-nums;font-weight:600;font-size:.9rem;padding-top:1px}
+.ev-time small{display:block;font-weight:500;color:var(--muted);font-size:.75rem}
+.ev-main{min-width:0;display:flex;flex-direction:column;gap:5px}
+.ev-title{font-weight:600;overflow-wrap:anywhere}
+.ev-meta{display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:.78rem;color:var(--muted)}
+.who{display:inline-flex;align-items:center;gap:5px;padding:2px 8px 2px 6px;border-radius:999px;background:color-mix(in srgb,var(--k) 14%,transparent);color:var(--ink);font-weight:600}
+.tag{padding:2px 8px;border-radius:999px;border:1px solid var(--line)}
+.tag.warn{border-color:color-mix(in srgb,var(--warn) 50%,transparent);color:var(--warn);font-weight:600}
+.tag.done{background:var(--sunk)}
+.ev-note{font-size:.84rem;color:var(--muted);overflow-wrap:anywhere}
+.ev-note b{color:var(--ink);font-weight:600}
+.ex{font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+
+.empty{margin-top:28px;padding:26px 18px;text-align:center;border:1.5px dashed var(--line);border-radius:var(--r);color:var(--muted)}
+.empty h3{font-family:var(--display);font-weight:500;color:var(--ink);margin:0 0 6px}
+
+/* month */
+.mhead{display:flex;align-items:center;justify-content:space-between;margin:16px 0 10px;gap:8px}
+.mhead h2{font-family:var(--display);font-weight:500;font-size:1.25rem;margin:0}
+.mnav{display:flex;gap:6px}
+.grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.dow{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);text-align:center;padding-bottom:4px}
+.cell{min-height:64px;background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:5px;text-align:left;display:flex;flex-direction:column;gap:3px;min-width:0}
+.cell.out{background:transparent;opacity:.55}
+.cell .n{font-size:.8rem;font-weight:600;font-variant-numeric:tabular-nums}
+.cell.today .n{background:var(--accent);color:var(--accent-ink);border-radius:999px;width:22px;height:22px;display:grid;place-items:center}
+.cell.sel{outline:2px solid var(--ink);outline-offset:-1px}
+.cell .marks{display:flex;flex-wrap:wrap;gap:3px;min-width:0;width:100%}
+.cell .lbl{max-width:100%}
+.cell .lbl{display:none}
+@media (min-width:600px){
+  .cell{min-height:88px}
+  .cell .marks{flex-direction:column;gap:2px}
+  .cell .lbl{display:block;font-size:.7rem;line-height:1.25;padding:1px 5px;border-radius:4px;background:color-mix(in srgb,var(--k) 16%,transparent);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .cell .marks .dot{display:none}
+  .cell .more{font-size:.68rem;color:var(--muted)}
+}
+.cell .more{font-size:.62rem;color:var(--muted)}
+
+/* twins */
+.seg{display:inline-flex;background:var(--sunk);border-radius:999px;padding:3px;margin-top:16px}
+.seg button{border:0;background:none;border-radius:999px;padding:7px 16px;font-weight:600;display:inline-flex;gap:7px;align-items:center;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgb(0 0 0 / .12)}
+.profile{margin-top:14px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center}
+.avatar{width:56px;height:56px;border-radius:50%;background:color-mix(in srgb,var(--k) 20%,transparent);color:var(--k);display:grid;place-items:center;font-family:var(--display);font-weight:700;font-size:1.4rem}
+.profile h2{font-family:var(--display);font-weight:700;margin:0;font-size:1.35rem}
+.profile p{margin:2px 0 0;color:var(--muted);font-size:.88rem}
+.stats{grid-column:1 / -1;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;border-top:1px solid var(--line);padding-top:12px}
+.stats div{display:flex;flex-direction:column}
+.stats b{font-family:var(--display);font-size:1.3rem;font-variant-numeric:tabular-nums}
+.stats span{font-size:.75rem;color:var(--muted)}
+.section-title{font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:22px 0 8px;font-weight:700}
+
+/* premium */
+.premium{margin-top:18px;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--surface)}
+.premium .mock{padding:16px;filter:blur(2.5px);opacity:.6;pointer-events:none;user-select:none;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.premium .mock div{background:var(--sunk);border-radius:10px;padding:12px;font-size:.85rem}
+.premium .mock b{display:block;font-family:var(--display);font-size:1.2rem}
+.premium .pitch{padding:18px;border-top:1px solid var(--line)}
+.premium h2{font-family:var(--display);font-weight:700;margin:0 0 4px;font-size:1.3rem}
+.premium ul{margin:10px 0 0;padding-left:18px;color:var(--muted)}
+.premium li{margin:3px 0}
+
+/* add button */
+.fab{position:fixed;right:max(18px,calc(env(safe-area-inset-right,0px) + 18px));bottom:calc(env(safe-area-inset-bottom,0px) + 20px);z-index:6;background:var(--accent);color:var(--accent-ink);border:0;border-radius:999px;padding:14px 20px;font-weight:700;font-size:1rem;box-shadow:0 6px 18px rgb(0 0 0 / .22);display:inline-flex;gap:8px;align-items:center}
+.fab svg{width:18px;height:18px}
+
+/* dialogs */
+dialog{border:0;padding:0;border-radius:16px;background:var(--surface);color:var(--ink);width:min(560px,calc(100vw - 24px));max-height:calc(100dvh - 24px)}
+dialog::backdrop{background:rgb(10 18 28 / .45)}
+.dlg{display:flex;flex-direction:column;max-height:calc(100dvh - 24px)}
+.dlg header{display:flex;justify-content:space-between;align-items:center;padding:16px 18px 8px}
+.dlg header h2{font-family:var(--display);font-weight:700;font-size:1.25rem;margin:0}
+.dlg .body{padding:6px 18px 12px;overflow-y:auto;display:flex;flex-direction:column;gap:14px}
+.dlg footer{display:flex;gap:8px;justify-content:space-between;padding:12px 18px 16px;border-top:1px solid var(--line);flex-wrap:wrap}
+.field{display:flex;flex-direction:column;gap:6px}
+.field > span,.legend{font-size:.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+input[type=text],input[type=date],input[type=time],select,textarea{width:100%;border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:10px 11px;min-width:0}
+textarea{resize:vertical;min-height:70px}
+.pick{display:flex;gap:8px;flex-wrap:wrap}
+.pick label{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:999px;padding:7px 12px;font-weight:600;font-size:.88rem;cursor:pointer;background:var(--bg)}
+.pick input{position:absolute;opacity:0;pointer-events:none}
+.pick label:has(input:checked){background:color-mix(in srgb,var(--k,var(--accent)) 16%,var(--surface));border-color:var(--k,var(--accent))}
+.pick label:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:2px}
+.check{display:flex;gap:8px;align-items:center;font-weight:500}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:10px 16px;font-weight:700}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.danger{color:var(--warn);border-color:color-mix(in srgb,var(--warn) 45%,transparent)}
+.btn.danger.armed{background:var(--warn);color:var(--surface)}
+.err{color:var(--warn);font-size:.85rem;min-height:1em}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 84px);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:999px;font-weight:600;font-size:.88rem;z-index:20}
+@media (prefers-reduced-motion:no-preference){.ev,.cell,.chip,.tab{transition:background-color .15s,border-color .15s}}
+</style>
+
+<div class="app">
+  <div class="top">
+    <div class="brand">
+      <div>
+        <h1><span class="pair" aria-hidden="true"><i style="background:var(--kid-a)"></i><i style="background:var(--kid-b)"></i></span>Twin Planner</h1>
+        <div class="sub"><span id="todayLbl"></span><span aria-hidden="true">·</span><span class="status" id="status" data-s="">Connecting…</span></div>
+      </div>
+      <button class="iconbtn" id="settingsBtn" type="button">Names</button>
+    </div>
+    <div class="tabs" role="tablist" aria-label="Views">
+      <button class="tab" role="tab" data-tab="upcoming" aria-selected="true">Upcoming</button>
+      <button class="tab" role="tab" data-tab="month" aria-selected="false">Month</button>
+      <button class="tab" role="tab" data-tab="twins" aria-selected="false">Twins</button>
+      <button class="tab" role="tab" data-tab="log" aria-selected="false">Daily log <span class="lock">Premium</span></button>
+    </div>
+  </div>
+  <div id="bannerSlot"></div>
+  <div id="filterSlot"></div>
+  <main id="view"></main>
+</div>
+
+<button class="fab" id="addBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Add</button>
+
+<dialog id="evDlg" aria-labelledby="evDlgTitle">
+  <form class="dlg" id="evForm" novalidate>
+    <header><h2 id="evDlgTitle">New entry</h2><button type="button" class="iconbtn" data-close>Close</button></header>
+    <div class="body">
+      <label class="field"><span>What</span><input type="text" id="fTitle" maxlength="120" placeholder="e.g. 16-week vaccinations" autocomplete="off"></label>
+      <div class="field"><span class="legend">Who is it for</span><div class="pick" id="fWho"></div></div>
+      <div class="field"><span class="legend">Type</span>
+        <div class="pick" id="fType">
+          <label><input type="radio" name="type" value="appointment" checked>Appointment</label>
+          <label><input type="radio" name="type" value="keydate">Key date</label>
+          <label><input type="radio" name="type" value="reminder">Reminder</label>
+        </div>
+      </div>
+      <div class="row">
+        <label class="field"><span>Date</span><input type="date" id="fDate"></label>
+        <label class="field"><span>Time (optional)</span><input type="time" id="fTime"></label>
+      </div>
+      <label class="check"><input type="checkbox" id="fYearly"> Repeats every year (birthdays, anniversaries)</label>
+      <div class="field"><span class="legend">Who's handling it</span><div class="pick" id="fOwner"></div></div>
+      <label class="field"><span>Notes</span><textarea id="fNotes" maxlength="2000" placeholder="Address, what to bring, questions to ask"></textarea></label>
+      <label class="field" id="outcomeField"><span>What happened (after)</span><textarea id="fOutcome" maxlength="2000" placeholder="Weight, what the doctor said, follow-ups"></textarea></label>
+      <label class="check" id="doneField"><input type="checkbox" id="fDone"> Done</label>
+      <div class="err" id="fErr" role="alert"></div>
+    </div>
+    <footer>
+      <button type="button" class="btn danger" id="delBtn" hidden>Delete</button>
+      <span></span>
+      <button type="submit" class="btn primary" id="saveBtn">Save</button>
+    </footer>
+  </form>
+</dialog>
+
+<dialog id="setDlg" aria-labelledby="setDlgTitle">
+  <form class="dlg" id="setForm" novalidate>
+    <header><h2 id="setDlgTitle">Family names</h2><button type="button" class="iconbtn" data-close>Close</button></header>
+    <div class="body">
+      <div class="row">
+        <label class="field"><span>First twin</span><input type="text" id="sKidA" maxlength="30"></label>
+        <label class="field"><span>Second twin</span><input type="text" id="sKidB" maxlength="30"></label>
+      </div>
+      <div class="row">
+        <label class="field"><span>Parent 1</span><input type="text" id="sP1" maxlength="30"></label>
+        <label class="field"><span>Parent 2</span><input type="text" id="sP2" maxlength="30"></label>
+      </div>
+      <div id="exampleBox" hidden>
+        <p class="ev-note">Some entries are examples to show how the planner works.</p>
+        <button type="button" class="btn danger" id="clearEx">Remove example entries</button>
+      </div>
+      <div class="err" id="sErr" role="alert"></div>
+    </div>
+    <footer><span></span><button type="submit" class="btn primary">Save names</button></footer>
+  </form>
+</dialog>
+
+<script>
+(() => {
+  // ---------- helpers ----------
+  const $ = (s, el = document) => el.querySelector(s);
+  const pad = n => String(n).padStart(2, "0");
+  const ymd = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  const parse = s => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); };
+  const addDays = (s, n) => { const d = parse(s); d.setDate(d.getDate() + n); return ymd(d); };
+  const todayStr = () => ymd(new Date());
+  const fmtDay = (s, opts = { weekday: "short", day: "numeric", month: "short" }) => parse(s).toLocaleDateString("en-GB", opts);
+  const h = (tag, attrs = {}, ...kids) => {
+    const el = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs)) {
+      if (v == null || v === false) continue;
+      if (k === "class") el.className = v; else if (k === "text") el.textContent = v;
+      else if (k.startsWith("on")) el.addEventListener(k.slice(2), v); else el.setAttribute(k, v === true ? "" : v);
+    }
+    for (const c of kids.flat()) if (c != null && c !== false) el.append(c.nodeType ? c : document.createTextNode(c));
+    return el;
+  };
+  const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+
+  // ---------- state ----------
+  const DEFAULT_SETTINGS = { kids: { a: "Twin A", b: "Twin B" }, parents: { p1: "Dad", p2: "Mum" } };
+  const S = {
+    events: new Map(), settings: structuredClone(DEFAULT_SETTINGS),
+    tab: "upcoming", filter: "all", month: null, selDay: todayStr(), kidView: "a",
+    mode: "connecting", canWrite: true, db: null, editing: null
+  };
+  { const t = parse(todayStr()); S.month = new Date(t.getFullYear(), t.getMonth(), 1); }
+
+  const kidName = k => k === "fam" ? "Family" : (S.settings.kids?.[k] || (k === "a" ? "Twin A" : "Twin B"));
+  const ownerName = o => o === "both" ? "Both of us" : (S.settings.parents?.[o] || "");
+  const TYPE_LBL = { appointment: "Appointment", keydate: "Key date", reminder: "Reminder" };
+
+  // expand yearly events to occurrences in [from, to]
+  function occurrences(from, to) {
+    const out = [];
+    const y0 = parse(from).getFullYear(), y1 = parse(to).getFullYear();
+    for (const ev of S.events.values()) {
+      if (!ev.date) continue;
+      if (S.filter !== "all" && !(ev.who || []).includes(S.filter)) continue;
+      if (ev.yearly) {
+        for (let y = y0; y <= y1; y++) {
+          let md = ev.date.slice(5); if (md === "02-29" && !(y % 4 === 0 && (y % 100 !== 0 || y % 400 === 0))) md = "02-28";
+          const d = `${y}-${md}`;
+          if (d >= ev.date && d >= from && d <= to) out.push({ ev, date: d });
+        }
+      } else if (ev.date >= from && ev.date <= to) out.push({ ev, date: ev.date });
+    }
+    return out.sort((a, b) => a.date.localeCompare(b.date) || (a.ev.time || "").localeCompare(b.ev.time || "") || a.ev.title.localeCompare(b.ev.title));
+  }
+  const stripeFor = who => {
+    const w = (who || []).filter(Boolean);
+    if (w.length === 1) return `var(--${w[0] === "fam" ? "fam" : "kid-" + w[0]})`;
+    if (w.includes("a") && w.includes("b")) return "linear-gradient(var(--kid-a) 50%, var(--kid-b) 50%)";
+    return "var(--fam)";
+  };
+  const whoChips = who => (who || []).map(k => h("span", { class: `who k-${k}` }, h("span", { class: "dot" }), kidName(k)));
+
+  // ---------- rendering ----------
+  function eventCard(ev, date) {
+    const unassigned = ev.type === "appointment" && !ev.owner && !ev.done;
+    const meta = h("span", { class: "ev-meta" },
+      whoChips(ev.who),
+      ev.owner ? h("span", { class: "tag", text: `${ownerName(ev.owner)} handling` }) : null,
+      unassigned ? h("span", { class: "tag warn", text: "No one assigned" }) : null,
+      ev.type !== "appointment" ? h("span", { class: "tag", text: TYPE_LBL[ev.type] || "" }) : null,
+      ev.yearly ? h("span", { class: "tag", text: "Every year" }) : null,
+      ev.done ? h("span", { class: "tag done", text: "Done" }) : null,
+      ev.example ? h("span", { class: "ex", text: "Example" }) : null
+    );
+    const main = h("span", { class: "ev-main" }, h("span", { class: "ev-title", text: ev.title }), meta);
+    if (ev.outcome) main.append(h("span", { class: "ev-note" }, h("b", { text: "Outcome: " }), ev.outcome));
+    else if (ev.notes) main.append(h("span", { class: "ev-note", text: ev.notes }));
+    const btn = h("button", { class: "ev", type: "button", onclick: () => openEvent(ev.id) },
+      h("span", { class: "ev-time" }, ev.time || "All day", date && S.tab !== "upcoming" ? h("small", { text: fmtDay(date, { day: "numeric", month: "short" }) }) : null),
+      main);
+    btn.style.setProperty("--stripe", stripeFor(ev.who));
+    return btn;
+  }
+
+  function renderUpcoming(view) {
+    const t = todayStr(), end = addDays(t, 90);
+    const occ = occurrences(t, end).filter(o => !(o.ev.done && !o.ev.yearly));
+    const week = occ.filter(o => o.date <= addDays(t, 6));
+    const unassigned = occ.filter(o => o.ev.type === "appointment" && !o.ev.owner).length;
+    view.append(h("div", { class: "summary" },
+      h("span", {}, "Next 7 days: ", h("strong", { text: String(week.length) }), week.length === 1 ? " entry" : " entries"),
+      unassigned ? h("span", { class: "warnpill", text: `${unassigned} appointment${unassigned > 1 ? "s" : ""} with no one assigned` }) : null));
+    if (!occ.length) { view.append(emptyState()); return; }
+    let cur = null, list;
+    for (const o of occ) {
+      if (o.date !== cur) {
+        cur = o.date;
+        const diff = Math.round((parse(o.date) - parse(t)) / 864e5);
+        const label = diff === 0 ? "Today" : diff === 1 ? "Tomorrow" : fmtDay(o.date, { weekday: "long" });
+        list = h("div", { class: "list" });
+        view.append(h("section", { class: "day" },
+          h("div", { class: "dayhead" }, h("h3", { text: label }), h("span", { text: fmtDay(o.date, { day: "numeric", month: "long" }) })), list));
+      }
+      list.append(eventCard(o.ev, o.date));
+    }
+  }
+
+  function renderMonth(view) {
+    const m = S.month, y = m.getFullYear(), mo = m.getMonth();
+    const first = new Date(y, mo, 1), startOffset = (first.getDay() + 6) % 7;
+    const gridStart = new Date(y, mo, 1 - startOffset), gs = ymd(gridStart), ge = addDays(gs, 41);
+    const byDay = {};
+    for (const o of occurrences(gs, ge)) (byDay[o.date] ||= []).push(o);
+    view.append(h("div", { class: "mhead" },
+      h("h2", { text: m.toLocaleDateString("en-GB", { month: "long", year: "numeric" }) }),
+      h("div", { class: "mnav" },
+        h("button", { class: "iconbtn", type: "button", "aria-label": "Previous month", onclick: () => { S.month = new Date(y, mo - 1, 1); render(); } }, "‹"),
+        h("button", { class: "iconbtn", type: "button", onclick: () => { const t = parse(todayStr()); S.month = new Date(t.getFullYear(), t.getMonth(), 1); S.selDay = todayStr(); render(); } }, "Today"),
+        h("button", { class: "iconbtn", type: "button", "aria-label": "Next month", onclick: () => { S.month = new Date(y, mo + 1, 1); render(); } }, "›"))));
+    const grid = h("div", { class: "grid" });
+    for (const d of ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]) grid.append(h("div", { class: "dow", text: d }));
+    const t = todayStr();
+    for (let i = 0; i < 42; i++) {
+      const ds = addDays(gs, i), dd = parse(ds), items = byDay[ds] || [];
+      const marks = h("div", { class: "marks" });
+      items.slice(0, 3).forEach(o => {
+        const k = (o.ev.who || [])[0] || "fam";
+        marks.append(h("span", { class: `dot k-${(o.ev.who || []).length > 1 && o.ev.who.includes("a") && o.ev.who.includes("b") ? "a" : k}` }));
+        marks.append(h("span", { class: `lbl k-${k}`, text: o.ev.title }));
+      });
+      if (items.length > 3) marks.append(h("span", { class: "more", text: `+${items.length - 3}` }));
+      grid.append(h("button", {
+        type: "button", class: `cell${dd.getMonth() !== mo ? " out" : ""}${ds === t ? " today" : ""}${ds === S.selDay ? " sel" : ""}`,
+        "aria-label": `${fmtDay(ds, { weekday: "long", day: "numeric", month: "long" })}, ${items.length} entries`,
+        onclick: () => { S.selDay = ds; render(); }
+      }, h("span", { class: "n", text: String(dd.getDate()) }), marks));
+    }
+    view.append(h("div", { style: "overflow-x:auto" }, grid));
+    const sel = byDay[S.selDay] || occurrences(S.selDay, S.selDay);
+    const list = h("div", { class: "list" });
+    sel.forEach(o => list.append(eventCard(o.ev)));
+    view.append(h("section", { class: "day" },
+      h("div", { class: "dayhead" }, h("h3", { text: fmtDay(S.selDay, { weekday: "long", day: "numeric", month: "long" }) }),
+        h("span", { text: sel.length ? `${sel.length} entr${sel.length > 1 ? "ies" : "y"}` : "Nothing planned" })),
+      list));
+  }
+
+  function renderTwins(view) {
+    const k = S.kidView;
+    view.append(h("div", { class: "seg", role: "group", "aria-label": "Choose twin" },
+      ["a", "b"].map(x => h("button", { type: "button", class: `k-${x}`, "aria-pressed": String(x === k), onclick: () => { S.kidView = x; render(); } }, h("span", { class: "dot" }), kidName(x)))));
+    const all = [...S.events.values()].filter(e => (e.who || []).includes(k));
+    const t = todayStr();
+    const next = [...all].map(e => ({ ev: e, date: e.yearly ? nextYearly(e.date, t) : e.date })).filter(o => o.date >= t && !(o.ev.done && !o.ev.yearly)).sort((a, b) => a.date.localeCompare(b.date) || (a.ev.time || "").localeCompare(b.ev.time || ""));
+    const past = all.filter(e => !e.yearly && (e.date < t || e.done)).sort((a, b) => b.date.localeCompare(a.date));
+    const appts = all.filter(e => e.type === "appointment");
+    const nextAppt = next.find(o => o.ev.type === "appointment");
+    view.append(h("div", { class: `profile k-${k}` },
+      h("div", { class: "avatar", text: kidName(k).trim().charAt(0).toUpperCase() || "?" }),
+      h("div", {}, h("h2", { text: kidName(k) }),
+        h("p", { text: nextAppt ? `Next appointment: ${nextAppt.ev.title}, ${fmtDay(nextAppt.date)}${nextAppt.ev.time ? " at " + nextAppt.ev.time : ""}` : "No appointments coming up" })),
+      h("div", { class: "stats" },
+        h("div", {}, h("b", { text: String(next.length) }), h("span", { text: "Coming up" })),
+        h("div", {}, h("b", { text: String(appts.length) }), h("span", { text: "Appointments logged" })),
+        h("div", {}, h("b", { text: String(past.filter(e => e.outcome).length) }), h("span", { text: "With outcome notes" })))));
+    view.append(h("div", { class: "section-title", text: "Coming up" }));
+    const l1 = h("div", { class: "list" }); next.forEach(o => l1.append(eventCard(o.ev, o.date)));
+    view.append(next.length ? l1 : h("p", { class: "ev-note", text: "Nothing planned." }));
+    view.append(h("div", { class: "section-title", text: "History" }));
+    const l2 = h("div", { class: "list" }); past.forEach(e => l2.append(eventCard(e, e.date)));
+    view.append(past.length ? l2 : h("p", { class: "ev-note", text: "Past appointments and what happened at them will collect here." }));
+  }
+  function nextYearly(date, from) {
+    const y = parse(from).getFullYear(); let d = `${y}-${date.slice(5)}`;
+    if (d < from) d = `${y + 1}-${date.slice(5)}`;
+    return d < date ? date : d;
+  }
+
+  function renderLog(view) {
+    view.append(h("div", { class: "premium" },
+      h("div", { class: "mock", "aria-hidden": "true" },
+        h("div", {}, h("b", { text: "2h 10m" }), `${kidName("a")}: since last feed`),
+        h("div", {}, h("b", { text: "1h 35m" }), `${kidName("b")}: since last feed`),
+        h("div", {}, h("b", { text: "7" }), "Nappies today"),
+        h("div", {}, h("b", { text: "11h 20m" }), "Sleep in 24h")),
+      h("div", { class: "pitch" },
+        h("h2", { text: "Daily log" }), h("span", { class: "lock", text: "Premium · in-app purchase" }),
+        h("ul", {},
+          h("li", { text: "One-tap feed, nappy and sleep logging for each twin" }),
+          h("li", { text: "See which twin fed last and how long ago" }),
+          h("li", { text: "Daily totals to show the health visitor" }),
+          h("li", { text: "Both parents log from their own phone, in real time" })),
+        h("p", { class: "ev-note", style: "margin-top:12px", text: "Not built yet. This is a preview of the planned premium feature." }))));
+  }
+
+  function emptyState() {
+    return h("div", { class: "empty" },
+      h("h3", { text: S.filter === "all" ? "Nothing planned yet" : `Nothing planned for ${kidName(S.filter)}` }),
+      h("p", { text: S.canWrite ? "Tap Add to put in the first appointment, birthday or reminder. Both of you will see it." : "Entries will appear here once they are added." }));
+  }
+
+  function renderFilters() {
+    const slot = $("#filterSlot"); slot.replaceChildren();
+    if (S.tab === "twins" || S.tab === "log") return;
+    slot.append(h("div", { class: "filters", role: "group", "aria-label": "Show entries for" },
+      [["all", "Everyone"], ["a", kidName("a")], ["b", kidName("b")], ["fam", "Family"]].map(([k, lbl]) =>
+        h("button", { type: "button", class: `chip k-${k}`, "aria-pressed": String(S.filter === k), onclick: () => { S.filter = k; render(); } },
+          k !== "all" ? h("span", { class: "dot" }) : null, lbl))));
+  }
+
+  function renderBanner() {
+    const slot = $("#bannerSlot"); slot.replaceChildren();
+    if (S.mode === "preview") slot.append(h("div", { class: "banner" }, h("b", { text: "Preview mode. " }), "Saved data isn't available in this view, so changes last until you close the page."));
+    else if (!S.canWrite) slot.append(h("div", { class: "banner" }, h("b", { text: "View only. " }), "Ask the person who shared this to invite you as an Editor so you can add entries."));
+  }
+
+  function render() {
+    document.querySelectorAll(".tab").forEach(b => b.setAttribute("aria-selected", String(b.dataset.tab === S.tab)));
+    $("#addBtn").hidden = !S.canWrite || S.tab === "log";
+    renderBanner(); renderFilters();
+    const view = $("#view"); view.replaceChildren();
+    ({ upcoming: renderUpcoming, month: renderMonth, twins: renderTwins, log: renderLog })[S.tab](view);
+  }
+
+  function setStatus(text, s) { const el = $("#status"); el.textContent = text; el.dataset.s = s; }
+
+  // ---------- dialog: event ----------
+  const evDlg = $("#evDlg");
+  function buildPickers() {
+    const who = $("#fWho"); who.replaceChildren();
+    for (const k of ["a", "b", "fam"]) who.append(h("label", { class: `k-${k}` }, h("input", { type: "checkbox", name: "who", value: k }), h("span", { class: "dot" }), k === "fam" ? "Us / family" : kidName(k)));
+    const own = $("#fOwner"); own.replaceChildren();
+    for (const [v, l] of [["", "Not decided"], ["p1", ownerName("p1")], ["p2", ownerName("p2")], ["both", "Both of us"]])
+      own.append(h("label", {}, h("input", { type: "radio", name: "owner", value: v }), l));
+  }
+  function openEvent(id, presetDate) {
+    if (!S.canWrite && !id) return;
+    buildPickers();
+    const ev = id ? S.events.get(id) : null;
+    S.editing = id || null;
+    $("#evDlgTitle").textContent = ev ? "Edit entry" : "New entry";
+    $("#fTitle").value = ev?.title || "";
+    const who = ev?.who || (S.filter !== "all" ? [S.filter] : ["a", "b"]);
+    document.querySelectorAll('#fWho input').forEach(i => i.checked = who.includes(i.value));
+    document.querySelectorAll('#fType input').forEach(i => i.checked = i.value === (ev?.type || "appointment"));
+    $("#fDate").value = ev?.date || presetDate || todayStr();
+    $("#fTime").value = ev?.time || "";
+    $("#fYearly").checked = !!ev?.yearly;
+    document.querySelectorAll('#fOwner input').forEach(i => i.checked = i.value === (ev?.owner || ""));
+    $("#fNotes").value = ev?.notes || "";
+    $("#fOutcome").value = ev?.outcome || "";
+    $("#fDone").checked = !!ev?.done;
+    $("#outcomeField").hidden = !ev; $("#doneField").hidden = !ev;
+    const del = $("#delBtn"); del.hidden = !ev || !S.canWrite; del.classList.remove("armed"); del.textContent = "Delete";
+    $("#saveBtn").hidden = !S.canWrite;
+    evDlg.querySelectorAll("input,textarea").forEach(el => el.disabled = !S.canWrite);
+    $("#fErr").textContent = "";
+    evDlg.showModal();
+    if (!ev) $("#fTitle").focus();
+  }
+  $("#evForm").addEventListener("submit", async e => {
+    e.preventDefault();
+    const title = $("#fTitle").value.trim();
+    const who = [...document.querySelectorAll('#fWho input:checked')].map(i => i.value);
+    const date = $("#fDate").value;
+    if (!title) return $("#fErr").textContent = "Add a short description, like “Hearing test”.";
+    if (!who.length) return $("#fErr").textContent = "Choose who it's for.";
+    if (!date) return $("#fErr").textContent = "Pick a date.";
+    const prev = S.editing ? S.events.get(S.editing) : null;
+    const body = {
+      title, who, date,
+      type: document.querySelector('#fType input:checked')?.value || "appointment",
+      time: $("#fTime").value || "",
+      yearly: $("#fYearly").checked,
+      owner: document.querySelector('#fOwner input:checked')?.value || "",
+      notes: $("#fNotes").value.trim(),
+      outcome: $("#fOutcome").value.trim(),
+      done: $("#fDone").checked,
+      example: prev?.example && prev.title === title ? true : false,
+      createdAt: prev?.createdAt || new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+    const id = S.editing || uid();
+    $("#saveBtn").disabled = true;
+    try {
+      if (S.db) await S.db.collection("events").doc(id).set(body);
+      else { S.events.set(id, { id, ...body }); render(); }
+      evDlg.close(); toast(prev ? "Saved" : "Added");
+    } catch (err) { handleWriteError(err, $("#fErr")); }
+    finally { $("#saveBtn").disabled = false; }
+  });
+  $("#delBtn").addEventListener("click", async () => {
+    const b = $("#delBtn");
+    if (!b.classList.contains("armed")) { b.classList.add("armed"); b.textContent = "Tap again to delete"; return; }
+    try {
+      if (S.db) await S.db.collection("events").doc(S.editing).delete();
+      else { S.events.delete(S.editing); render(); }
+      evDlg.close(); toast("Deleted");
+    } catch (err) { handleWriteError(err, $("#fErr")); }
+  });
+
+  // ---------- dialog: settings ----------
+  const setDlg = $("#setDlg");
+  $("#settingsBtn").addEventListener("click", () => {
+    $("#sKidA").value = S.settings.kids.a; $("#sKidB").value = S.settings.kids.b;
+    $("#sP1").value = S.settings.parents.p1; $("#sP2").value = S.settings.parents.p2;
+    setDlg.querySelectorAll("input").forEach(i => i.disabled = !S.canWrite);
+    $("#exampleBox").hidden = !S.canWrite || ![...S.events.values()].some(e => e.example);
+    $("#sErr").textContent = "";
+    setDlg.showModal();
+  });
+  $("#setForm").addEventListener("submit", async e => {
+    e.preventDefault();
+    if (!S.canWrite) return setDlg.close();
+    const val = (id, d) => $(id).value.trim() || d;
+    const next = { kids: { a: val("#sKidA", "Twin A"), b: val("#sKidB", "Twin B") }, parents: { p1: val("#sP1", "Dad"), p2: val("#sP2", "Mum") } };
+    try {
+      if (S.db) await S.db.doc("family/settings").set(next);
+      else { S.settings = next; render(); }
+      setDlg.close(); toast("Names saved");
+    } catch (err) { handleWriteError(err, $("#sErr")); }
+  });
+  $("#clearEx").addEventListener("click", async () => {
+    const ids = [...S.events.values()].filter(e => e.example).map(e => e.id);
+    try {
+      for (const id of ids) { if (S.db) await S.db.collection("events").doc(id).delete(); else S.events.delete(id); }
+      if (!S.db) render();
+      setDlg.close(); toast(`Removed ${ids.length} examples`);
+    } catch (err) { handleWriteError(err, $("#sErr")); }
+  });
+  document.querySelectorAll("[data-close]").forEach(b => b.addEventListener("click", () => b.closest("dialog").close()));
+
+  function handleWriteError(err, el) {
+    const code = err?.code;
+    if (code === "invalid_argument" || code === "not_granted") { S.canWrite = false; el.textContent = "You can view this planner but not change it. Ask to be invited as an Editor."; render(); }
+    else if (code === "quota_exceeded") el.textContent = "The planner is full. Delete some old entries and try again.";
+    else el.textContent = "Couldn't save just now. Check your connection and try again.";
+  }
+  let toastT;
+  function toast(msg) {
+    document.querySelector(".toast")?.remove(); clearTimeout(toastT);
+    const t = h("div", { class: "toast", role: "status", text: msg }); document.body.append(t);
+    toastT = setTimeout(() => t.remove(), 2200);
+  }
+
+  // ---------- wiring ----------
+  document.querySelectorAll(".tab").forEach(b => b.addEventListener("click", () => { S.tab = b.dataset.tab; render(); }));
+  $("#addBtn").addEventListener("click", () => openEvent(null, S.tab === "month" ? S.selDay : null));
+  $("#todayLbl").textContent = new Date().toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" });
+
+  // Preview fallback (only when the shared store isn't available, e.g. opening the file directly)
+  function loadPreview() {
+    S.mode = "preview"; setStatus("Preview", "warn");
+    const t = todayStr();
+    [
+      { title: "Health visitor home visit", who: ["a", "b"], type: "appointment", date: addDays(t, 2), time: "11:00", owner: "both" },
+      { title: "16-week vaccinations", who: ["a", "b"], type: "appointment", date: addDays(t, 4), time: "10:30", owner: "p2", notes: "Bring both red books. Calpol in the bag." },
+      { title: "Hip scan", who: ["a"], type: "appointment", date: addDays(t, 10), time: "14:00", owner: "" },
+      { title: "Anniversary dinner", who: ["fam"], type: "keydate", date: addDays(t, 14), yearly: true },
+      { title: "Clinic weigh-in", who: ["b"], type: "appointment", date: addDays(t, -5), time: "09:30", owner: "p1", done: true, outcome: "6.1 kg, on track. Next weigh-in in 4 weeks." }
+    ].forEach(e => { const id = uid(); S.events.set(id, { id, example: true, notes: "", outcome: "", time: "", owner: "", yearly: false, done: false, ...e }); });
+    render();
+  }
+
+  async function start() {
+    render();
+    const c = window.claude;
+    const db = c?.use ? await c.use("db").catch(() => null) : null;
+    if (!db) return loadPreview();
+    S.db = db; S.mode = "live";
+    const user = await c.use("user").catch(() => null);
+    if (user) { const c = await user.can("data.write"); if (c === false) S.canWrite = false; }
+    let loaded = false;
+    const timer = setTimeout(() => { if (!loaded) setStatus("Can't reach saved data yet", "warn"); }, 10000);
+    db.collection("events").onSnapshot(snap => {
+      S.events = new Map(snap.docs.map(d => [d.id, { id: d.id, ...d.data() }]));
+      if (!snap.metadata.fromCache) { loaded = true; clearTimeout(timer); setStatus("Shared · up to date", "live"); }
+      render();
+    }, () => { clearTimeout(timer); setStatus("Not syncing. Reopen to retry", "warn"); });
+    db.doc("family/settings").onSnapshot(snap => {
+      const d = snap.exists ? snap.data() : null;
+      S.settings = { kids: { ...DEFAULT_SETTINGS.kids, ...(d?.kids || {}) }, parents: { ...DEFAULT_SETTINGS.parents, ...(d?.parents || {}) } };
+      render();
+    }, () => {});
+    render();
+  }
+  start();
+})();
+</script>
