@@ -57,3 +57,6 @@ If you open `index.html` straight from disk, it runs in preview mode with sample
 - **Joining.** Today people join through the claude.ai Share menu. A real app would use invite links or codes, with roles (owner, member, visitor until a date) enforced on the server.
 - **Live calendar sync.** The .ics import is a one-off copy. Keeping Google, Outlook or university calendars in sync needs a backend that subscribes to those calendars.
 - **Notifications, payments and storage.** Push reminders, App Store / Google Play purchases for Premium, and unlimited chat and log history all need a real backend.
+
+## Colours
+The palette comes from Kenya's lilac-breasted roller (*Coracias caudatus*): lilac breast, turquoise belly, ultramarine flight feathers (the main accent), cinnamon back and olive crown. The bird's dark eye-stripe is used for text. Neutrals carry a faint lilac tint, and a thin "plumage" stripe runs across the top of the app. Each colour has a lighter version for dark mode.

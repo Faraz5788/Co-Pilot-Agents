@@ -5,20 +5,22 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Figtree:wght@400;500;600;700&display=swap">
 <style>
 /* Layout: one-column phone-first app shell (max 760px) — sticky header + tabs, content panel, floating Add button */
+/* Palette: the lilac-breasted roller (Coracias caudatus) — lilac breast, turquoise belly, ultramarine flight feathers,
+   cinnamon back, olive crown, dark eye-stripe for ink. Neutrals carry a faint lilac tint. */
 :root{
-  --bg:#F2F5F7; --surface:#FFFFFF; --sunk:#E6ECF1; --ink:#1A2836; --muted:#5A6B7A; --line:#D3DCE4;
-  --accent:#1F4E79; --accent-ink:#FFFFFF;
-  --c0:#23867C; --c1:#8656BF; --c2:#C0473F; --c3:#2F6FB5; --c4:#5E8A1E; --c5:#B4579A; --fam:#B97C12; --warn:#B4532A;
+  --bg:#F6F4FA; --surface:#FFFFFF; --sunk:#ECE8F3; --ink:#1E1C38; --muted:#615C78; --line:#DCD6E8;
+  --accent:#2B47A6; --accent-ink:#FFFFFF;
+  --c0:#14839F; --c1:#8C52B5; --c2:#AD5B2A; --c3:#2F72CC; --c4:#647F25; --c5:#5B4CC8; --fam:#A0761A; --warn:#C0402B;
   --display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
   --body:"Figtree","Segoe UI",system-ui,-apple-system,sans-serif;
   --r:12px;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#0E1620; --surface:#16212C; --sunk:#1E2B38; --ink:#E5ECF2; --muted:#93A4B3; --line:#2A3A49;
-  --accent:#86B6E6; --accent-ink:#0E1620; --c0:#4FC2B6; --c1:#B590EA; --c2:#EE7D73; --c3:#7FB0EA; --c4:#9CC75A; --c5:#E28CC8; --fam:#E4AE4C; --warn:#EC8B62; color-scheme:dark}}
+  --bg:#13121F; --surface:#1C1A2D; --sunk:#26243B; --ink:#ECEAF6; --muted:#A39FBA; --line:#33304D;
+  --accent:#93A8F3; --accent-ink:#13121F; --c0:#47C2E0; --c1:#C69CE8; --c2:#E39461; --c3:#7DB4F3; --c4:#AAC867; --c5:#A097F2; --fam:#E3B556; --warn:#F28B6B; color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#0E1620; --surface:#16212C; --sunk:#1E2B38; --ink:#E5ECF2; --muted:#93A4B3; --line:#2A3A49;
-  --accent:#86B6E6; --accent-ink:#0E1620; --c0:#4FC2B6; --c1:#B590EA; --c2:#EE7D73; --c3:#7FB0EA; --c4:#9CC75A; --c5:#E28CC8; --fam:#E4AE4C; --warn:#EC8B62; color-scheme:dark}
+  --bg:#13121F; --surface:#1C1A2D; --sunk:#26243B; --ink:#ECEAF6; --muted:#A39FBA; --line:#33304D;
+  --accent:#93A8F3; --accent-ink:#13121F; --c0:#47C2E0; --c1:#C69CE8; --c2:#E39461; --c3:#7DB4F3; --c4:#AAC867; --c5:#A097F2; --fam:#E3B556; --warn:#F28B6B; color-scheme:dark}
 
 *{box-sizing:border-box}
 [hidden]{display:none!important}
@@ -30,7 +32,8 @@ button{cursor:pointer}
 .app{max-width:760px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 110px}
 
 /* header */
-.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:14px 0}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:10px 0}
+.plumage{height:4px;border-radius:999px;margin-bottom:12px;background:linear-gradient(90deg,var(--c1) 0 24%,var(--c0) 24% 50%,var(--accent) 50% 72%,var(--c2) 72% 90%,var(--c4) 90%)}
 .brand{display:flex;align-items:center;gap:12px;justify-content:space-between}
 .brand h1{font-family:var(--display);font-weight:700;font-size:1.55rem;letter-spacing:-.01em;margin:0;line-height:1.1}
 .brand h1 .pair{display:inline-flex;gap:3px;margin-right:8px;vertical-align:middle}
@@ -331,9 +334,10 @@ input[type=date]::-webkit-date-and-time-value,input[type=time]::-webkit-date-and
 
 <div class="app">
   <div class="top">
+    <div class="plumage" aria-hidden="true"></div>
     <div class="brand">
       <div>
-        <h1><span class="pair" aria-hidden="true"><i style="background:var(--c0)"></i><i style="background:var(--c1)"></i><i style="background:var(--fam)"></i></span><span id="groupTitle">Circle Planner</span></h1>
+        <h1><span class="pair" aria-hidden="true"><i style="background:var(--c1)"></i><i style="background:var(--c0)"></i><i style="background:var(--accent)"></i></span><span id="groupTitle">Circle Planner</span></h1>
         <div class="sub"><span id="todayLbl"></span><span aria-hidden="true">·</span><span class="status" id="status" data-s="">Connecting…</span></div>
       </div>
       <button class="iconbtn" id="settingsBtn" type="button">Group</button>
