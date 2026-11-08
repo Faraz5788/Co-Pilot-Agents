@@ -5,10 +5,11 @@ A shared planner for any family or group: a household, parents and grandparents,
 Live app: https://claude.ai/artifact/NQsiQw4pRcLMxmWEQnKTk4
 
 ## Features
-- **Group calendar**: shared entries. Each entry has who it's for, a type (appointment, key date or reminder), a date and optional time, whether it repeats yearly, who's handling it, notes, and what happened afterwards.
-- **Profiles**: the people the group plans for who don't use the app themselves (kids, grandparents, pets). You can add any number, each with a colour. Each profile has a page showing what's coming up and a history with outcome notes.
-- **Who's handling it**: choose from the people who actually share the planner, or "Everyone". Appointments with no one assigned are flagged.
-- **Personal calendars**: Add → *My calendar*. Each person chooses whether others see full details or "Busy" only.
+- **One shared calendar**: each entry has who it's for, a type (event, key date or reminder), a date and optional time, whether it repeats yearly, notes, and what happened afterwards.
+- **Who is it for**: lists everyone, both the people who use the app and the profiles, plus "Whole group". To add your own plans, pick yourself.
+- **Profiles**: people the group plans for who don't use the app themselves (young kids, grandparents, pets). You can add any number, each with a colour. Each profile has a page showing what's coming up and a history with outcome notes.
+- **Someone needs to sort it**: optional. Tick it when someone has to take or drive a person, or deal with something, then pick who's doing it. Only these entries get a "Needs someone" flag.
+- **Private**: when an entry is only for you, you can mark it private. Others see "Busy".
 - **People**: a "who's around" view, similar to Outlook's scheduling view. Pick a day to see every calendar side by side.
 - **Ongoing or temporary sharing**: the owner sets each person as *Family · ongoing* or *Visitor until a date*. When the date passes, the visitor stops seeing the calendars. The owner can also remove people.
 - **Care log (Premium)**: a locked preview of the planned in-app purchase for feed, nappy, sleep and medicine tracking. Not built yet.
