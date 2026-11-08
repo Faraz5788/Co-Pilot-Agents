@@ -1,0 +1,14 @@
+{
+  "name": "Circle Planner",
+  "short_name": "Circle",
+  "description": "One shared calendar, lists, trips and chat for families, couples, friends, housemates and students.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#22307E",
+  "theme_color": "#22307E",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}
