@@ -1,0 +1,94 @@
+{
+ "slides": [
+  {
+   "type": "hero",
+   "badge": "NEW YEAR 2027",
+   "title": "2027 Annual Budget Planner Spreadsheet",
+   "sub": "Plan \u00b7 Track \u00b7 Monthly view \u00b7 Year overview",
+   "pills": [
+    "Excel & Google Sheets",
+    "12 months in one file",
+    "UK \u00a3"
+   ],
+   "main": "monthly",
+   "bullets": [
+    "Plan every month of 2027",
+    "Track spending against your plan",
+    "See your savings rate for the year"
+   ]
+  },
+  {
+   "type": "included",
+   "sub": "Everything you need to take control of your money in 2027",
+   "items": [
+    [
+     "Dashboard",
+     "Year totals, savings rate & chart"
+    ],
+    [
+     "Monthly View",
+     "Plan vs actual for any month"
+    ],
+    [
+     "Budget Plan",
+     "12 months planned in one grid"
+    ],
+    [
+     "Transactions",
+     "Room for 1,500 entries"
+    ],
+    [
+     "Year Overview",
+     "Every category, every month"
+    ],
+    [
+     "How-To Guide",
+     "Simple steps, no skills needed"
+    ]
+   ]
+  },
+  {
+   "type": "feature",
+   "heading": "Pick a month, see where you stand",
+   "bullets": [
+    "Plan vs actual for every category",
+    "What's left to spend",
+    "Overspending turns red",
+    "Chart updates instantly"
+   ],
+   "shot": "monthly",
+   "left": 690,
+   "top": 80,
+   "width": 730
+  },
+  {
+   "type": "wide",
+   "heading": "Plan the whole year in one grid",
+   "sub": "Type your usual amount once \u2014 then tweak the months that are different",
+   "shot": "plan",
+   "width": 1340,
+   "bullets": [
+    "6 income & 16 expense categories",
+    "Rename them to suit you",
+    "Left over for every month"
+   ]
+  },
+  {
+   "type": "feature",
+   "heading": "Your year at a glance",
+   "bullets": [
+    "Income vs spending by month",
+    "Your savings rate",
+    "Your biggest spending categories"
+   ],
+   "shot": "dashboard",
+   "left": 690,
+   "top": 90,
+   "width": 730
+  },
+  {
+   "type": "how",
+   "step3": "Change the year to re-use it every January"
+  }
+ ]
+}

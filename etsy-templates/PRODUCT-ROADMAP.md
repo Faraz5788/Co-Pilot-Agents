@@ -18,12 +18,17 @@ Inspired by inDeoDesignStudio (103 listings, 13.8k sales). Our angle: **UK-first
 | 1 | Ultimate Christmas Organiser | Christmas & Seasonal | £7.99 | Live |
 | 2 | Monthly Budget Planner | Personal Finance | £4.99 | Built, needs photos |
 | 3 | Ultimate Trip Planner | Travel & Events | £4.99 | Built, needs photos |
-| 4 | UK Sole Trader Bookkeeping | Small Business | £6.99 | Ready to list |
-| 5 | Reseller Profit Tracker (Vinted/eBay) | Small Business | £4.99 | Ready to list |
-| 6 | 2027 Goals & Habit Tracker | Goals & Habits | £4.99 | Ready to list |
+| 4 | UK Sole Trader Bookkeeping | Small Business | £6.99 | Live |
+| 5 | Reseller Profit Tracker (Vinted/eBay) | Small Business | £4.99 | Live |
+| 6 | 2027 Goals & Habit Tracker | Goals & Habits | £4.99 | Live |
+| 7 | Debt Payoff Planner | Personal Finance | £5.99 | Ready to list |
+| 8 | Savings Tracker & Challenges | Personal Finance | £4.99 | Ready to list |
+| 9 | Bill & Subscription Tracker | Personal Finance | £4.99 | Ready to list |
+| 10 | 2027 Annual Budget Planner | Personal Finance | £5.99 | Ready to list |
+| 11 | Christmas Gift Tracker | Christmas & Seasonal | £3.99 | Ready to list |
 
 ## Next batches, ordered by season
-**Batch 2: New Year money (list by early December)**
+**Batch 2: New Year money (DONE)**
 - Debt Payoff Tracker (snowball and avalanche)
 - Savings Challenges & Sinking Funds (incl. 1p-a-day challenge)
 - Monthly Bill & Subscription Tracker
@@ -80,3 +85,4 @@ Inspired by inDeoDesignStudio (103 listings, 13.8k sales). Our angle: **UK-first
 - `shots.sh <shots.xlsx> <dir> names…`: renders each tab to a PNG
 - `photos.py <config.json> <shots_dir> <out_dir>`: renders the 3000×2250 listing photos
 - `listings.py <listings.json> <out_dir>`: writes listing copy and checks Etsy's title and tag rules
+- `howto.py "<name>" <file.xlsx> <out.pdf>`: buyer guide PDF that goes in each upload zip (`etsy-uploads/`)

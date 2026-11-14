@@ -1,0 +1,94 @@
+{
+ "slides": [
+  {
+   "type": "hero",
+   "badge": "SNOWBALL & AVALANCHE",
+   "title": "Debt Payoff Planner Spreadsheet",
+   "sub": "Payoff order \u00b7 Debt-free date \u00b7 Interest",
+   "pills": [
+    "Excel & Google Sheets",
+    "Auto payoff plan",
+    "UK \u00a3"
+   ],
+   "main": "dashboard",
+   "bullets": [
+    "See your exact debt-free date",
+    "Know which debt to attack first",
+    "Watch your balance count down to \u00a30"
+   ]
+  },
+  {
+   "type": "included",
+   "sub": "Everything you need to clear your debts for good",
+   "items": [
+    [
+     "Dashboard",
+     "Debt-free date, interest & chart"
+    ],
+    [
+     "My Debts",
+     "Up to 15 debts with progress bars"
+    ],
+    [
+     "Payoff Plan",
+     "Month-by-month until \u00a30"
+    ],
+    [
+     "Payment Log",
+     "Record payments as you go"
+    ],
+    [
+     "Snowball or Avalanche",
+     "Switch with one click"
+    ],
+    [
+     "How-To Guide",
+     "Simple steps, no skills needed"
+    ]
+   ]
+  },
+  {
+   "type": "feature",
+   "heading": "Your debt-free date, worked out for you",
+   "bullets": [
+    "Pick snowball or avalanche",
+    "Spare money rolls onto the next debt",
+    "Total interest you'll pay",
+    "Attack order for every debt"
+   ],
+   "shot": "dashboard",
+   "left": 690,
+   "top": 90,
+   "width": 730
+  },
+  {
+   "type": "wide",
+   "heading": "Every debt in one place",
+   "sub": "Balance, APR, minimum payment \u2014 the planner does the rest",
+   "shot": "debts",
+   "width": 1340,
+   "bullets": [
+    "Credit cards, loans, overdrafts, BNPL",
+    "Payoff month for each debt",
+    "Progress bar as you pay"
+   ]
+  },
+  {
+   "type": "feature",
+   "heading": "A month-by-month plan to \u00a30",
+   "bullets": [
+    "What you pay each month",
+    "What's left after every payment",
+    "Up to 10 years mapped out"
+   ],
+   "shot": "plan",
+   "left": 820,
+   "top": 80,
+   "width": 560
+  },
+  {
+   "type": "how",
+   "step3": "Change your monthly amount and watch your debt-free date move"
+  }
+ ]
+}

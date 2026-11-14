@@ -38,6 +38,7 @@ def slide(s):
     raise ValueError(t)
 
 CSS = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "photos.css")).read()
+if cfg.get("theme"): CSS += open(os.path.join(os.path.dirname(os.path.abspath(__file__)), f"photos-{cfg['theme']}.css")).read()
 pages = []
 for i, s in enumerate(cfg["slides"], 1):
     p = os.path.join(OUT, f"_slide{i}.html")

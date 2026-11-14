@@ -1,0 +1,93 @@
+{
+ "slides": [
+  {
+   "type": "hero",
+   "badge": "NEVER MISS A BILL",
+   "title": "Bill & Subscription Tracker Spreadsheet",
+   "sub": "Bills \u00b7 Subscriptions \u00b7 Due dates \u00b7 Checklist",
+   "pills": [
+    "Excel & Google Sheets",
+    "Auto due dates",
+    "UK \u00a3"
+   ],
+   "main": "dashboard",
+   "bullets": [
+    "Next due date worked out for every bill",
+    "See what's due in the next 30 days",
+    "Find subscriptions to cancel"
+   ]
+  },
+  {
+   "type": "included",
+   "sub": "Get on top of every direct debit and subscription",
+   "items": [
+    [
+     "Dashboard",
+     "Monthly total, upcoming bills & chart"
+    ],
+    [
+     "Bills",
+     "Weekly, monthly, quarterly or yearly"
+    ],
+    [
+     "Subscriptions",
+     "Keep, review or cancel"
+    ],
+    [
+     "Paid Checklist",
+     "Tick every bill, every month"
+    ],
+    [
+     "Free-Trial Alerts",
+     "Warns you before you're charged"
+    ],
+    [
+     "How-To Guide",
+     "Simple steps, no skills needed"
+    ]
+   ]
+  },
+  {
+   "type": "wide",
+   "heading": "Every bill, with its next due date",
+   "sub": "Weekly, monthly, quarterly or yearly \u2014 dates roll forward automatically",
+   "shot": "bills",
+   "width": 1340,
+   "bullets": [
+    "Days until due",
+    "Red when due within 3 days",
+    "Monthly & yearly cost"
+   ]
+  },
+  {
+   "type": "feature",
+   "heading": "Spot the subscriptions you don't need",
+   "bullets": [
+    "Mark each one Keep, Review or Cancel",
+    "See how much you'd save a year",
+    "Free-trial end dates flagged"
+   ],
+   "shot": "subs",
+   "left": 720,
+   "top": 70,
+   "width": 700
+  },
+  {
+   "type": "feature",
+   "heading": "Where your money goes each month",
+   "bullets": [
+    "Bills + subscriptions per month",
+    "What's due in the next 7 and 30 days",
+    "Spending by category"
+   ],
+   "shot": "dashboard",
+   "left": 690,
+   "top": 90,
+   "width": 730
+  },
+  {
+   "type": "how",
+   "step3": "Due dates and totals update for you"
+  }
+ ]
+}
