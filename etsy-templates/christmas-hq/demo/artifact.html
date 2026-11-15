@@ -80,6 +80,7 @@ const STATUSES = [["idea","Idea"],["tobuy","To buy"],["bought","Bought"],["wrapp
 const CURRENCIES = {GBP:"£ GBP",USD:"$ USD",EUR:"€ EUR",CAD:"$ CAD",AUD:"$ AUD",NZD:"$ NZD",IEP:"€ (Ireland)"};
 const VIEWS = [["dash","🏠","Dashboard"],["gifts","🎁","Gifts"],["people","👪","People"],["ideas","💡","Idea Vault"],["shop","🛒","Shopping"],["stock","🧦","Stockings"],["cards","💌","Cards"],["santa","🎅","Secret Santa"],["tags","🏷️","Gift Tags"],["thanks","🙏","Thank-Yous"],["check","✅","Checklist"],["print","🖨️","Printables"],["settings","⚙️","Settings"]];
 const uid = () => Math.random().toString(36).slice(2, 9);
+const ld = s => { const [y, m, d] = String(s).split("-").map(Number); return new Date(y, (m || 1) - 1, d || 1); };   // dates typed as YYYY-MM-DD are local days, not UTC
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const year = new Date().getFullYear();
 
@@ -144,7 +145,7 @@ function vDash(){
   <div class="grid g2" style="margin-bottom:16px">
    <div class="card"><h3>Budget vs planned, by person</h3>${per.length ? per.map(({p,pl}) => `<div class="prow"><span class="n">${esc(p.name)}</span><div class="bar"><i class="${pl > p.budget ? 'over' : ''}" style="width:${p.budget ? Math.min(100, pl/p.budget*100) : 0}%"></i></div><span class="m">${money(pl)} / ${money(p.budget)}</span></div>`).join("") : `<div class="empty">Add people to set budgets.</div>`}</div>
    <div class="card"><h3>Progress</h3><div class="rings">${ring(bought,n,"var(--blue)","Bought")}${ring(wrapped,n,"var(--grn)","Wrapped")}${ring(given,n,"var(--yel)","Given")}${ring(cs,S.cards.length,"var(--red)","Cards sent")}</div>
-    <h3 style="margin-top:20px">Up next</h3><div class="list">${next.length ? next.map(g => `<div class="it"><div><div class="t">${esc(g.title)}</div><div class="d">for ${esc(person(g.person)?.name || "?")}${g.giveBy ? " · give by " + new Date(g.giveBy).toLocaleDateString("en-GB",{day:"numeric",month:"short"}) : ""}</div></div>${statusPill(g)}</div>`).join("") : `<div class="empty">Nothing waiting. Nice work! 🎉</div>`}</div></div></div>`;
+    <h3 style="margin-top:20px">Up next</h3><div class="list">${next.length ? next.map(g => `<div class="it"><div><div class="t">${esc(g.title)}</div><div class="d">for ${esc(person(g.person)?.name || "?")}${g.giveBy ? " · give by " + ld(g.giveBy).toLocaleDateString("en-GB",{day:"numeric",month:"short"}) : ""}</div></div>${statusPill(g)}</div>`).join("") : `<div class="empty">Nothing waiting. Nice work! 🎉</div>`}</div></div></div>`;
 }
 function statusPill(g){ return `<span class="pill s-${g.status}" data-a="cycle" data-id="${g.id}" style="cursor:pointer" title="Tap to move to the next stage">${STATUSES.find(s => s[0] === g.status)?.[1]}</span>`; }
 function vGifts(){
@@ -153,7 +154,7 @@ function vGifts(){
   <div class="tools"><input placeholder="Search…" value="${esc(filt.q)}" data-f="q"><select data-f="person"><option value="">Everyone</option>${S.people.map(p => `<option value="${p.id}" ${filt.person===p.id?"selected":""}>${esc(p.name)}</option>`).join("")}</select>
   <select data-f="status"><option value="">Any status</option>${STATUSES.map(([k,l]) => `<option value="${k}" ${filt.status===k?"selected":""}>${l}</option>`).join("")}</select></div>
   <div class="card" style="padding:6px 8px;overflow-x:auto">${L.length ? `<table><tr><th>Gift</th><th>For</th><th class="hide-m">Shop</th><th class="num">Cost</th><th>Status</th><th class="hide-m">Give by</th><th></th></tr>
-  ${L.map(g => `<tr><td><b>${esc(g.title)}</b>${g.link ? ` · <a class="link" href="${esc(g.link)}" target="_blank" rel="noopener">link</a>` : ""}</td><td>${esc(person(g.person)?.name || "")}</td><td class="hide-m">${esc(g.store)}</td><td class="num">${money(giftPlan(g))}</td><td>${statusPill(g)}</td><td class="hide-m">${g.giveBy ? new Date(g.giveBy).toLocaleDateString("en-GB",{day:"numeric",month:"short"}) : ""}</td><td><span class="link" data-a="editGift" data-id="${g.id}">Edit</span></td></tr>`).join("")}</table>` : `<div class="empty">No gifts yet. Add your first one!</div>`}</div>`;
+  ${L.map(g => `<tr><td><b>${esc(g.title)}</b>${g.link ? ` · <a class="link" href="${esc(g.link)}" target="_blank" rel="noopener">link</a>` : ""}</td><td>${esc(person(g.person)?.name || "")}</td><td class="hide-m">${esc(g.store)}</td><td class="num">${money(giftPlan(g))}</td><td>${statusPill(g)}</td><td class="hide-m">${g.giveBy ? ld(g.giveBy).toLocaleDateString("en-GB",{day:"numeric",month:"short"}) : ""}</td><td><span class="link" data-a="editGift" data-id="${g.id}">Edit</span></td></tr>`).join("")}</table>` : `<div class="empty">No gifts yet. Add your first one!</div>`}</div>`;
 }
 function vPeople(){
   return `<div class="top"><div><h1>People</h1><p>Everyone you're buying for, with a budget for each.</p></div><button class="btn" data-a="addPerson">+ Add a person</button></div>
@@ -182,7 +183,7 @@ let ssReveal = null;
 function vSanta(){
   const ss = S.santa;
   if (ssReveal) { const r = ss.draw?.[ssReveal];
-    return `<div class="card reveal"><p style="color:var(--mute);font-weight:700">Shh! Only ${esc(ssReveal)} should be looking…</p><p>You're buying a present for</p><div class="big">${esc(r)}</div>${ss.budget ? `<p>Spend limit: <b>${money(ss.budget)}</b>${ss.date ? " · Exchange on " + new Date(ss.date).toLocaleDateString("en-GB",{day:"numeric",month:"long"}) : ""}</p>` : ""}<button class="btn" data-a="ssHide">Done: hide it and pass the phone on</button></div>`; }
+    return `<div class="card reveal"><p style="color:var(--mute);font-weight:700">Shh! Only ${esc(ssReveal)} should be looking…</p><p>You're buying a present for</p><div class="big">${esc(r)}</div>${ss.budget ? `<p>Spend limit: <b>${money(ss.budget)}</b>${ss.date ? " · Exchange on " + ld(ss.date).toLocaleDateString("en-GB",{day:"numeric",month:"long"}) : ""}</p>` : ""}<button class="btn" data-a="ssHide">Done: hide it and pass the phone on</button></div>`; }
   return `<div class="top"><div><h1>Secret Santa</h1><p>Add everyone, set any "not these two" rules, then draw. Each person taps their own name to see their match.</p></div></div>
   <div class="grid g2"><div class="card"><h3>Who's playing?</h3><div class="ss-pair" style="margin-bottom:12px">${ss.names.map((n,i) => `<span class="chip">${esc(n)} <button class="del" data-a="ssDel" data-i="${i}">×</button></span>`).join("") || `<span style="color:var(--mute)">No one yet</span>`}</div>
    <div class="tools noprint"><input id="ssName" placeholder="Add a name"><button class="btn sm" data-a="ssAdd">Add</button></div>
