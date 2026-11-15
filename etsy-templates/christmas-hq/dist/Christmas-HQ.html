@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Christmas HQ · The Geek Next Door Co.</title>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -75,11 +76,16 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
 <div class="stripe"></div>
 <div id="root"></div>
 <script>
-const DEMO = false, DEMO_LIMIT = 10, ETSY_URL = "https://thegeeknextdoorco.etsy.com";
+const MODE = "file", DEMO_LIMIT = 10, ETSY_URL = "https://thegeeknextdoorco.etsy.com";   // MODE: file (full) | web (demo until unlocked) | demo
+const CODE_HASH = "06500456b4cbff7d675afbda224ca4dc5a7116157ed30b5426b34c130ce6a2f1";
+function licensed(){ try { return localStorage.getItem("geekxmas-licence") === CODE_HASH; } catch(e) { return false; } }
+const DEMO = MODE === "demo" || (MODE === "web" && !licensed());
 const KEY = DEMO ? "geekxmas-demo-v1" : "geekxmas-v1";
+function pfolder(){ if (MODE === "file") return "printables"; try { return localStorage.getItem("geekxmas-pfolder") || "printables"; } catch(e) { return "printables"; } }
+async function sha256(t){ const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(t)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, "0")).join(""); }
 const STATUSES = [["idea","Idea"],["tobuy","To buy"],["bought","Bought"],["wrapped","Wrapped"],["given","Given"]];
 const CURRENCIES = {GBP:"£ GBP",USD:"$ USD",EUR:"€ EUR",CAD:"$ CAD",AUD:"$ AUD",NZD:"$ NZD",IEP:"€ (Ireland)"};
-const VIEWS = [["dash","🏠","Dashboard"],["gifts","🎁","Gifts"],["people","👪","People"],["shop","🛒","Shopping"],["stock","🧦","Stockings"],["cards","💌","Cards"],["santa","🎅","Secret Santa"],["tags","🏷️","Gift Tags"],["check","✅","Checklist"],["settings","⚙️","Settings"]];
+const VIEWS = [["dash","🏠","Dashboard"],["gifts","🎁","Gifts"],["people","👪","People"],["ideas","💡","Idea Vault"],["shop","🛒","Shopping"],["stock","🧦","Stockings"],["cards","💌","Cards"],["santa","🎅","Secret Santa"],["tags","🏷️","Gift Tags"],["thanks","🙏","Thank-Yous"],["check","✅","Checklist"],["print","🖨️","Printables"],["settings","⚙️","Settings"]];
 const uid = () => Math.random().toString(36).slice(2, 9);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const year = new Date().getFullYear();
@@ -92,7 +98,7 @@ function checklistDefaults(){ return [
  ["Mid December","Wrap presents"],["Christmas week","Big food shop"],["Christmas week","Charge batteries for new toys"],["Christmas Eve","Stockings ready"],
  ["Christmas Eve","Mince pie and carrot out for Santa & Rudolph"],["Christmas Day","Enjoy it! 🎄"],["After Christmas","Write thank-you notes"]].map(([w,t]) => ({id:uid(),week:w,text:t,done:false})); }
 
-function blank(){ return {settings:{family:"",year,currency:"GBP",theme:"light",pin:""},people:[],gifts:[],stockings:[],cards:[],santa:{names:[],excl:[],budget:"",date:"",draw:null,revealed:[]},checklist:checklistDefaults(),created:0}; }
+function blank(){ return {settings:{family:"",year,currency:"GBP",theme:"light",pin:""},people:[],gifts:[],stockings:[],cards:[],santa:{names:[],excl:[],budget:"",date:"",draw:null,revealed:[]},checklist:checklistDefaults(),ideas:[],thanks:[],created:0}; }
 function sample(){
   const d = blank(); d.settings.family = "The Taylor Family";
   const P = [["Mum","Family",120,"Size 12 · UK 6 shoes","Candles, bath stuff, a good crime novel"],["Dad","Family",100,"L · UK 10","Coffee, gardening, anything Liverpool FC"],
@@ -106,6 +112,8 @@ function sample(){
   [["Isla","Chocolate coins",2,true],["Isla","Hair clips",4,false],["Noah","Dinosaur stickers",3,true],["Noah","Satsuma",0.3,false]].forEach(([p,item,cost,got]) => d.stockings.push({id:uid(),person:by(p),item,cost,got}));
   [["Auntie Sue & Ken","12 Holly Lane, York",true,true],["The Johnsons","4 Elm Road, Leeds",true,false],["Nana & Grandad","",false,false]].forEach(([name,address,sent,received]) => d.cards.push({id:uid(),name,address,sent,received}));
   d.santa.names = ["Mum","Dad","Auntie Sue","Uncle Ken","Grandma Joan","Cousin Amy"]; d.santa.excl = [["Mum","Dad"],["Auntie Sue","Uncle Ken"]]; d.santa.budget = 20;
+  [["Isla","Art easel","Ikea",35,"She loved the one at school"],["Dad","Pizza oven","Online",120,"Maybe for his birthday instead?"],["","Board game for Boxing Day","Waterstones",25,""]].forEach(([p,idea,store,price,note]) => d.ideas.push({id:uid(),person:p ? by(p) : "",idea,store,link:"",price,note}));
+  [["Auntie Sue","Bath set",true],["Grandma Joan","£20 voucher",false]].forEach(([from,gift,sent]) => d.thanks.push({id:uid(),from,gift,sent}));
   d.checklist.slice(0,5).forEach(c => c.done = true);
   return d;
 }
@@ -206,28 +214,51 @@ function vCheck(){
 function vSettings(){
   const st = S.settings;
   return `<div class="top"><div><h1>Settings</h1><p>Your list is saved privately in this browser, on this device only.</p></div></div>
+  ${MODE === "web" ? (DEMO ? `<div class="card" style="margin-bottom:16px;border:2px solid var(--yel)"><h3>Unlock the full app</h3><p style="color:var(--mute);margin-top:0">Bought Christmas HQ? Type the unlock code from your PDF guide.</p><div class="tools" style="margin:0"><input id="code" placeholder="Unlock code" autocapitalize="characters" style="text-transform:uppercase"><button class="btn" data-a="unlockCode">Unlock</button></div></div>` : `<div class="card" style="margin-bottom:16px"><b>✓ Full version unlocked.</b> <span style="color:var(--mute)">Tip: on iPhone or iPad, tap Share → Add to Home Screen to use Christmas HQ like an app.</span></div>`) : ""}
   <div class="grid g2"><div class="card"><h3>Your Christmas</h3><div class="f">
    <label class="w">Family name<input value="${esc(st.family)}" data-set="family" placeholder="The Smith Family"></label>
    <label>Year<input type="number" value="${esc(st.year)}" data-set="year"></label>
    <label>Currency<select data-set="currency">${Object.entries(CURRENCIES).map(([k,l]) => `<option value="${k}" ${st.currency===k?"selected":""}>${l}</option>`).join("")}</select></label>
    <label>Theme<select data-set="theme">${[["light","Geek (light)"],["festive","Festive"],["dark","Dark"]].map(([k,l]) => `<option value="${k}" ${st.theme===k?"selected":""}>${l}</option>`).join("")}</select></label>
    <label>PIN lock (4 digits, blank = off)<input type="password" inputmode="numeric" maxlength="4" value="${esc(st.pin)}" data-set="pin"></label></div>
-   <p style="font-size:13px;color:var(--mute);margin:14px 0 0">🙈 <b>Little eyes nearby?</b> Press <b>Esc</b> twice (or tap the logo three times) to hide everything behind a mince pie recipe.</p></div>
+   <p style="font-size:13px;color:var(--mute);margin:14px 0 0">🙈 <b>Little eyes nearby?</b> Press <b>Esc</b> twice, tap the logo three times, or tap <b>Hide</b> on your phone to cover everything with a mince pie recipe.</p></div>
   <div class="card"><h3>Backup &amp; export</h3><p style="color:var(--mute);font-size:14px;margin-top:0">Download a backup to keep it safe or move it to another device. Export your gifts to open in Excel or Google Sheets.</p>
-   <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" data-a="backup">Download backup</button><label class="btn ghost" style="cursor:pointer">Restore backup<input type="file" accept=".json" data-a="restore" hidden></label><button class="btn ghost" data-a="csv">Export gifts (CSV)</button></div>
+   <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" data-a="backup">Download backup</button><label class="btn ghost" style="cursor:pointer">Restore backup<input type="file" accept=".json" data-a="restore" hidden></label></div>
+   <h3 style="margin-top:22px">Excel &amp; Google Sheets</h3><p style="color:var(--mute);font-size:14px;margin-top:0">Export everything to one workbook (a sheet for each list), or bring in a list from a spreadsheet.</p>
+   <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" data-a="xlsx">Export to Excel</button><button class="btn ghost" data-a="import">Import from a spreadsheet</button></div>
    <h3 style="margin-top:22px">Start again</h3><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn ghost" data-a="loadSample">Load the sample family</button><button class="btn ghost" data-a="reset" style="color:var(--red)">Clear everything</button></div></div></div>
   <p style="text-align:center;color:var(--mute);font-size:12px;margin-top:30px">Christmas HQ · made with ♥ by The Geek Next Door Co. · For personal use only.</p>`;
 }
-const V = {dash:vDash,gifts:vGifts,people:vPeople,shop:vShop,stock:vStock,cards:vCards,santa:vSanta,tags:vTags,check:vCheck,settings:vSettings};
+function vIdeas(){
+  return `<div class="top"><div><h1>Idea Vault</h1><p>Save ideas whenever they pop up. Turn one into a gift with one tap.</p></div><button class="btn" data-a="addIdea">+ Save an idea</button></div>
+  <div class="grid g3">${S.ideas.map(i => `<div class="card"><div style="display:flex;justify-content:space-between;gap:8px"><h3 style="font-size:19px;margin-bottom:4px">${esc(i.idea)}</h3><button class="del" data-a="delIdea" data-id="${i.id}">×</button></div>
+   <div style="color:var(--mute);font-size:13px">${i.person ? "For " + esc(person(i.person)?.name || "") : "For anyone"}${i.store ? " · " + esc(i.store) : ""}${i.price ? " · " + money(i.price) : ""}</div>
+   ${i.note ? `<p style="font-size:13px;margin:8px 0 0">${esc(i.note)}</p>` : ""}${i.link ? `<p style="margin:6px 0 0"><a class="link" href="${esc(i.link)}" target="_blank" rel="noopener">Open link</a></p>` : ""}
+   <button class="btn sm" style="margin-top:12px" data-a="ideaToGift" data-id="${i.id}">Make it a gift 🎁</button></div>`).join("") || `<div class="card empty">No ideas saved yet.</div>`}</div>`;
+}
+function vThanks(){
+  const done = S.thanks.filter(t => t.sent).length;
+  return `<div class="top"><div><h1>Thank-You Notes</h1><p>${done} of ${S.thanks.length} sent. Log the gifts you receive and tick off each note.</p></div><button class="btn" data-a="addThanks">+ Log a gift received</button></div>
+  <div class="card" style="padding:6px 8px;overflow-x:auto">${S.thanks.length ? `<table><tr><th>From</th><th>Gift</th><th>Thank-you sent</th><th></th></tr>${S.thanks.map(t => `<tr><td><b>${esc(t.from)}</b></td><td>${esc(t.gift)}</td><td><span class="chk ${t.sent?'on':''}" data-a="togThanks" data-id="${t.id}">${t.sent?'✓':''}</span></td><td><button class="del" data-a="delThanks" data-id="${t.id}">×</button></td></tr>`).join("")}</table>` : `<div class="empty">After Christmas, log who gave you what here.</div>`}</div>`;
+}
+const PRINTABLES = [["Christmas Colouring Book","25 pages · ages 3+","Christmas-Colouring-Book"],["Christmas Activity Pack","21 pages · mazes, puzzles &amp; answers","Christmas-Activity-Pack"]];
+function vPrint(){
+  return `<div class="top"><div><h1>Printables</h1><p>Bonus printables for the kids: open one, then print it from your PDF viewer.</p></div></div>
+  ${DEMO ? `<div class="banner"><span>🖨️ These printables are <b>included with the full app</b>.</span><a class="btn sm" style="background:var(--yel);color:#1F1D1A;text-decoration:none" href="${ETSY_URL}" target="_blank" rel="noopener">Get the full app</a></div>` : ""}
+  <div class="grid g2">${PRINTABLES.map(([t, d, f]) => `<div class="card"><h3 style="margin-bottom:2px">${t}</h3><p style="color:var(--mute);margin:0 0 14px">${d}</p>
+   <div style="display:flex;gap:8px;flex-wrap:wrap">${["A4","Letter"].map(sz => DEMO ? `<button class="btn ${sz==="A4"?"":"ghost"}" disabled>${sz === "A4" ? "A4 (UK)" : "US Letter"}</button>` : `<a class="btn ${sz==="A4"?"":"ghost"}" style="text-decoration:none" href="${pfolder()}/${f}-${sz}.pdf" target="_blank" rel="noopener">${sz === "A4" ? "Open A4 (UK)" : "Open US Letter"}</a>`).join("")}</div></div>`).join("")}</div>
+  ${MODE === "file" ? `<p style="color:var(--mute);font-size:13px;margin-top:16px">The PDFs are in the <b>printables</b> folder next to this file. Keep them together so these buttons work.</p>` : ""}`;
+}
+const V = {ideas:vIdeas,thanks:vThanks,print:vPrint,dash:vDash,gifts:vGifts,people:vPeople,shop:vShop,stock:vStock,cards:vCards,santa:vSanta,tags:vTags,check:vCheck,settings:vSettings};
 
 /* ---------------- shell ---------------- */
 const LOGO = `<svg width="44" height="20" viewBox="0 0 520 220"><path d="M10 70 L60 95M510 70 L460 95" stroke="currentColor" stroke-width="18" stroke-linecap="round"/><path d="M232 110 Q260 82 288 110" stroke="currentColor" stroke-width="18" fill="none" stroke-linecap="round"/><circle cx="145" cy="120" r="88" fill="none" stroke="#D6452F" stroke-width="30" stroke-dasharray="300 253"/><circle cx="145" cy="120" r="88" fill="none" stroke="#F2B632" stroke-width="30" stroke-dasharray="0 300 253 0"/><circle cx="375" cy="120" r="88" fill="none" stroke="#2F6FB5" stroke-width="30" stroke-dasharray="300 253"/><circle cx="375" cy="120" r="88" fill="none" stroke="#3F9B5A" stroke-width="30" stroke-dasharray="0 300 253 0"/></svg>`;
 function render(){
   document.documentElement.dataset.theme = S.settings.theme;
   if (S.settings.pin && !unlocked) { document.getElementById("root").innerHTML = `<div class="lock"><div class="card"><div class="logo" style="justify-content:center">${LOGO}</div><h2>Christmas HQ</h2><p style="color:var(--mute)">Enter your PIN</p><input id="pin" type="password" inputmode="numeric" maxlength="4" autofocus><br><button class="btn" data-a="unlock">Unlock</button></div></div>`; return; }
-  const demoBar = DEMO ? `<div class="banner"><span>🎄 <b>Free demo</b> · ${Math.max(0, DEMO_LIMIT - S.created)} of ${DEMO_LIMIT} new entries left. Everything else works!</span><a class="btn sm" style="background:var(--yel);color:#1F1D1A;text-decoration:none" href="${ETSY_URL}" target="_blank" rel="noopener">Get the full app</a></div>` : "";
+  const demoBar = DEMO ? `<div class="banner"><span>🎄 <b>Free demo</b> · ${Math.max(0, DEMO_LIMIT - S.created)} of ${DEMO_LIMIT} new entries left. Everything else works!</span><span style="display:flex;gap:8px;flex-wrap:wrap">${MODE === "web" ? `<button class="btn sm ghost" style="color:var(--bg);border-color:var(--bg)" data-v="settings">I have a code</button>` : ""}<a class="btn sm" style="background:var(--yel);color:#1F1D1A;text-decoration:none" href="${ETSY_URL}" target="_blank" rel="noopener">Get the full app</a></span></div>` : "";
   document.getElementById("root").innerHTML = `<div class="app"><nav class="side"><div class="logo" data-a="logo">${LOGO}<div><b>Christmas HQ</b><small>THE GEEK NEXT DOOR CO.</small></div></div><div class="nav">${VIEWS.map(([k,ic,l]) => `<a class="${view===k?'on':''}" data-v="${k}"><span class="ic">${ic}</span>${l}</a>`).join("")}</div></nav>
-  <main>${demoBar}${V[view]()}</main></div><div class="tabs-m">${VIEWS.map(([k,ic,l]) => `<a class="${view===k?'on':''}" data-v="${k}"><span>${ic}</span>${l}</a>`).join("")}</div>`;
+  <main>${demoBar}${V[view]()}</main></div><div class="tabs-m"><a data-a="hide"><span>🙈</span>Hide</a>${VIEWS.map(([k,ic,l]) => `<a class="${view===k?'on':''}" data-v="${k}"><span>${ic}</span>${l}</a>`).join("")}</div>`;
   tick();
 }
 function tick(){ const el = document.getElementById("countdown"); if (!el) return; const ms = xmas() - new Date();
@@ -316,6 +347,18 @@ document.addEventListener("click", e => {
      tagStyle: () => { tagStyle = a.dataset.s; render(); },
      unlock: () => { if (document.getElementById("pin").value === S.settings.pin) { unlocked = true; render(); } else toast("Wrong PIN"); },
      logo: () => { const now = Date.now(); logoTaps = logoTaps.filter(t => now - t < 900); logoTaps.push(now); if (logoTaps.length >= 3) { logoTaps = []; panic(); } },
+     hide: () => panic(),
+     addIdea: () => { if (!canAdd()) return; modal("Save an idea", inp("idea","Idea","","text",true) + `<label>For<select name="person"><option value="">Anyone</option>${S.people.map(p => `<option value="${p.id}">${esc(p.name)}</option>`).join("")}</select></label>` + inp("price","Price","","number",false,'step="0.01"') + inp("store","Shop") + inp("link","Link","","url") + `<label class="w">Note<textarea name="note" rows="2"></textarea></label>`, v => { if (!v.idea.trim()) return false; S.ideas.push({id:uid(), ...v}); created(); }); },
+     delIdea: () => { S.ideas = S.ideas.filter(x => x.id !== id); save(); render(); },
+     ideaToGift: () => { const i = S.ideas.find(x => x.id === id); if (!S.people.length) { toast("Add a person first"); return; }
+       S.gifts.push({id:uid(), person:i.person || S.people[0].id, title:i.idea, store:i.store || "", link:i.link || "", est:i.price || "", cost:"", status:"tobuy", giveBy:`${S.settings.year}-12-25`, notes:i.note || ""});
+       S.ideas = S.ideas.filter(x => x !== i); save(); toast("Moved to Gifts 🎁"); view = "gifts"; render(); },
+     addThanks: () => { if (!canAdd()) return; modal("Log a gift received", inp("from","From","","text") + inp("gift","Gift","","text"), v => { if (!v.from.trim()) return false; S.thanks.push({id:uid(), sent:false, ...v}); created(); }); },
+     togThanks: () => { const t = S.thanks.find(x => x.id === id); t.sent = !t.sent; save(); render(); }, delThanks: () => { S.thanks = S.thanks.filter(x => x.id !== id); save(); render(); },
+     unlockCode: async () => { const c = (document.getElementById("code").value || "").trim().toUpperCase(); if (!c) return;
+       if (await sha256(c) === CODE_HASH) { const pf = "printables-" + (await sha256("pdf:" + c)).slice(0, 16); try { localStorage.setItem("geekxmas-licence", CODE_HASH); localStorage.setItem("geekxmas-pfolder", pf); } catch(e) {} location.reload(); } else toast("That code didn't work. Check it against your PDF guide."); },
+     xlsx: () => exportXlsx(),
+     import: () => importModal(),
      backup: () => download(`christmas-hq-backup-${new Date().toISOString().slice(0,10)}.json`, JSON.stringify(S, null, 1), "application/json"),
      csv: () => { const rows = [["Gift","For","Shop","Status","Estimated","Actual","Give by","Link","Notes"], ...S.gifts.map(g => [g.title, person(g.person)?.name, g.store, STATUSES.find(s=>s[0]===g.status)?.[1], g.est, g.cost, g.giveBy, g.link, g.notes])];
             download("christmas-gifts.csv", "﻿" + rows.map(r => r.map(c => `"${String(c ?? "").replace(/"/g,'""')}"`).join(",")).join("\r\n"), "text/csv"); },
@@ -330,6 +373,63 @@ document.addEventListener("input", e => {
   if (t.dataset.s) { S.santa[t.dataset.s] = t.value; save(); }
 });
 document.addEventListener("change", e => { if (e.target.dataset.a === "restore" && e.target.files[0]) { const r = new FileReader(); r.onload = () => { try { S = Object.assign(blank(), JSON.parse(r.result)); save(); render(); toast("Backup restored ✓"); } catch (err) { toast("That file isn't a Christmas HQ backup"); } }; r.readAsText(e.target.files[0]); } });
+/* ---- tiny .xlsx writer (no libraries, works offline) ---- */
+const CRC = (() => { const t = []; for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+function crc32(b){ let c = 0xFFFFFFFF; for (let i = 0; i < b.length; i++) c = CRC[(c ^ b[i]) & 255] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; }
+function zip(files){ const enc = new TextEncoder(), parts = [], central = []; let off = 0;
+  const u16 = v => [v & 255, (v >> 8) & 255], u32 = v => [v & 255, (v >> 8) & 255, (v >> 16) & 255, (v >>> 24) & 255];
+  for (const [name, text] of files) { const n = enc.encode(name), d = enc.encode(text), c = crc32(d);
+    const head = [0x50,0x4b,3,4, ...u16(20), ...u16(0), ...u16(0), ...u16(0), ...u16(0x21), ...u32(c), ...u32(d.length), ...u32(d.length), ...u16(n.length), ...u16(0)];
+    parts.push(new Uint8Array(head), n, d);
+    central.push(new Uint8Array([0x50,0x4b,1,2, ...u16(20), ...u16(20), ...u16(0), ...u16(0), ...u16(0), ...u16(0x21), ...u32(c), ...u32(d.length), ...u32(d.length), ...u16(n.length), ...u16(0), ...u16(0), ...u16(0), ...u16(0), ...u32(0), ...u32(off)]), n);
+    off += head.length + n.length + d.length; }
+  const cl = central.reduce((a, x) => a + x.length, 0);
+  return new Blob([...parts, ...central, new Uint8Array([0x50,0x4b,5,6, ...u16(0), ...u16(0), ...u16(files.length), ...u16(files.length), ...u32(cl), ...u32(off), ...u16(0)])], {type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}); }
+function xesc(v){ return String(v ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])).replace(/[\x00-\x08\x0b\x0c\x0e-\x1f]/g, ""); }
+function sheetXml(rows){ const col = i => { let s = ""; i++; while (i) { const m = (i - 1) % 26; s = String.fromCharCode(65 + m) + s; i = Math.floor((i - 1) / 26); } return s; };
+  return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetData>` +
+    rows.map((r, ri) => `<row r="${ri+1}">` + r.map((v, ci) => { const ref = col(ci) + (ri + 1); return typeof v === "number" && isFinite(v) ? `<c r="${ref}"><v>${v}</v></c>` : `<c r="${ref}" t="inlineStr"><is><t xml:space="preserve">${xesc(v)}</t></is></c>`; }).join("") + "</row>").join("") + "</sheetData></worksheet>"; }
+function exportXlsx(){
+  const num = v => v === "" || v == null || isNaN(Number(v)) ? "" : Number(v), st = k => STATUSES.find(s => s[0] === k)?.[1] || k, nm = id => person(id)?.name || "";
+  const sheets = [["Gifts", [["Gift","For","Shop","Status","Estimated","Actual","Give by","Link","Notes"], ...S.gifts.map(g => [g.title, nm(g.person), g.store, st(g.status), num(g.est), num(g.cost), g.giveBy, g.link, g.notes])]],
+    ["People", [["Name","Group","Budget","Sizes","Wish list"], ...S.people.map(p => [p.name, p.group, num(p.budget), p.sizes, p.wish])]],
+    ["Ideas", [["Idea","For","Price","Shop","Link","Note"], ...S.ideas.map(i => [i.idea, nm(i.person), num(i.price), i.store, i.link, i.note])]],
+    ["Stockings", [["For","Item","Cost","Got it"], ...S.stockings.map(s => [nm(s.person), s.item, num(s.cost), s.got ? "Yes" : ""])]],
+    ["Cards", [["Name","Address","Sent","Received"], ...S.cards.map(c => [c.name, c.address, c.sent ? "Yes" : "", c.received ? "Yes" : ""])]],
+    ["Thank-yous", [["From","Gift","Sent"], ...S.thanks.map(t => [t.from, t.gift, t.sent ? "Yes" : ""])]],
+    ["Checklist", [["When","Task","Done"], ...S.checklist.map(c => [c.week, c.text, c.done ? "Yes" : ""])]]];
+  const files = [["[Content_Types].xml", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>${sheets.map((_, i) => `<Override PartName="/xl/worksheets/sheet${i+1}.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>`).join("")}</Types>`],
+    ["_rels/.rels", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>`],
+    ["xl/workbook.xml", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets>${sheets.map(([n], i) => `<sheet name="${n}" sheetId="${i+1}" r:id="rId${i+1}"/>`).join("")}</sheets></workbook>`],
+    ["xl/_rels/workbook.xml.rels", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">${sheets.map((_, i) => `<Relationship Id="rId${i+1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet${i+1}.xml"/>`).join("")}</Relationships>`],
+    ...sheets.map(([, rows], i) => [`xl/worksheets/sheet${i+1}.xml`, sheetXml(rows)])];
+  const u = URL.createObjectURL(zip(files)), l = document.createElement("a"); l.href = u; l.download = `christmas-hq-${S.settings.year}.xlsx`; document.body.appendChild(l); l.click(); l.remove(); setTimeout(() => URL.revokeObjectURL(u), 1000);
+}
+/* ---- import from a spreadsheet (paste or .csv) ---- */
+function parseRows(text){ const rows = [], sep = text.includes("\t") ? "\t" : ","; let row = [], cell = "", q = false;
+  for (let i = 0; i < text.length; i++) { const ch = text[i];
+    if (q) { if (ch === '"') { if (text[i+1] === '"') { cell += '"'; i++; } else q = false; } else cell += ch; }
+    else if (ch === '"') q = true; else if (ch === sep) { row.push(cell); cell = ""; } else if (ch === "\n" || ch === "\r") { if (ch === "\r" && text[i+1] === "\n") i++; row.push(cell); rows.push(row); row = []; cell = ""; } else cell += ch; }
+  if (cell || row.length) { row.push(cell); rows.push(row); }
+  return rows.map(r => r.map(c => c.trim())).filter(r => r.some(c => c)); }
+function importModal(){
+  modal("Import from a spreadsheet", `<label class="w">What are you importing?<select name="kind"><option value="gifts">Gifts: Gift, For, Shop, Cost</option><option value="people">People: Name, Budget</option><option value="cards">Cards: Name, Address</option></select></label>
+    <label class="w">Paste rows from Excel or Google Sheets (or choose a .csv file below)<textarea name="text" rows="7" placeholder="LEGO set	Isla	Argos	45"></textarea></label>
+    <label class="w">Or a .csv file<input type="file" accept=".csv,.txt" id="impFile"></label>`, v => {
+    if (!v.text.trim()) { toast("Paste some rows first"); return false; }
+    let rows = parseRows(v.text); if (rows.length && /^(gift|name|item)$/i.test(rows[0][0])) rows = rows.slice(1);
+    let n = 0;
+    for (const r of rows) { if (!canAdd()) break;
+      if (v.kind === "gifts" && r[0]) { let p = S.people.find(x => x.name.toLowerCase() === (r[1] || "").toLowerCase()); if (!p) { p = {id:uid(), name:r[1] || "Someone", group:"Family", budget:0, sizes:"", wish:""}; S.people.push(p); }
+        S.gifts.push({id:uid(), person:p.id, title:r[0], store:r[2] || "", link:"", est:(r[3] || "").replace(/[£$€,]/g, ""), cost:"", status:"idea", giveBy:`${S.settings.year}-12-25`, notes:""}); }
+      else if (v.kind === "people" && r[0]) S.people.push({id:uid(), name:r[0], group:"Family", budget:Number((r[1] || "").replace(/[£$€,]/g, "")) || 0, sizes:"", wish:""});
+      else if (v.kind === "cards" && r[0]) S.cards.push({id:uid(), name:r[0], address:r.slice(1).join(", "), sent:false, received:false});
+      else continue;
+      created(); n++; }
+    toast(`Imported ${n} row${n === 1 ? "" : "s"} ✓`);
+  });
+  document.getElementById("impFile").addEventListener("change", e => { const f = e.target.files[0]; if (!f) return; const r = new FileReader(); r.onload = () => { document.querySelector('.modal [name="text"]').value = r.result; }; r.readAsText(f); });
+}
 function download(name, text, type){ const b = new Blob([text], {type}), u = URL.createObjectURL(b), l = document.createElement("a"); l.href = u; l.download = name; document.body.appendChild(l); l.click(); l.remove(); setTimeout(() => URL.revokeObjectURL(u), 1000); }
 render();
 </script>
