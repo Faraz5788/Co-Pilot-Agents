@@ -75,7 +75,7 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
 <div class="stripe"></div>
 <div id="root"></div>
 <script>
-const DEMO = true, DEMO_LIMIT = 10, ETSY_URL = "https://www.etsy.com/shop/TheGeekNextDoorCo";
+const DEMO = true, DEMO_LIMIT = 10, ETSY_URL = "https://thegeeknextdoorco.etsy.com";
 const KEY = DEMO ? "geekxmas-demo-v1" : "geekxmas-v1";
 const STATUSES = [["idea","Idea"],["tobuy","To buy"],["bought","Bought"],["wrapped","Wrapped"],["given","Given"]];
 const CURRENCIES = {GBP:"£ GBP",USD:"$ USD",EUR:"€ EUR",CAD:"$ CAD",AUD:"$ AUD",NZD:"$ NZD",IEP:"€ (Ireland)"};
@@ -237,6 +237,10 @@ function tick(){ const el = document.getElementById("countdown"); if (!el) retur
 setInterval(tick, 1000);
 
 /* ---------------- modals ---------------- */
+function ask(msg, ok = "Yes"){ return new Promise(res => { const bg = document.createElement("div"); bg.className = "modal-bg";
+  bg.innerHTML = `<div class="modal" style="max-width:420px"><p style="font-size:17px;font-weight:600;margin:0 0 18px">${esc(msg)}</p><div style="display:flex;justify-content:flex-end;gap:8px"><button class="btn ghost" data-q="no">Cancel</button><button class="btn" data-q="ok">${esc(ok)}</button></div></div>`;
+  document.body.appendChild(bg); bg.querySelector('[data-q="ok"]').focus();
+  bg.addEventListener("click", e => { const q = e.target.dataset.q; if (e.target === bg || q === "no") { bg.remove(); res(false); } if (q === "ok") { bg.remove(); res(true); } }); }); }
 function modal(title, body, onSave, onDelete){
   const bg = document.createElement("div"); bg.className = "modal-bg";
   bg.innerHTML = `<div class="modal"><h2>${title}</h2><div class="f">${body}</div><div class="mfoot"><div>${onDelete ? `<button class="btn ghost" data-m="del" style="color:var(--red)">Delete</button>` : ""}</div><div style="display:flex;gap:8px"><button class="btn ghost" data-m="x">Cancel</button><button class="btn" data-m="ok">Save</button></div></div></div>`;
@@ -244,7 +248,7 @@ function modal(title, body, onSave, onDelete){
   bg.addEventListener("click", e => { const m = e.target.dataset.m;
     if (e.target === bg || m === "x") bg.remove();
     if (m === "ok") { const v = {}; bg.querySelectorAll("[name]").forEach(i => v[i.name] = i.type === "checkbox" ? i.checked : i.value); if (onSave(v) !== false) { bg.remove(); save(); render(); } }
-    if (m === "del" && confirm("Delete this?")) { onDelete(); bg.remove(); save(); render(); } });
+    if (m === "del") ask("Delete this? This cannot be undone.", "Delete").then(y => { if (y) { onDelete(); bg.remove(); save(); render(); } }); });
 }
 const inp = (n, l, v = "", t = "text", w = false, extra = "") => `<label class="${w?'w':''}">${l}<input name="${n}" type="${t}" value="${esc(v)}" ${extra}></label>`;
 const peopleSel = (v) => `<label>For<select name="person">${S.people.map(p => `<option value="${p.id}" ${v===p.id?"selected":""}>${esc(p.name)}</option>`).join("")}</select></label>`;
@@ -306,8 +310,8 @@ document.addEventListener("click", e => {
      ssDel: () => { S.santa.names.splice(+a.dataset.i, 1); S.santa.draw = null; save(); render(); },
      exAdd: () => { const x = document.getElementById("ex1").value, y = document.getElementById("ex2").value; if (x === y) { toast("Pick two different people"); return; } S.santa.excl.push([x, y]); S.santa.draw = null; save(); render(); },
      exDel: () => { S.santa.excl.splice(+a.dataset.i, 1); S.santa.draw = null; save(); render(); },
-     ssDraw: () => { if (S.santa.draw && !confirm("Draw again? Everyone will need to look again.")) return; if (drawSanta()) { save(); render(); toast("Names drawn! 🎅"); } },
-     ssShow: () => { const n = a.dataset.n; if (S.santa.revealed.includes(n) && !confirm(`${n} has already looked. Show again?`)) return; if (!confirm(`Are you ${n}? Make sure nobody else is looking!`)) return; ssReveal = n; render(); },
+     ssDraw: async () => { if (S.santa.draw && !(await ask("Draw again? Everyone will need to look again.", "Draw again"))) return; if (drawSanta()) { save(); render(); toast("Names drawn! 🎅"); } },
+     ssShow: async () => { const n = a.dataset.n; if (S.santa.revealed.includes(n) && !(await ask(`${n} has already looked. Show again?`, "Show again"))) return; if (!(await ask(`Are you ${n}? Make sure nobody else is looking!`, `Yes, show me`))) return; ssReveal = n; render(); },
      ssHide: () => { if (!S.santa.revealed.includes(ssReveal)) S.santa.revealed.push(ssReveal); ssReveal = null; save(); render(); },
      tagStyle: () => { tagStyle = a.dataset.s; render(); },
      unlock: () => { if (document.getElementById("pin").value === S.settings.pin) { unlocked = true; render(); } else toast("Wrong PIN"); },
@@ -315,8 +319,8 @@ document.addEventListener("click", e => {
      backup: () => download(`christmas-hq-backup-${new Date().toISOString().slice(0,10)}.json`, JSON.stringify(S, null, 1), "application/json"),
      csv: () => { const rows = [["Gift","For","Shop","Status","Estimated","Actual","Give by","Link","Notes"], ...S.gifts.map(g => [g.title, person(g.person)?.name, g.store, STATUSES.find(s=>s[0]===g.status)?.[1], g.est, g.cost, g.giveBy, g.link, g.notes])];
             download("christmas-gifts.csv", "﻿" + rows.map(r => r.map(c => `"${String(c ?? "").replace(/"/g,'""')}"`).join(",")).join("\r\n"), "text/csv"); },
-     loadSample: () => { if (confirm("Replace your list with the sample family?")) { const c = S.created; S = sample(); S.created = c; save(); render(); } },
-     reset: () => { if (confirm("Clear everything? This can't be undone (download a backup first!)")) { const c = S.created; S = blank(); S.created = c; save(); render(); } }
+     loadSample: async () => { if (await ask("Replace your list with the sample family?", "Load sample")) { const c = S.created; S = sample(); S.created = c; save(); render(); } },
+     reset: async () => { if (await ask("Clear everything? This cannot be undone, so download a backup first!", "Clear everything")) { const c = S.created; S = blank(); S.created = c; save(); render(); } }
   })[act]?.();
 });
 document.addEventListener("input", e => {

@@ -1,0 +1,328 @@
+<title>Christmas HQ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--red:#D6452F;--yel:#F2B632;--blue:#2F6FB5;--grn:#3F9B5A;--ink:#1F1D1A;--mute:#6b645a;--bg:#F7F3EA;--card:#fff;--line:#E4DCCB;--soft:#FBF8F1;--accent:#D6452F;--shadow:0 6px 20px rgba(0,0,0,.06)}
+[data-theme="dark"]{--ink:#F3EEE4;--mute:#B5AC9F;--bg:#17150F;--card:#221F18;--line:#3A352B;--soft:#2A261E;--shadow:0 6px 20px rgba(0,0,0,.3)}
+[data-theme="festive"]{--red:#B3261E;--yel:#C9A227;--blue:#1E5631;--grn:#1E5631;--accent:#B3261E;--bg:#FBF7EF}
+*{box-sizing:border-box}html,body{margin:0}body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.45}
+h1,h2,h3{font-family:'DM Serif Display',Georgia,serif;font-weight:400;margin:0}
+button,input,select,textarea{font:inherit;color:inherit}
+.stripe{height:6px;background:linear-gradient(90deg,var(--red) 0 25%,var(--yel) 25% 50%,var(--blue) 50% 75%,var(--grn) 75%)}
+.app{display:grid;grid-template-columns:230px 1fr;min-height:calc(100vh - 6px)}
+nav.side{background:var(--card);border-right:1px solid var(--line);padding:18px 12px;position:sticky;top:0;height:calc(100vh - 6px);overflow:auto}
+.logo{display:flex;align-items:center;gap:10px;padding:4px 8px 18px}.logo b{font-family:'DM Serif Display';font-size:22px;font-weight:400;line-height:1}.logo small{display:block;font-size:10px;letter-spacing:1.5px;color:var(--mute);font-weight:700}
+.nav a{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;color:var(--ink);text-decoration:none;font-weight:600;cursor:pointer;margin-bottom:2px}
+.nav a:hover{background:var(--soft)}.nav a.on{background:var(--ink);color:var(--bg)}.nav a .ic{width:22px;text-align:center}
+main{padding:26px 32px 90px;max-width:1180px;width:100%}
+.top{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:22px;flex-wrap:wrap}
+.top h1{font-size:34px;line-height:1.1}.top p{margin:4px 0 0;color:var(--mute)}
+.btn{background:var(--accent);color:#fff;border:0;border-radius:999px;padding:10px 18px;font-weight:700;cursor:pointer;white-space:nowrap}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}.btn.sm{padding:6px 12px;font-size:13px}.btn.dark{background:var(--ink);color:var(--bg)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.grid{display:grid;gap:16px}.grid>*,main,.app>*{min-width:0}.g4{grid-template-columns:repeat(4,1fr)}.g3{grid-template-columns:repeat(3,1fr)}.g2{grid-template-columns:repeat(2,1fr)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px 20px;box-shadow:var(--shadow)}
+.card h3{font-size:21px;margin-bottom:12px}
+.stat .k{font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--mute)}.stat .v{font-family:'DM Serif Display';font-size:34px;line-height:1.1;margin:4px 0 2px}.stat .s{font-size:13px;color:var(--mute)}
+.stat.c1{border-top:5px solid var(--red)}.stat.c2{border-top:5px solid var(--yel)}.stat.c3{border-top:5px solid var(--blue)}.stat.c4{border-top:5px solid var(--grn)}
+.count{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}.count b{font-family:'DM Serif Display';font-size:44px;color:var(--accent);font-weight:400;line-height:1}.count span{color:var(--mute);font-weight:600;margin-right:8px}
+.bar{height:10px;background:var(--soft);border-radius:99px;overflow:hidden;border:1px solid var(--line)}.bar i{display:block;height:100%;background:var(--grn);border-radius:99px}.bar i.over{background:var(--red)}
+.prow{display:grid;grid-template-columns:130px 1fr 110px;gap:12px;align-items:center;margin:9px 0;font-size:14px}.prow .n{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.prow .m{text-align:right;color:var(--mute);font-variant-numeric:tabular-nums}
+.rings{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center}.ring{position:relative;width:86px;height:86px;margin:0 auto}.ring svg{transform:rotate(-90deg)}.ring b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px}.rings small{display:block;margin-top:4px;font-weight:600;color:var(--mute)}
+.list .it{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-bottom:1px dashed var(--line)}.list .it:last-child{border:0}.it .t{font-weight:600}.it .d{font-size:13px;color:var(--mute)}
+.pill{display:inline-block;font-size:12px;font-weight:700;padding:3px 10px;border-radius:99px;white-space:nowrap}
+.s-idea{background:#EFEBE3;color:#6b645a}.s-tobuy{background:#FBEFC9;color:#8a6a00}.s-bought{background:#DCEBDF;color:#24603a}.s-wrapped{background:#B9D7C1;color:#1c4b2d}.s-given{background:#8FBF9E;color:#11331d}
+[data-theme="dark"] .pill{filter:brightness(.9)}
+table{width:100%;border-collapse:collapse;font-size:14px}th{text-align:left;font-size:12px;letter-spacing:.8px;text-transform:uppercase;color:var(--mute);padding:8px 10px;border-bottom:2px solid var(--line)}td{padding:10px;border-bottom:1px solid var(--line);vertical-align:middle}tr:hover td{background:var(--soft)}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+.tools{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}.tools input,.tools select{background:var(--card);border:1.5px solid var(--line);border-radius:999px;padding:8px 14px}
+.chk{width:22px;height:22px;border-radius:7px;border:2px solid var(--line);background:var(--card);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:13px}.chk.on{background:var(--grn);border-color:var(--grn)}
+.link{color:var(--blue);font-weight:600;cursor:pointer;text-decoration:none}.del{color:var(--red);cursor:pointer;font-weight:700;background:none;border:0}
+.empty{text-align:center;color:var(--mute);padding:30px 10px}
+.modal-bg{position:fixed;inset:0;background:rgba(20,18,14,.5);display:flex;align-items:center;justify-content:center;z-index:50;padding:16px}
+.modal{background:var(--card);border-radius:20px;padding:22px 24px;width:min(560px,100%);max-height:92vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)}.modal h2{font-size:26px;margin-bottom:14px}
+.f{display:grid;grid-template-columns:1fr 1fr;gap:12px}.f label{display:flex;flex-direction:column;gap:4px;font-size:13px;font-weight:700;color:var(--mute)}.f label.w{grid-column:1/-1}
+.f input,.f select,.f textarea{border:1.5px solid var(--line);border-radius:12px;padding:9px 12px;background:var(--soft);color:var(--ink);font-weight:500}
+.mfoot{display:flex;justify-content:space-between;gap:10px;margin-top:18px}
+.banner{background:var(--ink);color:var(--bg);border-radius:14px;padding:12px 16px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.banner b{color:var(--yel)}
+.ss-pair{display:flex;flex-wrap:wrap;gap:8px}.chip{background:var(--soft);border:1.5px solid var(--line);border-radius:99px;padding:6px 12px;font-weight:600;display:inline-flex;gap:8px;align-items:center}
+.reveal{text-align:center;padding:26px}.reveal .big{font-family:'DM Serif Display';font-size:46px;color:var(--accent)}
+.tags{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.tag{border-radius:16px;padding:16px;min-height:150px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden;border:2px solid var(--ink);background:#fff;color:#1F1D1A}
+.tag .to{font-family:'DM Serif Display';font-size:26px;line-height:1.1}.tag .fr{font-size:13px;font-weight:600}.tag .hole{position:absolute;top:10px;right:12px;width:14px;height:14px;border-radius:50%;border:2px solid #1F1D1A;background:#fff}
+.tag.geek{border-top:12px solid transparent;border-image:linear-gradient(90deg,#D6452F 0 25%,#F2B632 25% 50%,#2F6FB5 50% 75%,#3F9B5A 75%) 1}
+.tag.classic{background:#B3261E;color:#fff;border-color:#B3261E}.tag.classic .hole{border-color:#fff;background:#B3261E}.tag.classic:after{content:"";position:absolute;left:0;right:0;bottom:0;height:16px;background:repeating-linear-gradient(45deg,#fff 0 8px,#1E5631 8px 16px)}
+.tag.snowy{background:#EAF4FB;border-color:#2F6FB5;background-image:radial-gradient(#fff 3px,transparent 3px);background-size:22px 22px}
+.tag.kraft{background:#D9B98C;border-color:#7a5a32}.tag.kraft .to{color:#3f2a10}
+.lock,.panic{position:fixed;inset:0;z-index:100;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:20px}
+.lock .card{text-align:center;max-width:340px}.lock input{font-size:28px;letter-spacing:12px;text-align:center;width:180px;border:2px solid var(--line);border-radius:14px;padding:10px;background:var(--soft);margin:14px 0}
+.panic .card{max-width:560px}.panic li{margin:6px 0}
+.tabs-m{display:none}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:99px;font-weight:700;z-index:200}
+@media(max-width:900px){.app{grid-template-columns:1fr}.rings{grid-template-columns:repeat(2,1fr);row-gap:14px}.stat .v{font-size:26px}.count b{font-size:34px}nav.side{display:none}main{padding:18px 16px 96px}.g4{grid-template-columns:repeat(2,1fr)}.g3,.g2{grid-template-columns:1fr}.tags{grid-template-columns:repeat(2,1fr)}
+.tabs-m{display:flex;position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--line);z-index:40;overflow-x:auto;padding:6px 6px calc(6px + env(safe-area-inset-bottom))}
+.tabs-m a{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;font-size:11px;font-weight:700;padding:4px 10px;border-radius:10px;color:var(--mute);cursor:pointer}.tabs-m a.on{color:var(--accent)}.tabs-m a span{font-size:20px}
+.prow{grid-template-columns:90px 1fr 92px}.hide-m{display:none}.top h1{font-size:28px}table{font-size:13px}td,th{padding:8px 6px}}
+@media print{body{background:#fff}nav,.tabs-m,.top,.tools,.banner,.noprint{display:none!important}.app{display:block}main{padding:0;max-width:none}.tags{grid-template-columns:repeat(3,1fr);gap:8mm}.tag{break-inside:avoid;min-height:45mm}}
+</style>
+<div class="stripe"></div>
+<div id="root"></div>
+<script>
+const DEMO = true, DEMO_LIMIT = 10, ETSY_URL = "https://thegeeknextdoorco.etsy.com";
+const KEY = DEMO ? "geekxmas-demo-v1" : "geekxmas-v1";
+const STATUSES = [["idea","Idea"],["tobuy","To buy"],["bought","Bought"],["wrapped","Wrapped"],["given","Given"]];
+const CURRENCIES = {GBP:"£ GBP",USD:"$ USD",EUR:"€ EUR",CAD:"$ CAD",AUD:"$ AUD",NZD:"$ NZD",IEP:"€ (Ireland)"};
+const VIEWS = [["dash","🏠","Dashboard"],["gifts","🎁","Gifts"],["people","👪","People"],["shop","🛒","Shopping"],["stock","🧦","Stockings"],["cards","💌","Cards"],["santa","🎅","Secret Santa"],["tags","🏷️","Gift Tags"],["check","✅","Checklist"],["settings","⚙️","Settings"]];
+const uid = () => Math.random().toString(36).slice(2, 9);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const year = new Date().getFullYear();
+
+function checklistDefaults(){ return [
+ ["Early November","Set your Christmas budget"],["Early November","List everyone you're buying for"],["Early November","Book Christmas travel"],
+ ["Mid November","Order personalised gifts"],["Late November","Black Friday shopping (stick to the list!)"],["Late November","Buy cards and stamps"],
+ ["Early December","Put the tree up"],["Early December","Book the food delivery / order the turkey"],["Early December","Organise Secret Santa"],
+ ["Early December","Write and post cards (check Royal Mail last posting dates)"],["Mid December","Post gifts to faraway family"],["Mid December","Finish the shopping"],
+ ["Mid December","Wrap presents"],["Christmas week","Big food shop"],["Christmas week","Charge batteries for new toys"],["Christmas Eve","Stockings ready"],
+ ["Christmas Eve","Mince pie and carrot out for Santa & Rudolph"],["Christmas Day","Enjoy it! 🎄"],["After Christmas","Write thank-you notes"]].map(([w,t]) => ({id:uid(),week:w,text:t,done:false})); }
+
+function blank(){ return {settings:{family:"",year,currency:"GBP",theme:"light",pin:""},people:[],gifts:[],stockings:[],cards:[],santa:{names:[],excl:[],budget:"",date:"",draw:null,revealed:[]},checklist:checklistDefaults(),created:0}; }
+function sample(){
+  const d = blank(); d.settings.family = "The Taylor Family";
+  const P = [["Mum","Family",120,"Size 12 · UK 6 shoes","Candles, bath stuff, a good crime novel"],["Dad","Family",100,"L · UK 10","Coffee, gardening, anything Liverpool FC"],
+             ["Isla","Kids",150,"Age 8-9","LEGO Friends, art set, roller skates"],["Noah","Kids",150,"Age 5-6","Dinosaurs, football, Paw Patrol"],["Grandma Joan","Family",40,"","Jigsaws, slippers"],["Mr Patel (teacher)","Other",15,"",""]];
+  P.forEach(([name,group,budget,sizes,wish]) => d.people.push({id:uid(),name,group,budget,sizes,wish}));
+  const by = n => d.people.find(p => p.name.startsWith(n)).id, dt = (m,dd) => `${year}-${String(m).padStart(2,"0")}-${String(dd).padStart(2,"0")}`;
+  [["Mum","Cashmere scarf","John Lewis",45,42,"wrapped",dt(12,20)],["Mum","Crime novel","Waterstones",12,10,"bought",dt(12,20)],["Dad","Coffee subscription","Online",30,30,"bought",dt(12,25)],
+   ["Dad","Gardening gloves","Garden centre",15,"","tobuy",dt(12,25)],["Isla","LEGO Friends set","Argos",60,55,"wrapped",dt(12,25)],["Isla","Roller skates","Decathlon",45,"","tobuy",dt(12,25)],
+   ["Noah","Dinosaur kit","Smyths",35,32,"bought",dt(12,25)],["Noah","Football","JD Sports",20,"","idea",dt(12,25)],["Grandma Joan","1000-piece jigsaw","WHSmith",18,16,"given",dt(12,18)],
+   ["Mr Patel (teacher)","Box of chocolates","Tesco",8,8,"bought",dt(12,19)]].forEach(([p,title,store,est,cost,status,giveBy]) => d.gifts.push({id:uid(),person:by(p),title,store,link:"",est,cost,status,giveBy,notes:""}));
+  [["Isla","Chocolate coins",2,true],["Isla","Hair clips",4,false],["Noah","Dinosaur stickers",3,true],["Noah","Satsuma",0.3,false]].forEach(([p,item,cost,got]) => d.stockings.push({id:uid(),person:by(p),item,cost,got}));
+  [["Auntie Sue & Ken","12 Holly Lane, York",true,true],["The Johnsons","4 Elm Road, Leeds",true,false],["Nana & Grandad","",false,false]].forEach(([name,address,sent,received]) => d.cards.push({id:uid(),name,address,sent,received}));
+  d.santa.names = ["Mum","Dad","Auntie Sue","Uncle Ken","Grandma Joan","Cousin Amy"]; d.santa.excl = [["Mum","Dad"],["Auntie Sue","Uncle Ken"]]; d.santa.budget = 20;
+  d.checklist.slice(0,5).forEach(c => c.done = true);
+  return d;
+}
+let S, view = "dash", filt = {person:"",status:"",q:""}, unlocked = false;
+function load(){ try { const raw = localStorage.getItem(KEY); S = raw ? JSON.parse(raw) : (DEMO ? sample() : blank()); } catch(e) { S = DEMO ? sample() : blank(); } S = Object.assign(blank(), S); }
+function save(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e) {} }
+load();
+const money = v => { const n = Number(v) || 0; const cur = S.settings.currency === "IEP" ? "EUR" : S.settings.currency; try { return new Intl.NumberFormat("en-GB",{style:"currency",currency:cur,maximumFractionDigits:n % 1 ? 2 : 0}).format(n); } catch(e) { return n.toFixed(2); } };
+const person = id => S.people.find(p => p.id === id);
+const giftCost = g => Number(g.cost !== "" && g.cost != null ? g.cost : 0);
+const giftPlan = g => Number(g.cost !== "" && g.cost != null ? g.cost : g.est) || 0;
+const isBought = g => ["bought","wrapped","given"].includes(g.status);
+function canAdd(){ if (!DEMO) return true; if (S.created >= DEMO_LIMIT) { toast("Demo limit reached: get the full version for unlimited entries"); return false; } return true; }
+function created(){ if (DEMO) S.created++; }
+function toast(m){ const t = document.createElement("div"); t.className = "toast"; t.textContent = m; document.body.appendChild(t); setTimeout(() => t.remove(), 2600); }
+function xmas(){ const now = new Date(); let x = new Date(Number(S.settings.year) || now.getFullYear(), 11, 25); if (x - now < -86400000) x = new Date(now.getFullYear() + 1, 11, 25); return x; }
+
+/* ---------------- views ---------------- */
+function ring(v, max, col, label){ const p = max ? Math.min(1, v / max) : 0, C = 2 * Math.PI * 36;
+  return `<div><div class="ring"><svg width="86" height="86"><circle cx="43" cy="43" r="36" fill="none" stroke="var(--soft)" stroke-width="10"/><circle cx="43" cy="43" r="36" fill="none" stroke="${col}" stroke-width="10" stroke-linecap="round" stroke-dasharray="${C*p} ${C}"/></svg><b>${v}/${max}</b></div><small>${label}</small></div>`; }
+function vDash(){
+  const budget = S.people.reduce((a,p) => a + (Number(p.budget)||0), 0), planned = S.gifts.reduce((a,g) => a + giftPlan(g), 0) + S.stockings.reduce((a,s) => a + (Number(s.cost)||0), 0);
+  const spent = S.gifts.filter(isBought).reduce((a,g) => a + giftCost(g), 0) + S.stockings.filter(s => s.got).reduce((a,s) => a + (Number(s.cost)||0), 0);
+  const n = S.gifts.length, bought = S.gifts.filter(isBought).length, wrapped = S.gifts.filter(g => ["wrapped","given"].includes(g.status)).length, given = S.gifts.filter(g => g.status === "given").length;
+  const cs = S.cards.filter(c => c.sent).length;
+  const next = S.gifts.filter(g => g.status !== "given").sort((a,b) => (a.giveBy||"9999").localeCompare(b.giveBy||"9999") || STATUSES.findIndex(s=>s[0]===a.status) - STATUSES.findIndex(s=>s[0]===b.status)).slice(0, 6);
+  const per = S.people.map(p => { const pl = S.gifts.filter(g => g.person === p.id).reduce((a,g) => a + giftPlan(g), 0) + S.stockings.filter(s => s.person === p.id).reduce((a,s) => a + (Number(s.cost)||0), 0); return {p, pl}; });
+  return `<div class="top"><div><h1>${esc(S.settings.family || "Our Family")} Christmas</h1><p>Season ${esc(S.settings.year)} · ${S.people.length} people · ${n} gifts</p></div><button class="btn" data-a="addGift">+ Add a gift</button></div>
+  <div class="card" style="margin-bottom:16px"><div class="count" id="countdown"></div></div>
+  <div class="grid g4" style="margin-bottom:16px">
+   <div class="card stat c1"><div class="k">Budget</div><div class="v">${money(budget)}</div><div class="s">across ${S.people.length} people</div></div>
+   <div class="card stat c2"><div class="k">Planned</div><div class="v">${money(planned)}</div><div class="s">${budget ? Math.round(planned/budget*100) : 0}% of budget</div></div>
+   <div class="card stat c3"><div class="k">Spent</div><div class="v">${money(spent)}</div><div class="s">${bought} gifts bought</div></div>
+   <div class="card stat c4"><div class="k">Left to spend</div><div class="v" style="color:${budget-spent<0?'var(--red)':'inherit'}">${money(budget - spent)}</div><div class="s">of your total budget</div></div></div>
+  <div class="grid g2" style="margin-bottom:16px">
+   <div class="card"><h3>Budget vs planned, by person</h3>${per.length ? per.map(({p,pl}) => `<div class="prow"><span class="n">${esc(p.name)}</span><div class="bar"><i class="${pl > p.budget ? 'over' : ''}" style="width:${p.budget ? Math.min(100, pl/p.budget*100) : 0}%"></i></div><span class="m">${money(pl)} / ${money(p.budget)}</span></div>`).join("") : `<div class="empty">Add people to set budgets.</div>`}</div>
+   <div class="card"><h3>Progress</h3><div class="rings">${ring(bought,n,"var(--blue)","Bought")}${ring(wrapped,n,"var(--grn)","Wrapped")}${ring(given,n,"var(--yel)","Given")}${ring(cs,S.cards.length,"var(--red)","Cards sent")}</div>
+    <h3 style="margin-top:20px">Up next</h3><div class="list">${next.length ? next.map(g => `<div class="it"><div><div class="t">${esc(g.title)}</div><div class="d">for ${esc(person(g.person)?.name || "?")}${g.giveBy ? " · give by " + new Date(g.giveBy).toLocaleDateString("en-GB",{day:"numeric",month:"short"}) : ""}</div></div>${statusPill(g)}</div>`).join("") : `<div class="empty">Nothing waiting. Nice work! 🎉</div>`}</div></div></div>`;
+}
+function statusPill(g){ return `<span class="pill s-${g.status}" data-a="cycle" data-id="${g.id}" style="cursor:pointer" title="Tap to move to the next stage">${STATUSES.find(s => s[0] === g.status)?.[1]}</span>`; }
+function vGifts(){
+  let L = S.gifts.filter(g => (!filt.person || g.person === filt.person) && (!filt.status || g.status === filt.status) && (!filt.q || (g.title + g.store + (person(g.person)?.name||"")).toLowerCase().includes(filt.q.toLowerCase())));
+  return `<div class="top"><div><h1>Gifts</h1><p>Tap a status to move it along: Idea → To buy → Bought → Wrapped → Given.</p></div><button class="btn" data-a="addGift">+ Add a gift</button></div>
+  <div class="tools"><input placeholder="Search…" value="${esc(filt.q)}" data-f="q"><select data-f="person"><option value="">Everyone</option>${S.people.map(p => `<option value="${p.id}" ${filt.person===p.id?"selected":""}>${esc(p.name)}</option>`).join("")}</select>
+  <select data-f="status"><option value="">Any status</option>${STATUSES.map(([k,l]) => `<option value="${k}" ${filt.status===k?"selected":""}>${l}</option>`).join("")}</select></div>
+  <div class="card" style="padding:6px 8px;overflow-x:auto">${L.length ? `<table><tr><th>Gift</th><th>For</th><th class="hide-m">Shop</th><th class="num">Cost</th><th>Status</th><th class="hide-m">Give by</th><th></th></tr>
+  ${L.map(g => `<tr><td><b>${esc(g.title)}</b>${g.link ? ` · <a class="link" href="${esc(g.link)}" target="_blank" rel="noopener">link</a>` : ""}</td><td>${esc(person(g.person)?.name || "")}</td><td class="hide-m">${esc(g.store)}</td><td class="num">${money(giftPlan(g))}</td><td>${statusPill(g)}</td><td class="hide-m">${g.giveBy ? new Date(g.giveBy).toLocaleDateString("en-GB",{day:"numeric",month:"short"}) : ""}</td><td><span class="link" data-a="editGift" data-id="${g.id}">Edit</span></td></tr>`).join("")}</table>` : `<div class="empty">No gifts yet. Add your first one!</div>`}</div>`;
+}
+function vPeople(){
+  return `<div class="top"><div><h1>People</h1><p>Everyone you're buying for, with a budget for each.</p></div><button class="btn" data-a="addPerson">+ Add a person</button></div>
+  <div class="grid g3">${S.people.map(p => { const gs = S.gifts.filter(g => g.person === p.id), pl = gs.reduce((a,g) => a + giftPlan(g), 0), sp = gs.filter(isBought).reduce((a,g) => a + giftCost(g), 0);
+   return `<div class="card"><div style="display:flex;justify-content:space-between;align-items:start"><div><h3 style="margin-bottom:2px">${esc(p.name)}</h3><span class="pill s-idea">${esc(p.group)}</span></div><span class="link" data-a="editPerson" data-id="${p.id}">Edit</span></div>
+   <div class="prow" style="grid-template-columns:70px 1fr"><span class="n">Planned</span><div class="bar"><i class="${pl > p.budget ? 'over' : ''}" style="width:${p.budget ? Math.min(100, pl/p.budget*100) : 0}%"></i></div></div>
+   <div class="d" style="color:var(--mute);font-size:13px">${money(pl)} planned · ${money(sp)} spent · budget ${money(p.budget)} · ${gs.length} gift${gs.length===1?"":"s"}</div>
+   ${p.sizes ? `<p style="margin:10px 0 0;font-size:13px"><b>Sizes:</b> ${esc(p.sizes)}</p>` : ""}${p.wish ? `<p style="margin:6px 0 0;font-size:13px"><b>Wish list:</b> ${esc(p.wish)}</p>` : ""}</div>`; }).join("") || `<div class="card empty">Add the people you're buying for.</div>`}</div>`;
+}
+function vShop(){
+  const L = S.gifts.filter(g => g.status === "tobuy" || g.status === "idea"), by = {};
+  L.forEach(g => (by[g.store || "Anywhere"] ||= []).push(g));
+  return `<div class="top"><div><h1>Shopping Run</h1><p>Everything still to buy, grouped by shop. Tick it when it's in the bag.</p></div><button class="btn ghost" onclick="window.print()">Print list</button></div>
+  <div class="grid g2">${Object.keys(by).sort().map(st => `<div class="card"><h3>${esc(st)}</h3><div class="list">${by[st].map(g => `<div class="it"><div style="display:flex;gap:10px;align-items:center"><span class="chk" data-a="buy" data-id="${g.id}"></span><div><div class="t">${esc(g.title)}</div><div class="d">for ${esc(person(g.person)?.name||"")} · ${money(giftPlan(g))}</div></div></div>${statusPill(g)}</div>`).join("")}</div></div>`).join("") || `<div class="card empty">Nothing left to buy! 🎉</div>`}</div>`;
+}
+function vStock(){
+  return `<div class="top"><div><h1>Stockings</h1><p>Little extras add up: these count towards each person's budget.</p></div><button class="btn" data-a="addStock">+ Add a stocking filler</button></div>
+  <div class="grid g2">${S.people.filter(p => S.stockings.some(s => s.person === p.id)).map(p => { const L = S.stockings.filter(s => s.person === p.id);
+   return `<div class="card"><h3>${esc(p.name)} <span style="font-family:Inter;font-size:14px;color:var(--mute)">${money(L.reduce((a,s)=>a+(Number(s.cost)||0),0))}</span></h3><div class="list">${L.map(s => `<div class="it"><div style="display:flex;gap:10px;align-items:center"><span class="chk ${s.got?'on':''}" data-a="togStock" data-id="${s.id}">${s.got?'✓':''}</span><div class="t" style="${s.got?'text-decoration:line-through;color:var(--mute)':''}">${esc(s.item)}</div></div><div>${money(s.cost)} <button class="del" data-a="delStock" data-id="${s.id}">×</button></div></div>`).join("")}</div></div>`; }).join("") || `<div class="card empty">No stocking fillers yet.</div>`}</div>`;
+}
+function vCards(){
+  return `<div class="top"><div><h1>Card List</h1><p>${S.cards.filter(c=>c.sent).length} of ${S.cards.length} sent · ${S.cards.filter(c=>c.received).length} received</p></div><button class="btn" data-a="addCard">+ Add a card</button></div>
+  <div class="card" style="padding:6px 8px;overflow-x:auto">${S.cards.length ? `<table><tr><th>Name</th><th class="hide-m">Address</th><th>Sent</th><th>Received</th><th></th></tr>${S.cards.map(c => `<tr><td><b>${esc(c.name)}</b></td><td class="hide-m">${esc(c.address)}</td><td><span class="chk ${c.sent?'on':''}" data-a="togCard" data-k="sent" data-id="${c.id}">${c.sent?'✓':''}</span></td><td><span class="chk ${c.received?'on':''}" data-a="togCard" data-k="received" data-id="${c.id}">${c.received?'✓':''}</span></td><td><span class="link" data-a="editCard" data-id="${c.id}">Edit</span></td></tr>`).join("")}</table>` : `<div class="empty">Add the people you send cards to.</div>`}</div>`;
+}
+let ssReveal = null;
+function vSanta(){
+  const ss = S.santa;
+  if (ssReveal) { const r = ss.draw?.[ssReveal];
+    return `<div class="card reveal"><p style="color:var(--mute);font-weight:700">Shh! Only ${esc(ssReveal)} should be looking…</p><p>You're buying a present for</p><div class="big">${esc(r)}</div>${ss.budget ? `<p>Spend limit: <b>${money(ss.budget)}</b>${ss.date ? " · Exchange on " + new Date(ss.date).toLocaleDateString("en-GB",{day:"numeric",month:"long"}) : ""}</p>` : ""}<button class="btn" data-a="ssHide">Done: hide it and pass the phone on</button></div>`; }
+  return `<div class="top"><div><h1>Secret Santa</h1><p>Add everyone, set any "not these two" rules, then draw. Each person taps their own name to see their match.</p></div></div>
+  <div class="grid g2"><div class="card"><h3>Who's playing?</h3><div class="ss-pair" style="margin-bottom:12px">${ss.names.map((n,i) => `<span class="chip">${esc(n)} <button class="del" data-a="ssDel" data-i="${i}">×</button></span>`).join("") || `<span style="color:var(--mute)">No one yet</span>`}</div>
+   <div class="tools noprint"><input id="ssName" placeholder="Add a name"><button class="btn sm" data-a="ssAdd">Add</button></div>
+   <h3 style="margin-top:10px">Don't pair these</h3><div class="ss-pair" style="margin-bottom:12px">${ss.excl.map((e,i) => `<span class="chip">${esc(e[0])} ⟷ ${esc(e[1])} <button class="del" data-a="exDel" data-i="${i}">×</button></span>`).join("") || `<span style="color:var(--mute)">No rules: anyone can get anyone</span>`}</div>
+   <div class="tools"><select id="ex1">${ss.names.map(n=>`<option>${esc(n)}</option>`).join("")}</select><select id="ex2">${ss.names.map(n=>`<option>${esc(n)}</option>`).join("")}</select><button class="btn sm ghost" data-a="exAdd">Add rule</button></div>
+   <div class="f" style="margin-top:6px"><label>Spend limit<input type="number" value="${esc(ss.budget)}" data-s="budget"></label><label>Exchange date<input type="date" value="${esc(ss.date)}" data-s="date"></label></div>
+   <div style="margin-top:16px"><button class="btn" data-a="ssDraw" ${ss.names.length < 3 ? "disabled" : ""}>${ss.draw ? "Draw again" : "Draw names"} 🎅</button></div></div>
+  <div class="card"><h3>Reveal your match</h3>${ss.draw ? `<p style="color:var(--mute)">Pass the phone around. Tap your name: only you will see who you've got.</p><div class="ss-pair">${ss.names.map(n => `<button class="btn ${ss.revealed.includes(n) ? 'ghost' : 'dark'}" data-a="ssShow" data-n="${esc(n)}">${esc(n)}${ss.revealed.includes(n) ? " ✓" : ""}</button>`).join("")}</div>` : `<div class="empty">Draw names first. Nobody ever gets themselves, and your rules are always followed.</div>`}</div></div>`;
+}
+let tagStyle = "geek";
+function vTags(){
+  const L = S.gifts.filter(g => g.status !== "given");
+  return `<div class="top"><div><h1>Gift Tags</h1><p>Filled in from your gift list. Pick a style, then print and cut out.</p></div><div style="display:flex;gap:8px;flex-wrap:wrap">${["geek","classic","snowy","kraft"].map(s => `<button class="btn sm ${tagStyle===s?'dark':'ghost'}" data-a="tagStyle" data-s="${s}">${s[0].toUpperCase()+s.slice(1)}</button>`).join("")}<button class="btn sm" onclick="window.print()">Print tags</button></div></div>
+  <div class="tags">${L.map(g => `<div class="tag ${tagStyle}"><span class="hole"></span><div><div class="fr">To</div><div class="to">${esc(person(g.person)?.name || "")}</div></div><div class="fr">With love from ${esc(S.settings.family ? S.settings.family.replace(/^The /,"the ") : "us")} 🎄</div></div>`).join("") || `<div class="card empty">Add gifts to make tags.</div>`}</div>`;
+}
+function vCheck(){
+  const weeks = [...new Set(S.checklist.map(c => c.week))], done = S.checklist.filter(c=>c.done).length;
+  return `<div class="top"><div><h1>Christmas Checklist</h1><p>${done} of ${S.checklist.length} done</p></div><button class="btn" data-a="addCheck">+ Add a task</button></div>
+  <div class="card" style="margin-bottom:16px"><div class="bar"><i style="width:${S.checklist.length ? done/S.checklist.length*100 : 0}%"></i></div></div>
+  <div class="grid g2">${weeks.map(w => `<div class="card"><h3>${esc(w)}</h3><div class="list">${S.checklist.filter(c => c.week === w).map(c => `<div class="it"><div style="display:flex;gap:10px;align-items:center"><span class="chk ${c.done?'on':''}" data-a="togCheck" data-id="${c.id}">${c.done?'✓':''}</span><span style="${c.done?'text-decoration:line-through;color:var(--mute)':''}">${esc(c.text)}</span></div><button class="del" data-a="delCheck" data-id="${c.id}">×</button></div>`).join("")}</div></div>`).join("")}</div>`;
+}
+function vSettings(){
+  const st = S.settings;
+  return `<div class="top"><div><h1>Settings</h1><p>Your list is saved privately in this browser, on this device only.</p></div></div>
+  <div class="grid g2"><div class="card"><h3>Your Christmas</h3><div class="f">
+   <label class="w">Family name<input value="${esc(st.family)}" data-set="family" placeholder="The Smith Family"></label>
+   <label>Year<input type="number" value="${esc(st.year)}" data-set="year"></label>
+   <label>Currency<select data-set="currency">${Object.entries(CURRENCIES).map(([k,l]) => `<option value="${k}" ${st.currency===k?"selected":""}>${l}</option>`).join("")}</select></label>
+   <label>Theme<select data-set="theme">${[["light","Geek (light)"],["festive","Festive"],["dark","Dark"]].map(([k,l]) => `<option value="${k}" ${st.theme===k?"selected":""}>${l}</option>`).join("")}</select></label>
+   <label>PIN lock (4 digits, blank = off)<input type="password" inputmode="numeric" maxlength="4" value="${esc(st.pin)}" data-set="pin"></label></div>
+   <p style="font-size:13px;color:var(--mute);margin:14px 0 0">🙈 <b>Little eyes nearby?</b> Press <b>Esc</b> twice (or tap the logo three times) to hide everything behind a mince pie recipe.</p></div>
+  <div class="card"><h3>Backup &amp; export</h3><p style="color:var(--mute);font-size:14px;margin-top:0">Download a backup to keep it safe or move it to another device. Export your gifts to open in Excel or Google Sheets.</p>
+   <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" data-a="backup">Download backup</button><label class="btn ghost" style="cursor:pointer">Restore backup<input type="file" accept=".json" data-a="restore" hidden></label><button class="btn ghost" data-a="csv">Export gifts (CSV)</button></div>
+   <h3 style="margin-top:22px">Start again</h3><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn ghost" data-a="loadSample">Load the sample family</button><button class="btn ghost" data-a="reset" style="color:var(--red)">Clear everything</button></div></div></div>
+  <p style="text-align:center;color:var(--mute);font-size:12px;margin-top:30px">Christmas HQ · made with ♥ by The Geek Next Door Co. · For personal use only.</p>`;
+}
+const V = {dash:vDash,gifts:vGifts,people:vPeople,shop:vShop,stock:vStock,cards:vCards,santa:vSanta,tags:vTags,check:vCheck,settings:vSettings};
+
+/* ---------------- shell ---------------- */
+const LOGO = `<svg width="44" height="20" viewBox="0 0 520 220"><path d="M10 70 L60 95M510 70 L460 95" stroke="currentColor" stroke-width="18" stroke-linecap="round"/><path d="M232 110 Q260 82 288 110" stroke="currentColor" stroke-width="18" fill="none" stroke-linecap="round"/><circle cx="145" cy="120" r="88" fill="none" stroke="#D6452F" stroke-width="30" stroke-dasharray="300 253"/><circle cx="145" cy="120" r="88" fill="none" stroke="#F2B632" stroke-width="30" stroke-dasharray="0 300 253 0"/><circle cx="375" cy="120" r="88" fill="none" stroke="#2F6FB5" stroke-width="30" stroke-dasharray="300 253"/><circle cx="375" cy="120" r="88" fill="none" stroke="#3F9B5A" stroke-width="30" stroke-dasharray="0 300 253 0"/></svg>`;
+function render(){
+  document.documentElement.dataset.theme = S.settings.theme;
+  if (S.settings.pin && !unlocked) { document.getElementById("root").innerHTML = `<div class="lock"><div class="card"><div class="logo" style="justify-content:center">${LOGO}</div><h2>Christmas HQ</h2><p style="color:var(--mute)">Enter your PIN</p><input id="pin" type="password" inputmode="numeric" maxlength="4" autofocus><br><button class="btn" data-a="unlock">Unlock</button></div></div>`; return; }
+  const demoBar = DEMO ? `<div class="banner"><span>🎄 <b>Free demo</b> · ${Math.max(0, DEMO_LIMIT - S.created)} of ${DEMO_LIMIT} new entries left. Everything else works!</span><a class="btn sm" style="background:var(--yel);color:#1F1D1A;text-decoration:none" href="${ETSY_URL}" target="_blank" rel="noopener">Get the full app</a></div>` : "";
+  document.getElementById("root").innerHTML = `<div class="app"><nav class="side"><div class="logo" data-a="logo">${LOGO}<div><b>Christmas HQ</b><small>THE GEEK NEXT DOOR CO.</small></div></div><div class="nav">${VIEWS.map(([k,ic,l]) => `<a class="${view===k?'on':''}" data-v="${k}"><span class="ic">${ic}</span>${l}</a>`).join("")}</div></nav>
+  <main>${demoBar}${V[view]()}</main></div><div class="tabs-m">${VIEWS.map(([k,ic,l]) => `<a class="${view===k?'on':''}" data-v="${k}"><span>${ic}</span>${l}</a>`).join("")}</div>`;
+  tick();
+}
+function tick(){ const el = document.getElementById("countdown"); if (!el) return; const ms = xmas() - new Date();
+  if (ms <= 0) { el.innerHTML = `<b>Merry Christmas! 🎄</b>`; return; }
+  const d = Math.floor(ms/864e5), h = Math.floor(ms%864e5/36e5), m = Math.floor(ms%36e5/6e4), s = Math.floor(ms%6e4/1e3);
+  el.innerHTML = `<b>${d}</b><span>days</span><b>${h}</b><span>hrs</span><b>${m}</b><span>mins</span><b>${s}</b><span>secs until Christmas Day</span>`; }
+setInterval(tick, 1000);
+
+/* ---------------- modals ---------------- */
+function ask(msg, ok = "Yes"){ return new Promise(res => { const bg = document.createElement("div"); bg.className = "modal-bg";
+  bg.innerHTML = `<div class="modal" style="max-width:420px"><p style="font-size:17px;font-weight:600;margin:0 0 18px">${esc(msg)}</p><div style="display:flex;justify-content:flex-end;gap:8px"><button class="btn ghost" data-q="no">Cancel</button><button class="btn" data-q="ok">${esc(ok)}</button></div></div>`;
+  document.body.appendChild(bg); bg.querySelector('[data-q="ok"]').focus();
+  bg.addEventListener("click", e => { const q = e.target.dataset.q; if (e.target === bg || q === "no") { bg.remove(); res(false); } if (q === "ok") { bg.remove(); res(true); } }); }); }
+function modal(title, body, onSave, onDelete){
+  const bg = document.createElement("div"); bg.className = "modal-bg";
+  bg.innerHTML = `<div class="modal"><h2>${title}</h2><div class="f">${body}</div><div class="mfoot"><div>${onDelete ? `<button class="btn ghost" data-m="del" style="color:var(--red)">Delete</button>` : ""}</div><div style="display:flex;gap:8px"><button class="btn ghost" data-m="x">Cancel</button><button class="btn" data-m="ok">Save</button></div></div></div>`;
+  document.body.appendChild(bg); bg.querySelector("input,select")?.focus();
+  bg.addEventListener("click", e => { const m = e.target.dataset.m;
+    if (e.target === bg || m === "x") bg.remove();
+    if (m === "ok") { const v = {}; bg.querySelectorAll("[name]").forEach(i => v[i.name] = i.type === "checkbox" ? i.checked : i.value); if (onSave(v) !== false) { bg.remove(); save(); render(); } }
+    if (m === "del") ask("Delete this? This cannot be undone.", "Delete").then(y => { if (y) { onDelete(); bg.remove(); save(); render(); } }); });
+}
+const inp = (n, l, v = "", t = "text", w = false, extra = "") => `<label class="${w?'w':''}">${l}<input name="${n}" type="${t}" value="${esc(v)}" ${extra}></label>`;
+const peopleSel = (v) => `<label>For<select name="person">${S.people.map(p => `<option value="${p.id}" ${v===p.id?"selected":""}>${esc(p.name)}</option>`).join("")}</select></label>`;
+function giftModal(g){
+  if (!S.people.length) { toast("Add a person first"); view = "people"; render(); return; }
+  if (!g && !canAdd()) return;
+  const x = g || {person: filt.person || S.people[0].id, status:"idea", title:"", store:"", link:"", est:"", cost:"", giveBy:`${S.settings.year}-12-25`, notes:""};
+  modal(g ? "Edit gift" : "Add a gift", inp("title","Gift",x.title,"text",true,'placeholder="e.g. LEGO set"') + peopleSel(x.person) +
+    `<label>Status<select name="status">${STATUSES.map(([k,l]) => `<option value="${k}" ${x.status===k?"selected":""}>${l}</option>`).join("")}</select></label>` +
+    inp("store","Shop",x.store) + inp("giveBy","Give by",x.giveBy,"date") + inp("est","Estimated cost",x.est,"number",false,'step="0.01"') + inp("cost","Actual cost",x.cost,"number",false,'step="0.01"') +
+    inp("link","Link",x.link,"url",true,'placeholder="https://"') + `<label class="w">Notes<textarea name="notes" rows="2">${esc(x.notes)}</textarea></label>`,
+    v => { if (!v.title.trim()) { toast("Give the gift a name"); return false; } if (g) Object.assign(g, v); else { S.gifts.push({id:uid(), ...v}); created(); } },
+    g ? () => S.gifts = S.gifts.filter(y => y !== g) : null);
+}
+function personModal(p){
+  if (!p && !canAdd()) return;
+  const x = p || {name:"", group:"Family", budget:"", sizes:"", wish:""};
+  modal(p ? "Edit person" : "Add a person", inp("name","Name",x.name,"text",true) + `<label>Group<select name="group">${["Family","Friends","Kids","Work","Other"].map(o => `<option ${x.group===o?"selected":""}>${o}</option>`).join("")}</select></label>` +
+    inp("budget","Budget",x.budget,"number") + inp("sizes","Sizes",x.sizes,"text",true,'placeholder="Clothes, shoes…"') + `<label class="w">Wish list &amp; ideas<textarea name="wish" rows="3">${esc(x.wish)}</textarea></label>`,
+    v => { if (!v.name.trim()) { toast("Add a name"); return false; } v.budget = Number(v.budget) || 0; if (p) Object.assign(p, v); else { S.people.push({id:uid(), ...v}); created(); } },
+    p ? () => { S.people = S.people.filter(y => y !== p); S.gifts = S.gifts.filter(g => g.person !== p.id); S.stockings = S.stockings.filter(s => s.person !== p.id); } : null);
+}
+function cardModal(c){
+  if (!c && !canAdd()) return;
+  const x = c || {name:"", address:"", sent:false, received:false};
+  modal(c ? "Edit card" : "Add a card", inp("name","Name",x.name,"text",true) + `<label class="w">Address<textarea name="address" rows="3">${esc(x.address)}</textarea></label>`,
+    v => { if (!v.name.trim()) return false; if (c) Object.assign(c, v); else { S.cards.push({id:uid(), sent:false, received:false, ...v}); created(); } }, c ? () => S.cards = S.cards.filter(y => y !== c) : null);
+}
+function stockModal(){
+  if (!S.people.length) { toast("Add a person first"); return; } if (!canAdd()) return;
+  modal("Add a stocking filler", peopleSel(S.people[0].id) + inp("item","Item","","text") + inp("cost","Cost","","number",false,'step="0.01"'),
+    v => { if (!v.item.trim()) return false; S.stockings.push({id:uid(), got:false, ...v}); created(); });
+}
+function drawSanta(){
+  const n = S.santa.names, ex = S.santa.excl;
+  const bad = (a, b) => a === b || ex.some(([x, y]) => (x === a && y === b) || (x === b && y === a));
+  for (let t = 0; t < 5000; t++) { const r = [...n].sort(() => Math.random() - .5); if (n.every((a, i) => !bad(a, r[i]))) { S.santa.draw = Object.fromEntries(n.map((a, i) => [a, r[i]])); S.santa.revealed = []; return true; } }
+  toast("Those rules make a draw impossible. Remove a rule and try again."); return false;
+}
+
+/* ---------------- events ---------------- */
+let escAt = 0, logoTaps = [];
+function panic(){ const p = document.createElement("div"); p.className = "panic"; p.innerHTML = `<div class="card"><h2>Easy Mince Pies</h2><p style="color:var(--mute)">Makes 12 · 40 minutes</p><ul><li>375g shortcrust pastry</li><li>1 jar of mincemeat (about 400g)</li><li>1 beaten egg, to glaze</li><li>Icing sugar, to dust</li></ul><ol><li>Heat the oven to 200°C (180°C fan).</li><li>Cut 12 circles of pastry and press into a bun tin.</li><li>Add a heaped teaspoon of mincemeat to each.</li><li>Top with pastry stars, brush with egg and bake for 15–20 minutes.</li><li>Cool, dust with icing sugar and enjoy!</li></ol><p style="font-size:12px;color:var(--mute)">Tap here to go back.</p></div>`; p.onclick = () => p.remove(); document.body.appendChild(p); }
+document.addEventListener("keydown", e => { if (e.key === "Escape") { const now = Date.now(); if (now - escAt < 700) { document.querySelector(".panic") ? document.querySelector(".panic").remove() : panic(); escAt = 0; } else escAt = now; }
+  if (e.key === "Enter" && document.getElementById("pin")) document.querySelector('[data-a="unlock"]').click(); if (e.key === "Enter" && document.activeElement?.id === "ssName") document.querySelector('[data-a="ssAdd"]').click(); });
+document.addEventListener("click", e => {
+  const vEl = e.target.closest("[data-v]"); if (vEl) { view = vEl.dataset.v; ssReveal = null; render(); window.scrollTo(0, 0); return; }
+  const a = e.target.closest("[data-a]"); if (!a) return; const id = a.dataset.id, act = a.dataset.a;
+  const G = () => S.gifts.find(g => g.id === id);
+  ({ addGift: () => giftModal(), editGift: () => giftModal(G()), addPerson: () => personModal(), editPerson: () => personModal(S.people.find(p => p.id === id)),
+     addCard: () => cardModal(), editCard: () => cardModal(S.cards.find(c => c.id === id)), addStock: () => stockModal(),
+     cycle: () => { const g = G(); const i = STATUSES.findIndex(s => s[0] === g.status); g.status = STATUSES[(i + 1) % STATUSES.length][0]; save(); render(); },
+     buy: () => { const g = G(); g.status = "bought"; if (g.cost === "" || g.cost == null) g.cost = g.est; save(); render(); },
+     togStock: () => { const s = S.stockings.find(x => x.id === id); s.got = !s.got; save(); render(); }, delStock: () => { S.stockings = S.stockings.filter(x => x.id !== id); save(); render(); },
+     togCard: () => { const c = S.cards.find(x => x.id === id); c[a.dataset.k] = !c[a.dataset.k]; save(); render(); },
+     togCheck: () => { const c = S.checklist.find(x => x.id === id); c.done = !c.done; save(); render(); }, delCheck: () => { S.checklist = S.checklist.filter(x => x.id !== id); save(); render(); },
+     addCheck: () => { if (!canAdd()) return; modal("Add a task", inp("text","Task","","text",true) + `<label class="w">When<select name="week">${[...new Set(S.checklist.map(c => c.week))].map(w => `<option>${esc(w)}</option>`).join("")}</select></label>`, v => { if (!v.text.trim()) return false; S.checklist.push({id:uid(), done:false, ...v}); created(); }); },
+     ssAdd: () => { const i = document.getElementById("ssName"), n = i.value.trim(); if (!n) return; if (S.santa.names.includes(n)) { toast("That name's already in"); return; } if (!canAdd()) return; S.santa.names.push(n); S.santa.draw = null; created(); save(); render(); setTimeout(() => document.getElementById("ssName")?.focus(), 0); },
+     ssDel: () => { S.santa.names.splice(+a.dataset.i, 1); S.santa.draw = null; save(); render(); },
+     exAdd: () => { const x = document.getElementById("ex1").value, y = document.getElementById("ex2").value; if (x === y) { toast("Pick two different people"); return; } S.santa.excl.push([x, y]); S.santa.draw = null; save(); render(); },
+     exDel: () => { S.santa.excl.splice(+a.dataset.i, 1); S.santa.draw = null; save(); render(); },
+     ssDraw: async () => { if (S.santa.draw && !(await ask("Draw again? Everyone will need to look again.", "Draw again"))) return; if (drawSanta()) { save(); render(); toast("Names drawn! 🎅"); } },
+     ssShow: async () => { const n = a.dataset.n; if (S.santa.revealed.includes(n) && !(await ask(`${n} has already looked. Show again?`, "Show again"))) return; if (!(await ask(`Are you ${n}? Make sure nobody else is looking!`, `Yes, show me`))) return; ssReveal = n; render(); },
+     ssHide: () => { if (!S.santa.revealed.includes(ssReveal)) S.santa.revealed.push(ssReveal); ssReveal = null; save(); render(); },
+     tagStyle: () => { tagStyle = a.dataset.s; render(); },
+     unlock: () => { if (document.getElementById("pin").value === S.settings.pin) { unlocked = true; render(); } else toast("Wrong PIN"); },
+     logo: () => { const now = Date.now(); logoTaps = logoTaps.filter(t => now - t < 900); logoTaps.push(now); if (logoTaps.length >= 3) { logoTaps = []; panic(); } },
+     backup: () => download(`christmas-hq-backup-${new Date().toISOString().slice(0,10)}.json`, JSON.stringify(S, null, 1), "application/json"),
+     csv: () => { const rows = [["Gift","For","Shop","Status","Estimated","Actual","Give by","Link","Notes"], ...S.gifts.map(g => [g.title, person(g.person)?.name, g.store, STATUSES.find(s=>s[0]===g.status)?.[1], g.est, g.cost, g.giveBy, g.link, g.notes])];
+            download("christmas-gifts.csv", "﻿" + rows.map(r => r.map(c => `"${String(c ?? "").replace(/"/g,'""')}"`).join(",")).join("\r\n"), "text/csv"); },
+     loadSample: async () => { if (await ask("Replace your list with the sample family?", "Load sample")) { const c = S.created; S = sample(); S.created = c; save(); render(); } },
+     reset: async () => { if (await ask("Clear everything? This cannot be undone, so download a backup first!", "Clear everything")) { const c = S.created; S = blank(); S.created = c; save(); render(); } }
+  })[act]?.();
+});
+document.addEventListener("input", e => {
+  const t = e.target;
+  if (t.dataset.f) { filt[t.dataset.f] = t.value; const pos = t.selectionStart; render(); const n = document.querySelector(`[data-f="${t.dataset.f}"]`); if (n && t.tagName === "INPUT") { n.focus(); n.setSelectionRange(pos, pos); } }
+  if (t.dataset.set) { S.settings[t.dataset.set] = t.value; save(); if (t.dataset.set === "theme") render(); if (t.dataset.set === "pin" && t.value) unlocked = true; }
+  if (t.dataset.s) { S.santa[t.dataset.s] = t.value; save(); }
+});
+document.addEventListener("change", e => { if (e.target.dataset.a === "restore" && e.target.files[0]) { const r = new FileReader(); r.onload = () => { try { S = Object.assign(blank(), JSON.parse(r.result)); save(); render(); toast("Backup restored ✓"); } catch (err) { toast("That file isn't a Christmas HQ backup"); } }; r.readAsText(e.target.files[0]); } });
+function download(name, text, type){ const b = new Blob([text], {type}), u = URL.createObjectURL(b), l = document.createElement("a"); l.href = u; l.download = name; document.body.appendChild(l); l.click(); l.remove(); setTimeout(() => URL.revokeObjectURL(u), 1000); }
+render();
+</script>
