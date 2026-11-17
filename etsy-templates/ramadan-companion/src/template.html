@@ -134,6 +134,9 @@ table.tt{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric
   .g2,.g3{grid-template-columns:1fr}.g4{grid-template-columns:repeat(2,1fr)} .top h1,.hero h1{font-size:27px}
   .tline{grid-template-columns:repeat(4,minmax(0,1fr))} .big{font-size:40px}
   .tabs-m{display:flex;position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--line);z-index:40;overflow-x:auto;padding:6px max(8px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px))}
+  #nl-badge-frame,#netlify-badge{bottom:calc(74px + env(safe-area-inset-bottom,0px))!important}
+  .tabs-m{-webkit-mask-image:linear-gradient(to right,#000 85%,transparent);mask-image:linear-gradient(to right,#000 85%,transparent)}
+  html[dir="rtl"] .tabs-m{-webkit-mask-image:linear-gradient(to left,#000 85%,transparent);mask-image:linear-gradient(to left,#000 85%,transparent)}
   .tabs-m a{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;font-size:11px;font-weight:700;padding:4px 9px;border-radius:10px;color:var(--mute);cursor:pointer;line-height:1.3}
   .tabs-m a.on{color:var(--pri)} .tabs-m a span{font-size:20px}
 }
@@ -225,6 +228,8 @@ function duaCard(d, i){
    ${d.note ? `<div class="note">💡 ${esc(L(d.note))}</div>` : ""}<div class="src">${esc(t("source"))}: ${esc(d.src)}</div></div>`;
 }
 const duaById = id => DUAS.find(d => d.id === id);
+// search: ignore Arabic vowel marks, tatweel and alef/yaa/taa-marbuta spellings, so الحمد finds الْحَمْدُ
+const norm = x => String(x).toLowerCase().replace(/[\u064B-\u065F\u0670\u06D6-\u06ED\u0640]/g, "").replace(/[أإآٱ]/g, "ا").replace(/ى/g, "ي").replace(/ة/g, "ه");
 const dayNav = (k, n) => `<div class="row" style="justify-content:space-between;margin-bottom:12px"><button class="btn ghost sm" data-a="dnav" data-k="${k}" data-d="-1" ${n <= 1 ? "disabled" : ""}>‹ ${esc(t("prev"))}</button><b>${esc(t("day"))} ${n} · ${esc(fmtD(gdate(n)))}</b><button class="btn ghost sm" data-a="dnav" data-k="${k}" data-d="1" ${n >= S.len ? "disabled" : ""}>${esc(t("next"))} ›</button></div>`;
 const checklist = (items, store, act) => items.map((it, i) => { const on = !!store[i]; return `<div class="it ${on ? "on" : ""}"><button class="chk ${on ? "on" : ""}" data-a="${act}" data-i="${i}" aria-pressed="${on}">${on ? "✓" : ""}</button><span>${esc(typeof it === "string" ? it : L(it))}</span></div>`; }).join("");
 
@@ -314,7 +319,7 @@ function vQuran(){
 }
 function vDuas(){
   const list = DUAS.map((d, i) => [d, i]).filter(([d]) => (dcat === "all" || (dcat === "fav" ? S.fav.includes(d.id) : d.cat === dcat)) &&
-    (!dq || (L(d.title) + " " + d.title.en + " " + d.tr_ + " " + Object.values(d.pr || {}).join(" ") + " " + L(d.m) + " " + d.ar).toLowerCase().includes(dq.toLowerCase())));
+    (!dq || norm(L(d.title) + " " + d.title.en + " " + d.tr_ + " " + Object.values(d.pr || {}).join(" ") + " " + L(d.m) + " " + d.ar).includes(norm(dq))));
   return `<div class="top"><div><h1>${esc(t("duas"))}</h1><p>${esc(t("scholar"))}</p></div></div>
   <div class="row" style="margin-bottom:12px"><input id="dq" class="inp" placeholder="${esc(t("search"))}" value="${esc(dq)}" style="max-width:420px"></div>
   <div class="chips" style="margin-bottom:16px"><button class="chip ${dcat === "all" ? "on" : ""}" data-a="cat" data-c="all">${esc(t("all"))}</button><button class="chip ${dcat === "fav" ? "on" : ""}" data-a="cat" data-c="fav">★ ${esc(t("favourites"))}</button>${Object.keys(CATS).map(c => `<button class="chip ${dcat === c ? "on" : ""}" data-a="cat" data-c="${c}">${esc(L(CATS[c]))}</button>`).join("")}</div>
@@ -482,7 +487,7 @@ document.addEventListener("click", async e => {
     case "dsel": dsel = a.dataset.id; render(); break;
     case "dh": { S.dc[dsel] = (S.dc[dsel] || 0) + 1; S.dt[dsel] = (S.dt[dsel] || 0) + 1; const td = dayIdx(); if (inRamadan(td)) dd(td).z = 1; buzz(); rr(); break; }
     case "dhu": if (S.dc[dsel] > 0) { S.dc[dsel]--; S.dt[dsel] = Math.max(0, (S.dt[dsel] || 0) - 1); } rr(); break;
-    case "dhr": S.dc[dsel] = 0; rr(); break;
+    case "dhr": if (!S.dc[dsel] || await ask(t("reset_count_q"))) { S.dc[dsel] = 0; rr(); } break;
     case "np": S.np[a.dataset.nt] = S.np[a.dataset.nt] || []; S.np[a.dataset.nt][i] = !S.np[a.dataset.nt][i]; rr(); break;
     case "ik": S.itk[i] = !S.itk[i]; rr(); break;
     case "ec": S.eidc[i] = !S.eidc[i]; rr(); break;

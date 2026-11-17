@@ -102,6 +102,9 @@ html[dir="rtl"] .ring svg{transform:rotate(-90deg) scaleY(-1)}
   .app{grid-template-columns:1fr} nav.side{display:none} main{padding-block:18px 110px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
   .g2,.g3,.counter{grid-template-columns:1fr}.g4{grid-template-columns:repeat(2,1fr)} .top h1,.hero h1{font-size:27px}
   .tabs-m{display:flex;position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--line);z-index:40;overflow-x:auto;padding:6px max(8px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px))}
+  #nl-badge-frame,#netlify-badge{bottom:calc(74px + env(safe-area-inset-bottom,0px))!important}
+  .tabs-m{-webkit-mask-image:linear-gradient(to right,#000 85%,transparent);mask-image:linear-gradient(to right,#000 85%,transparent)}
+  html[dir="rtl"] .tabs-m{-webkit-mask-image:linear-gradient(to left,#000 85%,transparent);mask-image:linear-gradient(to left,#000 85%,transparent)}
   .tabs-m a{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;font-size:11px;font-weight:700;padding:4px 10px;border-radius:10px;color:var(--mute);cursor:pointer;line-height:1.3}
   .tabs-m a.on{color:var(--emerald)} .tabs-m a span{font-size:20px}
 }
@@ -133,6 +136,8 @@ const lang = () => S.lang || "en";
 const L = o => (o && (o[lang()] || o.en)) || "";
 const t = k => L(UI[k]) || k;
 const dua = id => DUAS.find(d => d.id === id);
+// search: ignore Arabic vowel marks, tatweel and alef/yaa/taa-marbuta spellings, so الحمد finds الْحَمْدُ
+const norm = x => String(x).toLowerCase().replace(/[\u064B-\u065F\u0670\u06D6-\u06ED\u0640]/g, "").replace(/[أإآٱ]/g, "ا").replace(/ى/g, "ي").replace(/ة/g, "ه");
 const VIEWS = [["home","🏠","home"],["steps","🕋","steps"],["tawaf","🔄","tawaf"],["sai","⛰️","sai"],["duas","🤲","duas"],["madinah","🕌","madinah"],["ziyarat","📍","ziyarat"],["phrases","🗣️","phrases"],["checklist","✅","checklist"],["settings","⚙️","settings"]];
 function toast(m){ const el = document.createElement("div"); el.className = "toast"; el.textContent = m; document.body.appendChild(el); setTimeout(() => el.remove(), 2400); }
 function buzz(){ try { navigator.vibrate && navigator.vibrate(35); } catch(e) {} }
@@ -204,7 +209,7 @@ function counterView(kind){
 }
 function vDuas(){
   const list = DUAS.filter(d => (dcat === "all" || (dcat === "fav" ? S.fav.includes(d.id) : d.cat === dcat)) &&
-    (!dq || (L(d.title) + " " + d.title.en + " " + d.tr_ + " " + Object.values(d.pr || {}).join(" ") + " " + L(d.m) + " " + d.ar).toLowerCase().includes(dq.toLowerCase())));
+    (!dq || norm(L(d.title) + " " + d.title.en + " " + d.tr_ + " " + Object.values(d.pr || {}).join(" ") + " " + L(d.m) + " " + d.ar).includes(norm(dq))));
   return `<div class="top"><div><h1>${esc(t("duas"))}</h1></div></div>
   <div class="row" style="margin-bottom:12px"><input id="dq" class="inp" placeholder="${esc(t("search"))}" value="${esc(dq)}" data-f="dq" style="max-width:420px"></div>
   <div class="chips" style="margin-bottom:16px"><button class="chip ${dcat === "all" ? "on" : ""}" data-a="cat" data-c="all">${esc(t("all"))}</button><button class="chip ${dcat === "fav" ? "on" : ""}" data-a="cat" data-c="fav">★ ${esc(t("favourites"))}</button>${Object.keys(CATS).map(c => `<button class="chip ${dcat === c ? "on" : ""}" data-a="cat" data-c="${c}">${esc(L(CATS[c]))}</button>`).join("")}</div>
@@ -289,7 +294,7 @@ document.addEventListener("click", async e => {
   if (act === "toggleStep") { S.done[a.dataset.id] = !S.done[a.dataset.id]; save(); render(); }
   if (act === "count") { const k = a.dataset.k; if (S[k] < 7) { S[k]++; buzz(); save(); render(); if (S[k] === 7) { S.done[k] = true; save(); render(); } } }
   if (act === "undo") { const k = a.dataset.k; if (S[k] > 0) { S[k]--; S.done[k] = false; save(); render(); } }
-  if (act === "resetCount") { const k = a.dataset.k; S[k] = 0; S.done[k] = false; save(); render(); }
+  if (act === "resetCount") { const k = a.dataset.k; if (!S[k] || await ask(t("reset_count_q"))) { S[k] = 0; S.done[k] = false; save(); render(); } }
   if (act === "cat") { dcat = a.dataset.c; render(); }
   if (act === "zcity") { zcity = a.dataset.c; view = "ziyarat"; render(); window.scrollTo(0, 0); }
   if (act === "unlockCode") { const c = (document.getElementById("code").value || "").trim().toUpperCase(); if (!c) return;

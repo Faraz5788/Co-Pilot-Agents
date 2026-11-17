@@ -220,6 +220,7 @@ _U = {
  "show_english":("Also show English meaning","انگریزی مطلب بھی دکھائیں","अंग्रेज़ी मतलब भी दिखाएँ","ইংরেজি অর্থও দেখান","Ipakita rin ang kahulugan sa Ingles","İngilizce anlamını da göster","Tampilkan juga arti bahasa Inggris"),
  "reset_all":("Reset all my data","میرا سارا ڈیٹا مٹائیں","मेरा सारा डेटा मिटाएँ","আমার সব ডেটা মুছুন","I-reset ang lahat ng data ko","Tüm verilerimi sıfırla","Hapus semua data saya"),
  "reset_q":("Delete all your progress, notes and lists? This can't be undone.","آپ کی تمام پیش رفت، نوٹس اور فہرستیں مٹا دیں؟ یہ واپس نہیں ہو سکتا۔","आपकी सारी प्रगति, नोट्स और सूचियाँ मिटा दें? यह वापस नहीं होगा।","আপনার সব অগ্রগতি, নোট ও তালিকা মুছে ফেলবেন? এটি ফেরানো যাবে না।","Burahin ang lahat ng progreso, tala at listahan? Hindi na ito maibabalik.","Tüm ilerlemeniz, notlarınız ve listeleriniz silinsin mi? Geri alınamaz.","Hapus semua progres, catatan, dan daftar Anda? Tidak dapat dibatalkan."),
+ "reset_count_q":("Start this count again from zero?","کیا یہ گنتی دوبارہ صفر سے شروع کریں؟","क्या यह गिनती फिर से शून्य से शुरू करें?","এই গণনা কি আবার শূন্য থেকে শুরু করবেন?","Simulan muli ang bilang na ito mula sa zero?","Bu sayım sıfırdan yeniden başlasın mı?","Mulai hitungan ini lagi dari nol?"),
  "cancel":("Cancel","منسوخ","रद्द करें","বাতিল","Kanselahin","İptal","Batal"),
  "yes":("Yes","ہاں","हाँ","হ্যাঁ","Oo","Evet","Ya"),
  "done":("Done","ٹھیک ہے","ठीक है","ঠিক আছে","Tapos","Tamam","Selesai"),

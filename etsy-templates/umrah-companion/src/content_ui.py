@@ -79,6 +79,7 @@ UI = {
  "auto":      {"en":"Automatic","ur":"خودکار","hi":"अपने-आप","bn":"স্বয়ংক্রিয়","tl":"Awtomatiko","tr":"Otomatik","id":"Otomatis"},
  "reset_all": {"en":"Reset my progress","ur":"میری پیش رفت ختم کریں","hi":"मेरी प्रगति रीसेट करें","bn":"আমার অগ্রগতি রিসেট করুন","tl":"I-reset ang aking progreso","tr":"İlerlememi sıfırla","id":"Atur ulang kemajuan saya"},
  "reset_q":   {"en":"Reset your steps, counters and checklist?","ur":"کیا آپ مراحل، کاؤنٹر اور چیک لسٹ ختم کرنا چاہتے ہیں؟","hi":"क्या आप चरण, काउंटर और चेकलिस्ट रीसेट करना चाहते हैं?","bn":"ধাপ, কাউন্টার ও চেকলিস্ট রিসেট করবেন?","tl":"I-reset ang mga hakbang, pambilang at checklist?","tr":"Adımları, sayaçları ve listeyi sıfırlamak istiyor musunuz?","id":"Atur ulang langkah, penghitung, dan daftar periksa?"},
+ "reset_count_q":{"en":"Start this count again from zero?","ur":"کیا یہ گنتی دوبارہ صفر سے شروع کریں؟","hi":"क्या यह गिनती फिर से शून्य से शुरू करें?","bn":"এই গণনা কি আবার শূন্য থেকে শুরু করবেন?","tl":"Simulan muli ang bilang na ito mula sa zero?","tr":"Bu sayım sıfırdan yeniden başlasın mı?","id":"Mulai hitungan ini lagi dari nol?"},
  "cancel":    {"en":"Cancel","ur":"منسوخ","hi":"रद्द करें","bn":"বাতিল","tl":"Kanselahin","tr":"İptal","id":"Batal"},
  "yes":       {"en":"Yes","ur":"جی ہاں","hi":"हाँ","bn":"হ্যাঁ","tl":"Oo","tr":"Evet","id":"Ya"},
  "scholar":   {"en":"Practices can differ between schools of thought. If you are unsure, ask a scholar you trust.",

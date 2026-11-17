@@ -17,7 +17,7 @@ UI.update(PUI); UI.update(LUI)
 import content_pron; content_pron.apply(DUAS, PHRASES)
 ZIYARAT = [dict(z, city="makkah") for z in MAKKAH] + [dict(z, city="madinah") for z in MADINAH_Z]
 langs = [l[0] for l in LANGS]
-URL = sys.argv[1] if len(sys.argv) > 1 else "https://thegeeknextdoorco.etsy.com"
+URL = sys.argv[1] if len(sys.argv) > 1 else "https://www.etsy.com/listing/4619489196/umrah-guide-app-umrah-duas-arabic"
 CODE = "LABBAYK-7Q2M"                     # printed in the buyer guide PDF
 H = hashlib.sha256(CODE.encode()).hexdigest()
 
