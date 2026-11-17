@@ -12,7 +12,7 @@ Umrah Guide App, Umrah Duas Arabic English Urdu, Tawaf Counter, Madinah Ziyarat 
 - Price: **£9.99** · Quantity: **999**
 - Digital files: `Umrah-Companion.zip` (about 0.3 MB). It holds an "Umrah Companion" folder with the app and the "START HERE" guide (with the unlock code). You can also upload `Umrah-Companion-Guide.pdf` on its own as a second file, so phone buyers can open the guide without unzipping.
 - Shop section: **Islamic & Umrah**
-- Website (free demo + unlock): **https://umrah-companion-geek.netlify.app**
+- Website (free demo + unlock): **https://umrahcompaniongeek.netlify.app**
 
 ## Tags (13)
 umrah guide, umrah duas, umrah gift, tawaf counter, hajj umrah, madinah guide, ziyarat, islamic gift, muslim gift, umrah app, dua book, umrah checklist, umrah planner
@@ -45,7 +45,7 @@ Steps, duas, history, tips and phrases are all translated. The Arabic pronunciat
 On a computer, just double-click the app file. It opens in your web browser, fully unlocked.
 
 👀 TRY BEFORE YOU BUY
-Try the free demo: umrah-companion-geek.netlify.app
+Try the free demo: umrahcompaniongeek.netlify.app
 
 ✦ PRIVATE BY DESIGN
 Everything saves on your own device. There's no account, nothing is uploaded and there are no adverts.

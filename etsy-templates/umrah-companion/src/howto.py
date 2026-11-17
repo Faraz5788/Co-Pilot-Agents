@@ -1,6 +1,6 @@
 """Buyer guide PDF for Umrah Companion: python3 howto.py <out.pdf> <site host>"""
 import sys, os, subprocess
-out = os.path.abspath(sys.argv[1]); SITE = sys.argv[2] if len(sys.argv) > 2 else "umrah-companion-geek.netlify.app"
+out = os.path.abspath(sys.argv[1]); SITE = sys.argv[2] if len(sys.argv) > 2 else "umrahcompaniongeek.netlify.app"
 CODE = "LABBAYK-7Q2M"
 page = f"""<!doctype html><html><head><meta charset="utf-8"><link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;600;800&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
 <style>@page{{size:A4;margin:0}}body{{margin:0;font-family:Inter,sans-serif;color:#1E1C18;background:#F5EFE2;font-size:11.5px}}
