@@ -35,6 +35,10 @@ _U = {
  "dua_today":("Dua for today","آج کی دعا","आज की दुआ","আজকের দোয়া","Du'a para ngayon","Günün duası","Doa hari ini"),
  "fasts_kept":("fasts kept","روزے رکھے","रोज़े रखे","রোজা রাখা হয়েছে","pag-aayuno","oruç tutuldu","puasa dijalankan"),
  "quick":("Quick tools","فوری ٹولز","झटपट टूल","দ্রুত টুল","Mabilisang tool","Hızlı araçlar","Alat cepat"),
+ "next_prayer":("Next prayer","اگلی نماز","अगली नमाज़","পরবর্তী নামাজ","Susunod na dasal","Sıradaki vakit","Shalat berikutnya"),
+ "times_today":("Today's prayer times","آج کے نماز کے اوقات","आज की नमाज़ का समय","আজকের নামাজের সময়","Oras ng dasal ngayon","Bugünün namaz vakitleri","Jadwal shalat hari ini"),
+ "times_tom":("Tomorrow's prayer times","کل کے نماز کے اوقات","कल की नमाज़ का समय","আগামীকালের নামাজের সময়","Oras ng dasal bukas","Yarının namaz vakitleri","Jadwal shalat besok"),
+ "uk_hint":("In the UK, many mosques use the Moonsighting Committee times. To match your own mosque exactly, use 'Adjust times' below.","برطانیہ میں بہت سی مساجد مون سائٹنگ کمیٹی کے اوقات استعمال کرتی ہیں۔ اپنی مسجد سے بالکل ملانے کے لیے نیچے 'اوقات میں کمی بیشی' استعمال کریں۔","ब्रिटेन में बहुत सी मस्जिदें मूनसाइटिंग कमेटी के समय इस्तेमाल करती हैं। अपनी मस्जिद से बिल्कुल मिलाने के लिए नीचे 'समय में बदलाव' इस्तेमाल करें।","যুক্তরাজ্যে অনেক মসজিদ মুনসাইটিং কমিটির সময় ব্যবহার করে। নিজের মসজিদের সাথে হুবহু মেলাতে নিচের 'সময় সমন্বয়' ব্যবহার করুন।","Sa UK, maraming masjid ang gumagamit ng oras ng Moonsighting Committee. Para eksaktong tumugma sa inyong masjid, gamitin ang 'Ayusin ang oras' sa ibaba.","Birleşik Krallık'ta pek çok cami Moonsighting Committee vakitlerini kullanır. Kendi caminize tam uydurmak için aşağıdaki 'Vakitleri ayarla'yı kullanın.","Di Inggris, banyak masjid memakai waktu Moonsighting Committee. Agar sama persis dengan masjid Anda, gunakan 'Sesuaikan waktu' di bawah."),
  # prayers
  "imsak":("Imsak","امساک","इम्साक","ইমসাক","Imsak","Tedbir (−10 dk)","Imsak"),
  "fajr":("Fajr","فجر","फ़ज्र","ফজর","Fajr","Sabah","Subuh"),

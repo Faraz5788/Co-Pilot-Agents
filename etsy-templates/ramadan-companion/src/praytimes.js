@@ -2,6 +2,7 @@
 // prayTimes(dateUTCmidnight, lat, lng, {fajr, isha | ishaMin, asr: 1|2, elev}) -> {fajr, sunrise, dhuhr, asr, maghrib, isha} as Date objects (UTC instants)
 const PT_METHODS = {
   mwl:     {name: "Muslim World League", fajr: 18, isha: 17},
+  msc:     {name: "Moonsighting Committee (UK)", fajr: 18, isha: 18, msc: true, off: {dhuhr: 5, maghrib: 3}},
   isna:    {name: "ISNA (North America)", fajr: 15, isha: 15},
   karachi: {name: "Karachi (Pakistan, India, Bangladesh)", fajr: 18, isha: 18},
   makkah:  {name: "Umm al-Qura (Saudi Arabia)", fajr: 18.5, ishaMin: 120},   // Isha is 2 hours after Maghrib in Ramadan
@@ -41,10 +42,25 @@ function prayTimes(date, lat, lng, o) {
   if (o.ishaMin) t.isha = t.maghrib + o.ishaMin / 60;
   // high latitudes (e.g. Scotland in summer): angle-based night portion when twilight never ends
   const night = fix(t.sunrise - t.maghrib, 24);
+  if (o.msc) {
+    // Moonsighting Committee: Fajr/Isha from seasonal tables by latitude; use whichever keeps the fast safer
+    const L = Math.abs(lat), leap = (y % 4 === 0 && y % 100 !== 0) || y % 400 === 0, doy = Math.round((Date.UTC(y, m - 1, d) - Date.UTC(y, 0, 0)) / 864e5), len = leap ? 366 : 365;
+    let dys = lat >= 0 ? doy + 10 : doy - (leap ? 173 : 172); if (dys >= len) dys -= len; if (dys < 0) dys += len;
+    const season = (a, b, c, e) => dys < 91 ? a + (b - a) / 91 * dys : dys < 137 ? b + (c - b) / 46 * (dys - 91) : dys < 183 ? c + (e - c) / 46 * (dys - 137)
+      : dys < 229 ? e + (c - e) / 46 * (dys - 183) : dys < 275 ? c + (b - c) / 46 * (dys - 229) : b + (a - b) / 91 * (dys - 275);
+    const mAdj = season(75 + 28.65 / 55 * L, 75 + 19.44 / 55 * L, 75 + 32.74 / 55 * L, 75 + 48.10 / 55 * L);
+    const eAdj = season(75 + 25.60 / 55 * L, 75 + 2.050 / 55 * L, 75 - 9.21 / 55 * L, 75 + 6.14 / 55 * L);
+    if (lat >= 55) t.fajr = t.sunrise - night / 7;
+    const safeF = t.sunrise - mAdj / 60, safeI = t.maghrib + eAdj / 60;
+    if (isNaN(t.fajr) || safeF > t.fajr) t.fajr = safeF;
+    if (lat >= 55) t.isha = t.maghrib + night / 7;
+    if (isNaN(t.isha) || safeI < t.isha) t.isha = safeI;
+  } else {
   const adj = (time, base, angle, dir) => { const portion = angle / 60 * night; const diff = dir > 0 ? fix(time - base, 24) : fix(base - time, 24);
     return (isNaN(time) || diff > portion) ? base + dir * portion : time; };
   t.fajr = adj(t.fajr, t.sunrise, o.fajr, -1);
   if (!o.ishaMin) t.isha = adj(t.isha, t.maghrib, o.isha, 1);
+  }
   t.dhuhr += 1 / 60;   // a minute after the sun passes its highest point
   const base = Date.UTC(y, m - 1, d), out = {};
   // round to the minute: Fajr down and Maghrib up, so rounding never shortens the fast

@@ -31,7 +31,7 @@ nav.side{background:var(--card);border-inline-end:1px solid var(--line);padding:
 .brand{display:flex;align-items:center;gap:10px;padding:2px 8px 18px}.brand b{font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:22px;line-height:1}.brand small{display:block;font-size:10px;letter-spacing:1.4px;color:var(--mute);font-weight:700;font-family:Inter,sans-serif}
 .nav a{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:12px;color:var(--ink);text-decoration:none;font-weight:600;cursor:pointer;margin-bottom:2px}
 .nav a:hover{background:var(--soft)}.nav a.on{background:var(--pri);color:var(--on-pri)}.nav .ic{width:22px;text-align:center}
-main{padding-block:26px 100px;padding-left:max(28px,env(safe-area-inset-left,0px));padding-right:max(28px,env(safe-area-inset-right,0px));max-width:1100px;width:100%}
+main{padding-block:26px 100px;padding-left:max(28px,env(safe-area-inset-left,0px));padding-right:max(28px,env(safe-area-inset-right,0px));max-width:1180px;width:100%;margin-inline:auto}
 .top{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;flex-wrap:wrap;margin-bottom:20px}.top h1{font-size:34px}.top p{margin:6px 0 0;color:var(--mute);max-width:65ch}
 .grid{display:grid;gap:16px}.g2{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}.grid>*{min-width:0}
 .card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px 20px;box-shadow:var(--shadow)}
@@ -174,6 +174,10 @@ function gdate(n){ const [y, m, d] = ymd(S.start); return new Date(Date.UTC(y, m
 function todayYMD(){ return new Intl.DateTimeFormat("en-CA", {timeZone: tz(), year: "numeric", month: "2-digit", day: "2-digit"}).format(new Date()); }
 function dayIdx(){ const [y, m, d] = ymd(todayYMD()), [a, b, c] = ymd(S.start); return Math.round((Date.UTC(y, m - 1, d) - Date.UTC(a, b - 1, c)) / 864e5) + 1; }
 const inRamadan = n => n >= 1 && n <= S.len;
+function todayUTC(){ const [y, m, d] = ymd(todayYMD()); return new Date(Date.UTC(y, m - 1, d)); }
+function nextPrayer(){ if (!cityObj()) return null; const td = todayUTC(), a = times(td), now = new Date();
+  for (const k of ["fajr", "dhuhr", "asr", "maghrib", "isha"]) if (now < a[k]) return {k, at: a[k], tt: a};
+  const b = times(new Date(+td + 864e5)); return {k: "fajr", at: b.fajr, tt: b, tom: true}; }
 function times(date){ const c = cityObj(); if (!c) return null; const M = PT_METHODS[S.method] || PT_METHODS.mwl;
   const r = prayTimes(date, c.lat, c.lng, {...M, asr: +S.asr}); for (const k in r) r[k] = new Date(+r[k] + (S.adj[k] || 0) * 60000);
   r.imsak = new Date(+r.fajr - 600000); return r; }
@@ -195,7 +199,9 @@ function status(){
 const curDay = () => { const n = dayIdx(); return Math.min(Math.max(n, 1), S.len); };
 const dd = n => (S.d[n] = S.d[n] || {f: "", p: [0,0,0,0,0], t: 0, q: 0, s: 0, g: 0, w: 0, z: 0});
 const score = n => { const x = S.d[n]; if (!x) return 0; return (x.f === "y" ? 1 : 0) + x.p.reduce((a, b) => a + b, 0) + x.t + (x.q > 0 ? 1 : 0) + x.s + x.g; };
-const money = v => S.cur + (Math.round((+v || 0) * 100) / 100).toLocaleString(LOCALE[lang()], {maximumFractionDigits: 2});
+const money = v => S.cur + (/[A-Za-z]$/.test(S.cur) ? " " : "") + (Math.round((+v || 0) * 100) / 100).toLocaleString(LOCALE[lang()], {maximumFractionDigits: 2});
+const CUR = {"United Kingdom":"£", Ireland:"€", Pakistan:"Rs", India:"₹", Bangladesh:"৳", Philippines:"₱", "Türkiye":"₺", Indonesia:"Rp", Malaysia:"RM", Singapore:"S$", "Saudi Arabia":"SAR", UAE:"AED", Qatar:"QAR", Kuwait:"KWD", Bahrain:"BHD", Oman:"OMR", Egypt:"EGP", Jordan:"JOD", France:"€", Germany:"€", Netherlands:"€", Belgium:"€", Sweden:"kr", Norway:"kr", USA:"$", Canada:"$", "South Africa":"R", Nigeria:"₦", Kenya:"KSh", Australia:"$"};
+const CUR_CHIPS = ["£", "$", "€", "Rs", "₹", "৳", "₱", "₺", "Rp", "RM", "SAR", "AED"];
 const num = v => { const x = parseFloat(v); return isNaN(x) ? 0 : x; };
 
 /* ---------- shared bits ---------- */
@@ -224,28 +230,29 @@ const checklist = (items, store, act) => items.map((it, i) => { const on = !!sto
 
 /* ---------- views ---------- */
 function vHome(){
-  const st = status(), c = cityObj(), n = st.n, today = inRamadan(n) ? n : null;
-  let cd;
-  if (st.k === "starts_in") cd = `<div class="k">${esc(t("starts_in"))}</div><div class="big">${st.days} ${esc(t("days"))}</div><div style="color:var(--mute)">${esc(fmtD(gdate(1), {weekday: "long", day: "numeric", month: "long", year: "numeric"}))}</div>`;
-  else if (st.k === "eid" || st.k === "eve") cd = `<div class="k">${esc(t("day_x"))} ${S.len} ✓</div><div class="big">${esc(t("eid_mub"))}</div>`;
-  else if (st.k === "day") cd = `<div class="k">${esc(t("day_x"))} ${n}</div><div class="big">${esc(fmtD(gdate(n), {weekday: "long", day: "numeric", month: "long"}))}</div>`;
-  else cd = `<div class="k">${esc(t(st.k))}${inRamadan(n) ? ` · ${esc(t("day_x"))} ${n}` : ""}</div><div class="big" id="cd" data-at="${+st.at}">${hms(st.at - new Date())}</div><div style="color:var(--mute)">${esc(fmtT(st.at))} · ${esc(c.n)}</div>`;
-  const tn = c ? times(gdate(today || (n < 1 ? 1 : S.len))) : null, hl = st.k === "iftar_in" ? "maghrib" : st.k === "suhoor_in" ? "fajr" : "";
-  const timeline = tn ? `<div class="tline">${[["imsak","imsak"],["fajr","fajr"],["sunrise","sunrise"],["dhuhr","dhuhr"],["asr","asr"],["maghrib","maghrib"],["isha","isha"]].map(([k, lab]) => `<div class="${k === hl ? "hl" : ""}"><small>${esc(t(lab))}</small><b>${esc(fmtT(tn[k]))}</b></div>`).join("")}</div>` :
-    `<div class="notice" style="margin-top:14px">📍 ${esc(t("set_city"))} <button class="btn sm" style="margin-inline-start:8px" data-v="times">${esc(t("choose_city"))}</button></div>`;
+  const st = status(), c = cityObj(), n = st.n, today = inRamadan(n) ? n : null, np = nextPrayer(), ramadanCd = st.k === "suhoor_in" || st.k === "iftar_in";
+  let cd, tn = null, hl = "", tlab = t("times_today");
+  if (!c) cd = `<div class="k">📍 ${esc(t("set_city"))}</div><div style="margin-top:10px;max-width:420px">${citySelect()}</div><button class="btn ghost sm" style="margin-top:10px" data-a="geo">📡 ${esc(t("use_loc"))}</button>`;
+  else if (ramadanCd) { cd = `<div class="k">${esc(t(st.k))}${inRamadan(n) ? ` · ${esc(t("day_x"))} ${n}` : ""}</div><div class="big" id="cd" data-at="${+st.at}">${hms(st.at - new Date())}</div><div style="color:var(--mute)">${esc(fmtT(st.at))} · ${esc(c.n)}</div>`;
+    hl = st.k === "iftar_in" ? "maghrib" : "fajr"; tn = times(todayUTC());
+    if (st.at > +tn.fajr + 36e5) { tn = times(new Date(+todayUTC() + 864e5)); tlab = t("times_tom"); } }   // after iftar: show tomorrow's suhoor
+  else { cd = `<div class="k">${esc(t("next_prayer"))} · ${esc(t(np.k))}${np.tom ? ` · ${esc(t("tomorrow"))}` : ""}</div><div class="big" id="cd" data-at="${+np.at}">${hms(np.at - new Date())}</div><div style="color:var(--mute)">${esc(fmtT(np.at))} · ${esc(c.n)}</div>`;
+    tn = np.tt; hl = np.k; if (np.tom) tlab = t("times_tom"); }
+  const ram = st.k === "starts_in" ? `<span class="pill" style="background:var(--gold-soft);color:var(--ink)">🌙 ${esc(t("starts_in"))} ${st.days} ${esc(t("days"))} · ${esc(fmtD(gdate(1), {weekday: "short", day: "numeric", month: "short", year: "numeric"}))}</span>`
+    : st.k === "eid" || st.k === "eve" ? `<span class="pill" style="background:var(--gold-soft);color:var(--ink)">🎉 ${esc(t("eid_mub"))}</span>` : (today && !ramadanCd ? `<span class="pill">${esc(t("day_x"))} ${today}</span>` : "");
+  const timeline = tn ? `<div class="k" style="margin-top:14px">${esc(tlab)}</div><div class="tline" style="margin-top:6px">${["imsak","fajr","sunrise","dhuhr","asr","maghrib","isha"].map(k => `<div class="${k === hl ? "hl" : ""}"><small>${esc(t(k))}</small><b>${esc(fmtT(tn[k]))}</b></div>`).join("")}</div>` : "";
   const fasted = Object.values(S.d).filter(x => x.f === "y").length;
-  const qd = today ? dd(today) : null;
-  const quick = qd ? `<div class="card"><div class="spread"><h3 style="margin:0">${esc(t("today_list"))}</h3><span class="pill">${esc(t("day_x"))} ${today}</span></div>${dayForm(today, true)}</div>` : "";
+  const quick = today ? `<div class="card"><div class="spread"><h3 style="margin:0">${esc(t("today_list"))}</h3><span class="pill">${esc(t("day_x"))} ${today}</span></div>${dayForm(today, true)}</div>` : "";
   const dua = DUAS[((today || 1) - 1) % (DEMO ? DEMO_DUAS : DUAS.length)];
-  return `<div class="hero"><div class="salam" lang="ar">رَمَضَان مُبَارَك</div><h1>${esc(t("hero_t"))}</h1><p>${esc(t("hero_s"))}</p>
-    <div class="chips">${LANGS.map(([cc, nn]) => `<button class="chip ${lang() === cc ? "on" : ""}" data-a="lang" data-l="${cc}">${esc(nn)}</button>`).join("")}</div></div>
-   <div class="grid" style="grid-template-columns:minmax(0,2fr) minmax(0,1fr);margin-top:16px" id="homeTop">
-    <div class="card"><div class="cdcard"><div>${cd}</div></div>${timeline}</div>
+  return `<div class="grid" style="grid-template-columns:minmax(0,2fr) minmax(0,1fr)" id="homeTop">
+    <div class="card"><div class="spread" style="align-items:flex-start"><div>${cd}</div>${ram}</div>${timeline}</div>
     <div class="card center"><div class="k">${esc(t("tracker"))}</div>${ring(fasted / S.len, `${fasted}/${S.len}`)}<div style="color:var(--mute);font-weight:600">${esc(t("fasts_kept"))}</div><button class="btn sm" data-v="tracker">${esc(t("tracker"))} →</button></div>
    </div>
-   <div class="grid g2" style="margin-top:16px">${quick}<div><div class="k" style="margin:4px 0 8px">${esc(t("dua_today"))}</div>${duaCard(dua, 0)}</div></div>
+   <div class="hero" style="margin-top:16px"><div class="salam" lang="ar">رَمَضَان مُبَارَك</div><h1>${esc(t("hero_t"))}</h1><p>${esc(t("hero_s"))}</p>
+    <div class="chips">${LANGS.map(([cc, nn]) => `<button class="chip ${lang() === cc ? "on" : ""}" data-a="lang" data-l="${cc}">${esc(nn)}</button>`).join("")}</div></div>
+   <div class="grid ${quick ? "g2" : ""}" style="margin-top:16px">${quick}<div><div class="k" style="margin:4px 0 8px">${esc(t("dua_today"))}</div>${duaCard(dua, 0)}</div></div>
    <div class="k" style="margin:22px 0 8px">${esc(t("quick"))}</div>
-   <div class="grid g4">${[["dhikr","📿"],["quran","📖"],["last10","✨"],["charity","💝"],["meals","🍲"],["family","🧒"],["eid","🎉"],["journal","📝"]].map(([v, e]) => `<div class="card tool" data-v="${v}" tabindex="0"><span class="e">${e}</span><b>${esc(t(v))}</b></div>`).join("")}</div>`;
+   <div class="grid g4">${[["times","🕰️"],["dhikr","📿"],["quran","📖"],["last10","✨"],["charity","💝"],["meals","🍲"],["family","🧒"],["eid","🎉"]].map(([v, e]) => `<div class="card tool" data-v="${v}" tabindex="0"><span class="e">${e}</span><b>${esc(t(v))}</b></div>`).join("")}</div>`;
 }
 function dayForm(n, compact){
   const x = dd(n), reasons = ["r_ill", "r_travel", "r_period", "r_other"], pn = ["fajr","dhuhr","asr","maghrib","isha"];
@@ -256,12 +263,12 @@ function dayForm(n, compact){
    ${compact ? "" : `<div class="lbl">💧 ${esc(t("water"))}</div>${glasses(n)}`}`;
 }
 const glasses = n => `<div class="glass">${Array.from({length: 8}, (_, i) => `<button class="${dd(n).w > i ? "on" : ""}" data-a="wt" data-n="${n}" data-val="${i + 1}" aria-label="${i + 1}">${dd(n).w > i ? "💧" : ""}</button>`).join("")}</div>`;
+function citySelect(){ const groups = {}; CITIES.forEach(ci => (groups[ci.c] = groups[ci.c] || []).push(ci));
+  return `<select class="inp" data-sel="city"><option value="">— ${esc(t("choose_city"))} —</option>${S.loc ? `<option value="loc" ${S.city === "loc" ? "selected" : ""}>📍 ${esc(t("my_loc"))}</option>` : ""}${Object.entries(groups).map(([g, list]) => `<optgroup label="${esc(g)}">${list.map(ci => `<option value="${ci.id}" ${S.city === ci.id ? "selected" : ""}>${esc(ci.n)}</option>`).join("")}</optgroup>`).join("")}</select>`; }
 function vTimes(){
-  const c = cityObj(), groups = {};
-  CITIES.forEach(ci => (groups[ci.c] = groups[ci.c] || []).push(ci));
-  const citySel = `<select class="inp" data-sel="city"><option value="">— ${esc(t("choose_city"))} —</option>${S.loc ? `<option value="loc" ${S.city === "loc" ? "selected" : ""}>📍 ${esc(t("my_loc"))}</option>` : ""}${Object.entries(groups).map(([g, list]) => `<optgroup label="${esc(g)}">${list.map(ci => `<option value="${ci.id}" ${S.city === ci.id ? "selected" : ""}>${esc(ci.n)}</option>`).join("")}</optgroup>`).join("")}</select>`;
+  const c = cityObj(), citySel = citySelect();
   const settings = `<div class="card"><h3>📍 ${esc(t("location"))}</h3>${citySel}<button class="btn ghost sm" style="margin-top:10px" data-a="geo">📡 ${esc(t("use_loc"))}</button>
-    <label class="lbl">${esc(t("method"))}</label><select class="inp" data-sel="method">${Object.entries(PT_METHODS).map(([k, m]) => `<option value="${k}" ${S.method === k ? "selected" : ""}>${esc(m.name)}</option>`).join("")}</select>
+    <label class="lbl">${esc(t("method"))}</label><select class="inp" data-sel="method">${Object.entries(PT_METHODS).map(([k, m]) => `<option value="${k}" ${S.method === k ? "selected" : ""}>${esc(m.name)}</option>`).join("")}</select>${c && (c.c === "United Kingdom" || c.c === "Ireland") ? `<p style="margin:8px 0 0;font-size:13px;color:var(--mute)">🇬🇧 ${esc(t("uk_hint"))}</p>` : ""}
     <label class="lbl">${esc(t("asr_m"))}</label><select class="inp" data-sel="asr"><option value="1" ${+S.asr === 1 ? "selected" : ""}>${esc(t("asr_std"))}</option><option value="2" ${+S.asr === 2 ? "selected" : ""}>${esc(t("asr_han"))}</option></select></div>
    <div class="card"><h3>🌙 ${esc(t("start_date"))}</h3><input type="date" class="inp" style="border-radius:14px;width:100%" value="${esc(S.start)}" data-path="start" data-rr="1">
     <label class="lbl">${esc(t("length"))}</label><div class="chips">${[29, 30].map(v => `<button class="chip ${S.len === v ? "on" : ""}" data-a="len" data-val="${v}">${v} ${esc(t("days"))}</button>`).join("")}</div>
@@ -349,7 +356,7 @@ function updCalc(){ const r = calcRes(); for (const [id, k] of [["zres", "zr"], 
 const nIn = (path, lab, val) => `<div><label class="lbl">${esc(lab)}</label><input class="inp" type="number" inputmode="decimal" min="0" step="any" value="${esc(val ?? "")}" data-path="${path}"></div>`;
 function vCharity(){
   const r = calcRes(), z = S.zk, sqTot = S.sq.reduce((a, b) => a + num(b.a), 0);
-  return `<div class="top"><div><h1>${esc(t("charity"))}</h1><p>${esc(t("scholar"))}</p></div><div style="width:150px"><label class="lbl" style="margin-top:0">${esc(t("currency"))}</label><input class="inp" style="width:100%" maxlength="4" value="${esc(S.cur)}" data-path="cur" data-rr="1"></div></div>
+  return `<div class="top"><div><h1>${esc(t("charity"))}</h1><p>${esc(t("scholar"))}</p></div><div style="max-width:420px"><label class="lbl" style="margin-top:0">${esc(t("currency"))}</label><div class="row" style="gap:6px">${CUR_CHIPS.map(cc => `<button class="chip ${S.cur === cc ? "on" : ""}" data-a="cur" data-val="${esc(cc)}">${esc(cc)}</button>`).join("")}<input class="inp" style="max-width:80px;flex:0 0 80px" maxlength="4" value="${esc(S.cur)}" data-path="cur" data-rr="1" aria-label="${esc(t("currency"))}"></div></div></div>
    <div class="grid g2"><div class="card"><h3>🧮 ${esc(t("zakat_calc"))}</h3><p style="margin:0;color:var(--mute);font-size:14px">${esc(t("zakat_s"))}</p>
      <div class="fgrid">${nIn("zk.cash", t("z_cash"), z.cash)}${nIn("zk.bank", t("z_bank"), z.bank)}${nIn("zk.gg", t("z_gold_g"), z.gg)}${nIn("zk.gp", t("z_gold_p"), z.gp)}${nIn("zk.sg", t("z_silver_g"), z.sg)}${nIn("zk.sp", t("z_silver_p"), z.sp)}${nIn("zk.inv", t("z_invest"), z.inv)}${nIn("zk.bus", t("z_business"), z.bus)}${nIn("zk.owed", t("z_owed"), z.owed)}${nIn("zk.debts", t("z_debts"), z.debts)}</div>
      <label class="lbl">${esc(t("nisab_on"))}</label><div class="chips">${["silver", "gold"].map(b => `<button class="chip ${z.basis === b ? "on" : ""}" data-a="zb" data-val="${b}">${esc(t(b))}</button>`).join("")}</div>
@@ -480,6 +487,7 @@ document.addEventListener("click", async e => {
     case "ik": S.itk[i] = !S.itk[i]; rr(); break;
     case "ec": S.eidc[i] = !S.eidc[i]; rr(); break;
     case "zb": S.zk.basis = a.dataset.val; rr(); break;
+    case "cur": S.cur = a.dataset.val; S.curSet = true; rr(); break;
     case "sqAdd": { const amt = num(val("sqA")); if (amt > 0) { S.sq.push({a: amt, n: val("sqN").trim(), dt: today()}); const td = dayIdx(); if (inRamadan(td)) dd(td).s = 1; rr(); } break; }
     case "sqDel": S.sq.splice(i, 1); rr(); break;
     case "shopAdd": { const x = val("shopIn").trim(); if (x) { S.shop.push({t: x, on: false}); rr(); document.getElementById("shopIn")?.focus(); } break; }
@@ -507,14 +515,15 @@ let jt;
 document.addEventListener("input", e => {
   const el = e.target;
   if (el.id === "dq") { dq = el.value; const pos = el.selectionStart; render(); const n = document.getElementById("dq"); n.focus(); n.setSelectionRange(pos, pos); return; }
-  if (el.dataset.path) { const p = el.dataset.path; let v = el.type === "number" || el.type === "range" ? el.value : el.value; if (p === "ar") v = +v;
+  if (el.dataset.path) { const p = el.dataset.path; let v = el.value; if (p === "ar") v = +v;
+    if (p === "cur") { v = v.replace(/[0-9.,\s-]/g, ""); if (el.value !== v) el.value = v; if (!v) return; S.curSet = true; }
     setPath(p, v); save(); if (p === "ar") document.documentElement.style.setProperty("--ar-size", v + "px"); updCalc();
     if (p.startsWith("jr.")) { clearTimeout(jt); const s = document.getElementById("jsaved"); if (s) { s.textContent = "…"; jt = setTimeout(() => s.textContent = "✓ " + t("saved"), 500); } } }
 });
 document.addEventListener("change", e => {
   const el = e.target;
   if (el.dataset.sel) { const k = el.dataset.sel, v = el.value;
-    if (k === "city") { S.city = v === "" ? null : v === "loc" ? "loc" : +v; if (typeof S.city === "number") S.method = CITIES[S.city].m; }
+    if (k === "city") { S.city = v === "" ? null : v === "loc" ? "loc" : +v; if (typeof S.city === "number") { S.method = CITIES[S.city].m; if (!S.curSet && CUR[CITIES[S.city].c]) S.cur = CUR[CITIES[S.city].c]; } }
     else if (k === "asr") S.asr = +v; else S[k] = v; save(); render(); }
   if (el.dataset.tog) { S[el.dataset.tog] = el.checked; save(); }
   if (el.dataset.path && el.dataset.rr) { if (el.dataset.path === "start" && !/^\d{4}-\d{2}-\d{2}$/.test(el.value)) return; save(); render(); }

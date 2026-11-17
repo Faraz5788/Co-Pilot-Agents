@@ -70,6 +70,28 @@ const {chromium} = require('playwright'); const fs = require('fs');
   for (const v of ['home','times','tracker','quran','duas','dhikr','last10','charity','meals','family','eid','journal','settings']) { await mp.click(`.tabs-m [data-v="${v}"]`); await mp.waitForTimeout(150);
     const w = await mp.evaluate(() => document.documentElement.scrollWidth); if (w > 375) over.push(v + ':' + w); if (['home','tracker','times','last10','charity'].includes(v)) await mp.screenshot({path: U + `/m-${v}.png`}); }
   R.mobileOverflow = over.length ? over : 'none';
+  // ---- fixes: before Ramadan (Dec 2026, London) -> next-prayer countdown + Ramadan pill; currency; Eidi; UK method; centred layout
+  const f = await b.newContext({viewport: {width: 1440, height: 900}, timezoneId: 'Europe/London'}); const fp = await f.newPage(); watch(fp, 'fix');
+  await fp.clock.install({time: new Date('2026-12-10T13:00:00Z')});
+  await fp.goto('file://' + wrap); await fp.waitForTimeout(600); await fp.click('[data-pick="en"]');
+  R.fixNoCity = await fp.$$eval('#homeTop [data-sel="city"]', e => e.length);
+  await fp.selectOption('#homeTop [data-sel="city"]', {label: 'London'}); await fp.waitForTimeout(300);
+  R.fixFirst = await fp.$eval('main > *:first-child', e => e.id);
+  R.fixNext = await fp.$eval('#homeTop .k', e => e.textContent); R.fixPill = await fp.$eval('#homeTop .pill', e => e.textContent);
+  const a1 = await fp.$eval('#cd', e => e.textContent); await fp.clock.runFor(2000); R.fixTick = a1 + ' -> ' + await fp.$eval('#cd', e => e.textContent);
+  R.fixTimeline = await fp.$eval('#homeTop .tline', e => e.innerText.replace(/\s+/g, ' '));
+  await fp.screenshot({path: U + '/fix-home-dec.png'});
+  await fp.clock.fastForward('02:30:00'); await fp.waitForTimeout(1500); R.fixAfterAsr = await fp.$eval('#homeTop .k', e => e.textContent);
+  await fp.clock.fastForward('06:00:00'); await fp.waitForTimeout(1500); R.fixAfterIsha = await fp.$eval('#homeTop .k', e => e.textContent) + ' | ' + await fp.$eval('#homeTop .tline', e => e.previousElementSibling.textContent);
+  const box = await fp.$eval('main', e => { const r = e.getBoundingClientRect(); return [Math.round(r.left - 240), Math.round(innerWidth - r.right)]; }); R.fixCentred = box.join(' / ');
+  await fp.click('nav [data-v="charity"]'); R.fixCur = await fp.$eval('[data-path="cur"]', e => e.value);
+  await fp.fill('[data-path="cur"]', '£2'); R.fixCurTyped = await fp.$eval('[data-path="cur"]', e => e.value);
+  await fp.click('[data-a="cur"][data-val="Rs"]'); R.fixCurChip = await fp.$eval('[data-path="cur"]', e => e.value);
+  await fp.click('nav [data-v="eid"]'); R.fixEidi = await fp.$$eval('.stat b', e => e.map(x => x.textContent).join('|'));
+  await fp.click('nav [data-v="times"]'); R.fixUkHint = !!(await fp.$('text=Moonsighting Committee times'));
+  await fp.selectOption('[data-sel="method"]', 'msc'); await fp.waitForTimeout(200); R.fixMsc = await fp.$$eval('.tt tbody tr', rows => rows[0].innerText.replace(/\s+/g, ' '));
+  await fp.screenshot({path: U + '/fix-times.png'});
+  await f.close();
   // ---- website: demo then unlock
   const w = await b.newContext({viewport: {width: 1280, height: 860}}); const wp = await w.newPage(); watch(wp, 'web');
   await wp.goto(base + '/'); await wp.waitForTimeout(600); await wp.click('[data-pick="en"]'); R.demo = !!(await wp.$('.demobar'));
