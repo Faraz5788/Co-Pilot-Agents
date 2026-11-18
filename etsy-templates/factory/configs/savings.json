@@ -1,0 +1,95 @@
+{
+ "slides": [
+  {
+   "type": "hero",
+   "badge": "SINKING FUNDS + CHALLENGES",
+   "title": "Savings Tracker Spreadsheet",
+   "sub": "Sinking funds \u00b7 1p challenge \u00b7 52 week challenge",
+   "pills": [
+    "Excel & Google Sheets",
+    "Progress bars",
+    "UK \u00a3"
+   ],
+   "main": "dashboard",
+   "bullets": [
+    "Save for anything with sinking funds",
+    "Know exactly what to save each month",
+    "Two savings challenges included"
+   ]
+  },
+  {
+   "type": "included",
+   "sub": "Everything you need to grow your savings in 2027",
+   "items": [
+    [
+     "Dashboard",
+     "Every pot and challenge at a glance"
+    ],
+    [
+     "Sinking Funds",
+     "Up to 15 goals with targets & dates"
+    ],
+    [
+     "Savings Log",
+     "Money in and out of each fund"
+    ],
+    [
+     "1p a Day Challenge",
+     "365 days to \u00a3667.95"
+    ],
+    [
+     "52 Week Challenge",
+     "\u00a31,378 in a year (scalable)"
+    ],
+    [
+     "How-To Guide",
+     "Simple steps, no skills needed"
+    ]
+   ]
+  },
+  {
+   "type": "wide",
+   "heading": "Sinking funds that tell you what to save",
+   "sub": "Set a target and a date \u2014 get a monthly amount and a progress bar",
+   "shot": "funds",
+   "width": 1340,
+   "bullets": [
+    "Months left worked out",
+    "Save-per-month to hit your date",
+    "Funds turn green when complete"
+   ]
+  },
+  {
+   "type": "feature",
+   "heading": "Two classic savings challenges",
+   "bullets": [
+    "1p a day: \u00a3667.95 by the end of the year",
+    "52 weeks: \u00a31,378 (or scale it up)",
+    "Tick off days in any order",
+    "Running totals and progress bars"
+   ],
+   "shot": "onep",
+   "left": 880,
+   "top": 70,
+   "width": 500
+  },
+  {
+   "type": "feature",
+   "heading": "All your savings on one page",
+   "bullets": [
+    "Total saved across every pot",
+    "What's left to save",
+    "Each fund's progress",
+    "Both challenges' progress"
+   ],
+   "shot": "dashboard",
+   "left": 690,
+   "top": 90,
+   "width": 730
+  },
+  {
+   "type": "how",
+   "step3": "Every total and progress bar updates for you"
+  }
+ ]
+}

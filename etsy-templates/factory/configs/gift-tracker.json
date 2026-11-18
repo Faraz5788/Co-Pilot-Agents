@@ -1,0 +1,80 @@
+{
+ "theme": "christmas",
+ "slides": [
+  {
+   "type": "hero",
+   "badge": "CHRISTMAS 2026",
+   "title": "Christmas Gift Tracker Spreadsheet",
+   "sub": "Gift list \u00b7 Budgets per person \u00b7 Cards",
+   "pills": [
+    "Excel & Google Sheets",
+    "Instant download",
+    "UK \u00a3"
+   ],
+   "main": "dashboard",
+   "bullets": [
+    "A budget for every person",
+    "Track gifts from idea to given",
+    "Countdown to Christmas"
+   ]
+  },
+  {
+   "type": "included",
+   "sub": "Stay organised and on budget this Christmas",
+   "items": [
+    [
+     "Dashboard",
+     "Countdown, budget & progress"
+    ],
+    [
+     "People & Budgets",
+     "Spend vs budget for everyone"
+    ],
+    [
+     "Gift List",
+     "Status from idea to given"
+    ],
+    [
+     "Stocking Fillers",
+     "The little extras add up!"
+    ],
+    [
+     "Card List",
+     "Sent & received"
+    ],
+    [
+     "How-To Guide",
+     "Simple steps, no skills needed"
+    ]
+   ]
+  },
+  {
+   "type": "wide",
+   "heading": "Every gift, from idea to given",
+   "sub": "Colour-coded status for every present",
+   "shot": "gifts",
+   "width": 1340,
+   "bullets": [
+    "Idea \u2192 Ordered \u2192 Bought \u2192 Wrapped \u2192 Given",
+    "Where to buy",
+    "Actual cost"
+   ]
+  },
+  {
+   "type": "wide",
+   "heading": "A budget for everyone on your list",
+   "sub": "Spend, what's left and whether they're all sorted \u2014 automatically",
+   "shot": "people",
+   "width": 1340,
+   "bullets": [
+    "Overspends turn red",
+    "Gift count per person",
+    "\"All bought?\" check"
+   ]
+  },
+  {
+   "type": "how",
+   "step3": "Budgets and totals update for you"
+  }
+ ]
+}

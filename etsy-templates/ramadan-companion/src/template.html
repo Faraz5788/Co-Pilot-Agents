@@ -1,0 +1,540 @@
+<title>Ramadan Companion</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600;700;800&family=Amiri:wght@400;700&family=Noto+Nastaliq+Urdu:wght@400;600&family=Noto+Sans+Bengali:wght@400;600;700&family=Noto+Sans+Devanagari:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* Night-sky palette: ivory paper, deep navy ink, gold for the crescent and highlights */
+:root{
+  --bg:#F3F0E8; --card:#FFFDF8; --soft:#F8F5EE; --ink:#1A1D2B; --mute:#646577; --line:#E3DED2;
+  --pri:#1F2A55; --pri-2:#2E3D75; --pri-soft:#E6E9F4; --on-pri:#fff; --gold:#B98A1E; --gold-soft:#F3E7C7; --ok:#2F7D5B; --ok-soft:#E1F0E8; --warn:#B4472E;
+  --shadow:0 6px 22px rgba(30,30,60,.07);
+  --f-display:'DM Serif Display',Georgia,serif; --f-body:Inter,Amiri,system-ui,sans-serif; --f-ar:Amiri,'Traditional Arabic','Scheherazade New',serif;
+  --ar-size:30px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0B1020; --card:#141A2E; --soft:#1A2138; --ink:#ECE8DD; --mute:#A3A3B5; --line:#273049;
+  --pri:#8EA2E8; --pri-2:#AFC0F5; --pri-soft:#1E2747; --on-pri:#0B1020; --gold:#E2BE5A; --gold-soft:#332C17; --ok:#5BBE95; --ok-soft:#173026; --warn:#E07A5F;
+  --shadow:0 6px 22px rgba(0,0,0,.35); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0B1020; --card:#141A2E; --soft:#1A2138; --ink:#ECE8DD; --mute:#A3A3B5; --line:#273049;
+  --pri:#8EA2E8; --pri-2:#AFC0F5; --pri-soft:#1E2747; --on-pri:#0B1020; --gold:#E2BE5A; --gold-soft:#332C17; --ok:#5BBE95; --ok-soft:#173026; --warn:#E07A5F;
+  --shadow:0 6px 22px rgba(0,0,0,.35); color-scheme:dark}
+*{box-sizing:border-box} html,body{margin:0} body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5}
+html[lang="ur"] body{--f-body:'Noto Nastaliq Urdu',Inter,serif;line-height:2.1} html[lang="bn"] body{--f-body:'Noto Sans Bengali',Inter,sans-serif} html[lang="hi"] body{--f-body:'Noto Sans Devanagari',Inter,sans-serif}
+h1,h2,h3{font-family:var(--f-display);font-weight:400;margin:0;text-wrap:balance;line-height:1.15}
+html[lang="ur"] h1,html[lang="ur"] h2,html[lang="ur"] h3,html[lang="bn"] h1,html[lang="bn"] h2,html[lang="bn"] h3,html[lang="hi"] h1,html[lang="hi"] h2,html[lang="hi"] h3{font-family:var(--f-body);font-weight:600;line-height:1.5}
+button,input,select,textarea{font:inherit;color:inherit}
+.band{height:14px;background-color:#1F2A55;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='14' viewBox='0 0 48 14'%3E%3Cpath d='M14 2.5a4.5 4.5 0 1 0 3.6 7.2A4 4 0 1 1 14 2.5z' fill='%23E2BE5A'/%3E%3Cpath d='M36 4l.9 1.9 2.1.3-1.5 1.5.4 2.1-1.9-1-1.9 1 .4-2.1-1.5-1.5 2.1-.3z' fill='%23E2BE5A'/%3E%3C/svg%3E");background-size:48px 14px}
+.app{display:grid;grid-template-columns:240px 1fr;min-height:calc(100vh - 14px)}
+.app>*{min-width:0}
+nav.side{background:var(--card);border-inline-end:1px solid var(--line);padding:18px 12px;position:sticky;top:0;height:calc(100vh - 14px);overflow:auto}
+.brand{display:flex;align-items:center;gap:10px;padding:2px 8px 18px}.brand b{font-family:'DM Serif Display',Georgia,serif;font-weight:400;font-size:22px;line-height:1}.brand small{display:block;font-size:10px;letter-spacing:1.4px;color:var(--mute);font-weight:700;font-family:Inter,sans-serif}
+.nav a{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:12px;color:var(--ink);text-decoration:none;font-weight:600;cursor:pointer;margin-bottom:2px}
+.nav a:hover{background:var(--soft)}.nav a.on{background:var(--pri);color:var(--on-pri)}.nav .ic{width:22px;text-align:center}
+main{padding-block:26px 100px;padding-left:max(28px,env(safe-area-inset-left,0px));padding-right:max(28px,env(safe-area-inset-right,0px));max-width:1180px;width:100%;margin-inline:auto}
+.top{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;flex-wrap:wrap;margin-bottom:20px}.top h1{font-size:34px}.top p{margin:6px 0 0;color:var(--mute);max-width:65ch}
+.grid{display:grid;gap:16px}.g2{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}.grid>*{min-width:0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px 20px;box-shadow:var(--shadow)}
+.card h3{font-size:21px;margin-bottom:10px}
+.mb{margin-bottom:16px}
+.btn{background:var(--pri);color:var(--on-pri);border:0;border-radius:999px;padding:10px 18px;font-weight:700;cursor:pointer;white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center;gap:8px}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}.btn.gold{background:var(--gold);color:#1A1D2B}.btn.sm{padding:6px 13px;font-size:13px}
+.btn:disabled{opacity:.45;cursor:default}
+.btn:focus-visible,.nav a:focus-visible,.chip:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.chip{display:inline-flex;align-items:center;gap:6px;background:var(--soft);border:1.5px solid var(--line);border-radius:999px;padding:6px 12px;font-weight:600;font-size:13px;cursor:pointer;color:var(--ink)}
+.chip.on{background:var(--pri);border-color:var(--pri);color:var(--on-pri)}.chip.ok{background:var(--ok);border-color:var(--ok);color:#fff}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.hero{background:linear-gradient(135deg,#1F2A55 0%,#121A3A 70%);color:#fff;border-radius:24px;padding:24px 26px;position:relative;overflow:hidden}
+.hero:before{content:"";position:absolute;inset:0;background-image:radial-gradient(1.5px 1.5px at 20% 30%,#fff8,transparent),radial-gradient(1px 1px at 60% 20%,#fff9,transparent),radial-gradient(1.5px 1.5px at 80% 60%,#fff6,transparent),radial-gradient(1px 1px at 40% 75%,#fff7,transparent),radial-gradient(1px 1px at 90% 15%,#fff8,transparent);pointer-events:none}
+.hero:after{content:"";position:absolute;inset:-30px -10px auto auto;width:190px;height:190px;opacity:.9;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M58 14a36 36 0 1 0 28 58A31 31 0 1 1 58 14z' fill='%23E2BE5A' opacity='.85'/%3E%3C/svg%3E") center/contain no-repeat;pointer-events:none}
+html[dir="rtl"] .hero:after{inset:-30px auto auto -10px;transform:scaleX(-1)}
+.hero>*{position:relative}
+.hero .salam{font-family:var(--f-ar);font-size:30px;line-height:1.4;color:#E9CF85}
+.hero h1{font-size:34px;margin:4px 0 8px;color:#fff;max-width:20ch}.hero p{margin:0;max-width:56ch;opacity:.9}
+.hero .chips{margin-top:16px}.hero .chip{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.28);color:#fff}.hero .chip.on{background:#E2BE5A;border-color:#E2BE5A;color:#1A1D2B}
+.k{font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--mute)}
+.big{font-family:var(--f-display);font-size:46px;line-height:1.05;color:var(--pri);font-variant-numeric:tabular-nums}
+.cdcard{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:center}
+.tline{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;margin-top:14px}
+.tline div{background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:8px 4px;text-align:center}.tline small{display:block;font-size:11.5px;color:var(--mute);font-weight:700}.tline b{font-size:14.5px;font-variant-numeric:tabular-nums}
+.tline div.hl{background:var(--pri-soft);border-color:var(--pri)}.tline div.hl b{color:var(--pri)}
+.ring{position:relative;width:110px;height:110px;flex:0 0 auto}.ring svg{transform:rotate(-90deg)}.ring b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:19px;text-align:center;line-height:1.1}
+html[dir="rtl"] .ring svg{transform:rotate(-90deg) scaleY(-1)}
+.tool{display:flex;flex-direction:column;align-items:flex-start;gap:6px;cursor:pointer;text-align:start}
+.tool .e{font-size:28px}.tool b{font-size:15px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.spread{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.dua .ar{font-family:var(--f-ar);font-size:var(--ar-size);line-height:2;direction:rtl;text-align:right;margin:10px 0 8px;color:var(--ink)}
+.dua .tl{font-style:italic;color:var(--pri);direction:ltr;text-align:left;margin:6px 0;font-family:Inter,Amiri,sans-serif;font-size:14.5px;line-height:1.55}
+.dua .tl.own{font-style:normal;font-weight:600;font-size:16px;line-height:1.7}
+[lang=hi] .dua .tl.own{font-family:'Noto Sans Devanagari',Inter,sans-serif}[lang=bn] .dua .tl.own{font-family:'Noto Sans Bengali',Inter,sans-serif}
+.dua .tl.lat{font-size:13px;opacity:.75;margin-top:0}
+.dua .mn{margin:8px 0 0}.dua .en{direction:ltr;text-align:left;font-family:Inter,Amiri,sans-serif;color:var(--mute);font-size:14px;margin-top:6px;line-height:1.55}
+.dua .src{font-size:12.5px;color:var(--mute);margin-top:10px;font-family:Inter,Amiri,sans-serif;direction:ltr;text-align:left}
+.dua .note{background:var(--gold-soft);border-radius:12px;padding:8px 12px;font-size:13.5px;margin-top:10px}
+.dhead{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.star{background:none;border:0;font-size:22px;cursor:pointer;color:var(--gold);line-height:1;padding:2px}
+.pill{display:inline-block;font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;background:var(--pri-soft);color:var(--pri)}
+.tap{width:min(320px,86vw);padding:20px;border-radius:24px;font-size:19px;font-weight:800;border:0;background:var(--pri);color:var(--on-pri);cursor:pointer;box-shadow:0 10px 24px rgba(31,42,85,.3)}
+.tap:active{transform:scale(.98)}
+.center{display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center}
+.chk{width:26px;height:26px;border-radius:8px;border:2px solid var(--line);background:var(--card);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-weight:900;flex:0 0 auto;padding:0}
+.chk.on{background:var(--ok);border-color:var(--ok)}
+.it{display:flex;gap:10px;align-items:center;padding:9px 0;border-bottom:1px dashed var(--line)}.it:last-child{border:0}
+.it.on>span{color:var(--mute);text-decoration:line-through}.it>span{flex:1;min-width:0}
+.x{background:none;border:0;color:var(--mute);cursor:pointer;font-size:18px;padding:2px 6px}
+.bar{height:10px;border-radius:99px;background:var(--soft);border:1px solid var(--line);overflow:hidden}.bar i{display:block;height:100%;background:var(--ok)}
+.inp{border:1.5px solid var(--line);border-radius:999px;padding:9px 15px;background:var(--card);min-width:0;flex:1}
+select.inp{border-radius:14px;width:100%}
+textarea.inp{border-radius:16px;width:100%;min-height:110px;resize:vertical;padding:12px 14px}
+.lbl{display:block;font-size:13px;font-weight:700;color:var(--mute);margin:12px 0 5px}
+.notice{border-inline-start:4px solid var(--gold);background:var(--gold-soft);padding:10px 14px;border-radius:10px;font-size:14px}
+.modal-bg{position:fixed;inset:0;background:rgba(10,14,30,.6);display:flex;align-items:center;justify-content:center;z-index:60;padding:16px}
+.modal{background:var(--card);border-radius:22px;padding:20px 22px;width:min(620px,100%);max-height:90vh;overflow:auto}
+.langpick .chip{font-size:15px;padding:10px 16px}
+.tabs-m{display:none}
+.toast{position:fixed;bottom:calc(84px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:99px;font-weight:700;z-index:90}
+.foot{color:var(--mute);font-size:12.5px;margin-top:28px;text-align:center}
+.days{display:grid;grid-template-columns:repeat(auto-fill,minmax(52px,1fr));gap:8px}
+.dbtn{aspect-ratio:1;border-radius:14px;border:1.5px solid var(--line);background:var(--card);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:800;position:relative;padding:0;gap:2px}
+.dbtn small{font-size:10px;font-weight:700;color:var(--mute)}
+.dbtn.full{background:var(--ok);border-color:var(--ok);color:#fff}.dbtn.full small{color:#fff}
+.dbtn.part{background:var(--ok-soft);border-color:var(--ok)}
+.dbtn.miss{background:var(--gold-soft);border-color:var(--gold)}
+.dbtn.sel{outline:3px solid var(--pri);outline-offset:2px}.dbtn.today:after{content:"";position:absolute;top:5px;inset-inline-end:5px;width:7px;height:7px;border-radius:50%;background:var(--gold)}
+.dbtn.lock{opacity:.4}
+.prs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+.prs .chip{justify-content:center;padding:8px 4px}
+.stepper{display:inline-flex;align-items:center;gap:8px}.stepper b{min-width:36px;text-align:center;font-size:20px;font-variant-numeric:tabular-nums}
+.glass{display:flex;gap:6px;flex-wrap:wrap}.glass button{width:34px;height:40px;border-radius:6px 6px 12px 12px;border:2px solid var(--pri);background:transparent;cursor:pointer;padding:0;font-size:16px}
+.glass button.on{background:var(--pri-soft)}
+.stat{background:var(--soft);border:1px solid var(--line);border-radius:16px;padding:14px;text-align:center}.stat b{display:block;font-family:var(--f-display);font-size:30px;color:var(--pri);font-variant-numeric:tabular-nums}.stat span{font-size:13px;color:var(--mute);font-weight:600}
+.sumcard{background:linear-gradient(135deg,#1F2A55,#121A3A);color:#fff;border:0}.sumcard h3{color:#fff}.sumcard .stat{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.18)}.sumcard .stat b{color:#E9CF85}.sumcard .stat span{color:#d8dcf0}
+.juz{display:grid;grid-template-columns:repeat(auto-fill,minmax(46px,1fr));gap:6px}.juz button{aspect-ratio:1;border-radius:12px;border:1.5px solid var(--line);background:var(--card);cursor:pointer;font-weight:800;padding:0}.juz button.on{background:var(--ok);border-color:var(--ok);color:#fff}
+.night{border-inline-start:5px solid var(--gold)}.night.tn{background:var(--gold-soft)}
+table.tt{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}
+.ttw{overflow-x:auto;margin:0 -6px;padding:0 6px}
+.tt th,.tt td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:center;white-space:nowrap}.tt th{font-size:12px;color:var(--mute);font-weight:700}
+.tt tr.td{background:var(--pri-soft);font-weight:700}.tt td.em{color:var(--pri);font-weight:800}
+.tt tr.odd td:first-child:after{content:" ✦";color:var(--gold)}
+.adj{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.adj>div{background:var(--soft);border:1px solid var(--line);border-radius:14px;padding:8px;text-align:center}.adj small{display:block;font-weight:700;color:var(--mute);font-size:12px}
+.adj button{width:28px;height:28px;border-radius:50%;border:1.5px solid var(--line);background:var(--card);cursor:pointer;font-weight:800;padding:0}
+.res{background:var(--pri-soft);border-radius:14px;padding:12px 14px;margin-top:12px}.res b{color:var(--pri);font-size:20px}
+.fgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 12px}
+.fgrid input{width:100%}
+.sticker{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.sticker button{border:1.5px dashed var(--line);background:var(--soft);border-radius:16px;padding:10px 6px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:12.5px;font-weight:600;color:var(--mute)}
+.sticker button span{font-size:26px;filter:grayscale(1);opacity:.45}
+.sticker button.on{border-style:solid;border-color:var(--gold);background:var(--gold-soft);color:var(--ink)}.sticker button.on span{filter:none;opacity:1}
+.demobar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;background:var(--pri);color:var(--on-pri);border-radius:16px;padding:10px 14px;margin-bottom:18px;font-weight:600}
+.demobar .btn.ghost{color:var(--on-pri);border-color:currentColor}
+.lockc{display:flex;gap:14px;align-items:flex-start}.lockc .lk{font-size:26px;line-height:1}
+@media (max-width:900px){
+  .app{grid-template-columns:1fr} nav.side{display:none} main{padding-block:18px 110px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+  .g2,.g3{grid-template-columns:1fr}.g4{grid-template-columns:repeat(2,1fr)} .top h1,.hero h1{font-size:27px}
+  .tline{grid-template-columns:repeat(4,minmax(0,1fr))} .big{font-size:40px}
+  .tabs-m{display:flex;position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--line);z-index:40;overflow-x:auto;padding:6px max(8px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px))}
+  #nl-badge-frame,#netlify-badge{bottom:calc(74px + env(safe-area-inset-bottom,0px))!important}
+  .tabs-m{-webkit-mask-image:linear-gradient(to right,#000 85%,transparent);mask-image:linear-gradient(to right,#000 85%,transparent)}
+  html[dir="rtl"] .tabs-m{-webkit-mask-image:linear-gradient(to left,#000 85%,transparent);mask-image:linear-gradient(to left,#000 85%,transparent)}
+  .tabs-m a{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;font-size:11px;font-weight:700;padding:4px 9px;border-radius:10px;color:var(--mute);cursor:pointer;line-height:1.3}
+  .tabs-m a.on{color:var(--pri)} .tabs-m a span{font-size:20px}
+}
+@media (max-width:900px){#homeTop,#trk{grid-template-columns:1fr!important}.hero:after{width:110px;height:110px;inset:-14px -14px auto auto;opacity:.55}html[dir="rtl"] .hero:after{inset:-14px auto auto -14px}.hero h1{max-width:none}}
+@media (max-width:420px){.fgrid{grid-template-columns:1fr}.adj{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+<div class="band"></div>
+<div id="root"></div>
+<script>
+/*PRAYTIMES*/
+const D = /*DATA*/;
+const {LANGS, UI, DUAS, CATS, CITIES, DHIKR, JOURNAL, HEALTH, EXEMPT, QADR_FACTS, NIGHT_PLAN, ITIKAF, EID_CHECK, EID_PRAYER} = D;
+const KEY = "ramadan-companion-v1";
+const MODE = "__MODE__", ETSY_URL = "__ETSY_URL__", CODE_HASH = "__CODE_HASH__";   // MODE: file/preview (full) | web (demo until unlocked) | demo
+function licensed(){ try { return localStorage.getItem("ramadan-licence") === CODE_HASH; } catch(e) { return false; } }
+const DEMO = MODE === "demo" || (MODE === "web" && !licensed());
+const LOCKED_VIEWS = ["quran", "last10", "charity", "meals", "family", "eid", "journal"], DEMO_DAYS = 3, DEMO_DUAS = 5, DEMO_DHIKR = 2;
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+let S = {lang:null, theme:"auto", ar:30, translit:true, english:true, city:null, loc:null, method:"mwl", asr:1, adj:{fajr:0,sunrise:0,dhuhr:0,asr:0,maghrib:0,isha:0},
+  start:"2027-02-08", len:30, d:{}, madeUp:0, qGoal:1, juz:[], fav:[], dc:{}, dt:{}, np:{}, itk:[], cur:"£",
+  zk:{basis:"silver"}, fitr:{n:1, a:""}, fid:{d:"", a:""}, sq:[], meals:{}, shop:[], kids:[], eidc:[], eidi:[], gifts:[], jr:{}};
+try { const raw = localStorage.getItem(KEY); if (raw) S = Object.assign(S, JSON.parse(raw)); } catch(e) {}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e) {} };
+let view = "home", dcat = "all", dq = "", dsel = DHIKR[0].id, tday = null, mday = null, jday = null, kday = null;
+const lang = () => S.lang || "en";
+const L = o => (o && (o[lang()] || o.en)) || "";
+const t = k => L(UI[k]) || k;
+const LOCALE = {en: undefined, ur: "ur-PK", hi: "hi-IN", bn: "bn-BD", tl: "fil-PH", tr: "tr-TR", id: "id-ID"};
+const VIEWS = [["home","🏠","home"],["times","🕰️","times"],["tracker","📅","tracker"],["quran","📖","quran"],["duas","🤲","duas"],["dhikr","📿","dhikr"],["last10","✨","last10"],
+  ["charity","💝","charity"],["meals","🍲","meals"],["family","🧒","family"],["eid","🎉","eid"],["journal","📝","journal"],["settings","⚙️","settings"]];
+
+/* ---------- dates & times ---------- */
+function cityObj(){ if (S.city === "loc" && S.loc) return {n: t("my_loc"), c: "", ...S.loc}; if (S.city != null && CITIES[S.city]) return CITIES[S.city]; return null; }
+const tz = () => { const c = cityObj(); return c ? c.tz : Intl.DateTimeFormat().resolvedOptions().timeZone; };
+const ymd = s => s.split("-").map(Number);
+function gdate(n){ const [y, m, d] = ymd(S.start); return new Date(Date.UTC(y, m - 1, d + n - 1)); }    // Ramadan day n -> date (UTC midnight)
+function todayYMD(){ return new Intl.DateTimeFormat("en-CA", {timeZone: tz(), year: "numeric", month: "2-digit", day: "2-digit"}).format(new Date()); }
+function dayIdx(){ const [y, m, d] = ymd(todayYMD()), [a, b, c] = ymd(S.start); return Math.round((Date.UTC(y, m - 1, d) - Date.UTC(a, b - 1, c)) / 864e5) + 1; }
+const inRamadan = n => n >= 1 && n <= S.len;
+function todayUTC(){ const [y, m, d] = ymd(todayYMD()); return new Date(Date.UTC(y, m - 1, d)); }
+function nextPrayer(){ if (!cityObj()) return null; const td = todayUTC(), a = times(td), now = new Date();
+  for (const k of ["fajr", "dhuhr", "asr", "maghrib", "isha"]) if (now < a[k]) return {k, at: a[k], tt: a};
+  const b = times(new Date(+td + 864e5)); return {k: "fajr", at: b.fajr, tt: b, tom: true}; }
+function times(date){ const c = cityObj(); if (!c) return null; const M = PT_METHODS[S.method] || PT_METHODS.mwl;
+  const r = prayTimes(date, c.lat, c.lng, {...M, asr: +S.asr}); for (const k in r) r[k] = new Date(+r[k] + (S.adj[k] || 0) * 60000);
+  r.imsak = new Date(+r.fajr - 600000); return r; }
+const fmtT = d => d && !isNaN(d) ? new Intl.DateTimeFormat(LOCALE[lang()], {hour: "numeric", minute: "2-digit", timeZone: tz()}).format(d) : "–";
+const fmtD = (d, o) => new Intl.DateTimeFormat(LOCALE[lang()], {timeZone: "UTC", ...(o || {weekday: "short", day: "numeric", month: "short"})}).format(d);
+const hms = ms => { ms = Math.max(0, ms); const h = Math.floor(ms / 36e5), m = Math.floor(ms % 36e5 / 6e4), s = Math.floor(ms % 6e4 / 1e3); return `${h}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`; };
+function status(){
+  const n = dayIdx(), c = cityObj(), now = new Date();
+  if (n > S.len) return {k: "eid", n};
+  if (n < 1) {
+    if (c && n === 0) { const a = times(gdate(0)); if (now >= a.maghrib) return {k: "suhoor_in", at: times(gdate(1)).fajr, n}; }
+    return {k: "starts_in", days: 1 - n, n};
+  }
+  if (!c) return {k: "day", n};
+  const a = times(gdate(n)); if (now < a.fajr) return {k: "suhoor_in", at: a.fajr, n}; if (now < a.maghrib) return {k: "iftar_in", at: a.maghrib, n};
+  if (n < S.len) return {k: "suhoor_in", at: times(gdate(n + 1)).fajr, n};
+  return {k: "eve", n};
+}
+const curDay = () => { const n = dayIdx(); return Math.min(Math.max(n, 1), S.len); };
+const dd = n => (S.d[n] = S.d[n] || {f: "", p: [0,0,0,0,0], t: 0, q: 0, s: 0, g: 0, w: 0, z: 0});
+const score = n => { const x = S.d[n]; if (!x) return 0; return (x.f === "y" ? 1 : 0) + x.p.reduce((a, b) => a + b, 0) + x.t + (x.q > 0 ? 1 : 0) + x.s + x.g; };
+const money = v => S.cur + (/[A-Za-z]$/.test(S.cur) ? " " : "") + (Math.round((+v || 0) * 100) / 100).toLocaleString(LOCALE[lang()], {maximumFractionDigits: 2});
+const CUR = {"United Kingdom":"£", Ireland:"€", Pakistan:"Rs", India:"₹", Bangladesh:"৳", Philippines:"₱", "Türkiye":"₺", Indonesia:"Rp", Malaysia:"RM", Singapore:"S$", "Saudi Arabia":"SAR", UAE:"AED", Qatar:"QAR", Kuwait:"KWD", Bahrain:"BHD", Oman:"OMR", Egypt:"EGP", Jordan:"JOD", France:"€", Germany:"€", Netherlands:"€", Belgium:"€", Sweden:"kr", Norway:"kr", USA:"$", Canada:"$", "South Africa":"R", Nigeria:"₦", Kenya:"KSh", Australia:"$"};
+const CUR_CHIPS = ["£", "$", "€", "Rs", "₹", "৳", "₱", "₺", "Rp", "RM", "SAR", "AED"];
+const num = v => { const x = parseFloat(v); return isNaN(x) ? 0 : x; };
+
+/* ---------- shared bits ---------- */
+function toast(m){ const el = document.createElement("div"); el.className = "toast"; el.textContent = m; document.body.appendChild(el); setTimeout(() => el.remove(), 2400); }
+function buzz(){ try { navigator.vibrate && navigator.vibrate(30); } catch(e) {} }
+function ring(p, label, size = 110){ const r = size / 2 - 9, c = 2 * Math.PI * r;
+  return `<div class="ring" style="width:${size}px;height:${size}px"><svg width="${size}" height="${size}"><circle cx="${size/2}" cy="${size/2}" r="${r}" stroke="var(--soft)" stroke-width="10" fill="none"/>${p > 0 ? `<circle cx="${size/2}" cy="${size/2}" r="${r}" stroke="var(--ok)" stroke-width="10" fill="none" stroke-linecap="round" stroke-dasharray="${c * Math.min(p, 1)} ${c}"/>` : ""}</svg><b>${label}</b></div>`; }
+function prn(x){ const own = x.pr && x.pr[lang()];
+  if (!own) return `<div class="tl">${esc(x.tr_)}</div>`;
+  return `<div class="tl own">${esc(own)}</div>${["hi","bn"].includes(lang()) ? `<div class="tl lat">${esc(x.tr_)}</div>` : ""}`; }
+const getFull = () => `<a class="btn sm gold" href="${ETSY_URL}" target="_blank" rel="noopener" style="text-decoration:none">${esc(t("get_full"))}</a>`;
+const lockCard = (title, sub) => `<div class="card lockc"><div class="lk">🔒</div><div><h3 style="margin:0 0 4px">${esc(title)}</h3>${sub ? `<p style="margin:0 0 8px;color:var(--mute)">${esc(sub)}</p>` : ""}<p style="margin:0 0 10px;font-weight:600;color:var(--gold)">${esc(t("locked"))}</p>${getFull()}</div></div>`;
+async function sha256(x){ const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(x)); return [...new Uint8Array(b)].map(v => v.toString(16).padStart(2, "0")).join(""); }
+function duaCard(d, i){
+  if (DEMO && i >= DEMO_DUAS) return lockCard(L(d.title), L(CATS[d.cat]));
+  const fav = S.fav.includes(d.id);
+  return `<div class="card dua"><div class="dhead"><div><h3 style="margin-bottom:4px">${esc(L(d.title))}</h3><span class="pill">${esc(L(CATS[d.cat]))}</span></div>
+   <button class="star" data-a="fav" data-id="${d.id}" aria-label="${esc(t("favourites"))}">${fav ? "★" : "☆"}</button></div>
+   <div class="ar" lang="ar">${esc(d.ar)}</div>${S.translit ? prn(d) : ""}
+   <div class="mn">${esc(L(d.m))}</div>${lang() !== "en" && S.english ? `<div class="en">${esc(d.m.en)}</div>` : ""}
+   ${d.note ? `<div class="note">💡 ${esc(L(d.note))}</div>` : ""}<div class="src">${esc(t("source"))}: ${esc(d.src)}</div></div>`;
+}
+const duaById = id => DUAS.find(d => d.id === id);
+// search: ignore Arabic vowel marks, tatweel and alef/yaa/taa-marbuta spellings, so الحمد finds الْحَمْدُ
+const norm = x => String(x).toLowerCase().replace(/[\u064B-\u065F\u0670\u06D6-\u06ED\u0640]/g, "").replace(/[أإآٱ]/g, "ا").replace(/ى/g, "ي").replace(/ة/g, "ه");
+const dayNav = (k, n) => `<div class="row" style="justify-content:space-between;margin-bottom:12px"><button class="btn ghost sm" data-a="dnav" data-k="${k}" data-d="-1" ${n <= 1 ? "disabled" : ""}>‹ ${esc(t("prev"))}</button><b>${esc(t("day"))} ${n} · ${esc(fmtD(gdate(n)))}</b><button class="btn ghost sm" data-a="dnav" data-k="${k}" data-d="1" ${n >= S.len ? "disabled" : ""}>${esc(t("next"))} ›</button></div>`;
+const checklist = (items, store, act) => items.map((it, i) => { const on = !!store[i]; return `<div class="it ${on ? "on" : ""}"><button class="chk ${on ? "on" : ""}" data-a="${act}" data-i="${i}" aria-pressed="${on}">${on ? "✓" : ""}</button><span>${esc(typeof it === "string" ? it : L(it))}</span></div>`; }).join("");
+
+/* ---------- views ---------- */
+function vHome(){
+  const st = status(), c = cityObj(), n = st.n, today = inRamadan(n) ? n : null, np = nextPrayer(), ramadanCd = st.k === "suhoor_in" || st.k === "iftar_in";
+  let cd, tn = null, hl = "", tlab = t("times_today");
+  if (!c) cd = `<div class="k">📍 ${esc(t("set_city"))}</div><div style="margin-top:10px;max-width:420px">${citySelect()}</div><button class="btn ghost sm" style="margin-top:10px" data-a="geo">📡 ${esc(t("use_loc"))}</button>`;
+  else if (ramadanCd) { cd = `<div class="k">${esc(t(st.k))}${inRamadan(n) ? ` · ${esc(t("day_x"))} ${n}` : ""}</div><div class="big" id="cd" data-at="${+st.at}">${hms(st.at - new Date())}</div><div style="color:var(--mute)">${esc(fmtT(st.at))} · ${esc(c.n)}</div>`;
+    hl = st.k === "iftar_in" ? "maghrib" : "fajr"; tn = times(todayUTC());
+    if (st.at > +tn.fajr + 36e5) { tn = times(new Date(+todayUTC() + 864e5)); tlab = t("times_tom"); } }   // after iftar: show tomorrow's suhoor
+  else { cd = `<div class="k">${esc(t("next_prayer"))} · ${esc(t(np.k))}${np.tom ? ` · ${esc(t("tomorrow"))}` : ""}</div><div class="big" id="cd" data-at="${+np.at}">${hms(np.at - new Date())}</div><div style="color:var(--mute)">${esc(fmtT(np.at))} · ${esc(c.n)}</div>`;
+    tn = np.tt; hl = np.k; if (np.tom) tlab = t("times_tom"); }
+  const ram = st.k === "starts_in" ? `<span class="pill" style="background:var(--gold-soft);color:var(--ink)">🌙 ${esc(t("starts_in"))} ${st.days} ${esc(t("days"))} · ${esc(fmtD(gdate(1), {weekday: "short", day: "numeric", month: "short", year: "numeric"}))}</span>`
+    : st.k === "eid" || st.k === "eve" ? `<span class="pill" style="background:var(--gold-soft);color:var(--ink)">🎉 ${esc(t("eid_mub"))}</span>` : (today && !ramadanCd ? `<span class="pill">${esc(t("day_x"))} ${today}</span>` : "");
+  const timeline = tn ? `<div class="k" style="margin-top:14px">${esc(tlab)}</div><div class="tline" style="margin-top:6px">${["imsak","fajr","sunrise","dhuhr","asr","maghrib","isha"].map(k => `<div class="${k === hl ? "hl" : ""}"><small>${esc(t(k))}</small><b>${esc(fmtT(tn[k]))}</b></div>`).join("")}</div>` : "";
+  const fasted = Object.values(S.d).filter(x => x.f === "y").length;
+  const quick = today ? `<div class="card"><div class="spread"><h3 style="margin:0">${esc(t("today_list"))}</h3><span class="pill">${esc(t("day_x"))} ${today}</span></div>${dayForm(today, true)}</div>` : "";
+  const dua = DUAS[((today || 1) - 1) % (DEMO ? DEMO_DUAS : DUAS.length)];
+  return `<div class="grid" style="grid-template-columns:minmax(0,2fr) minmax(0,1fr)" id="homeTop">
+    <div class="card"><div class="spread" style="align-items:flex-start"><div>${cd}</div>${ram}</div>${timeline}</div>
+    <div class="card center"><div class="k">${esc(t("tracker"))}</div>${ring(fasted / S.len, `${fasted}/${S.len}`)}<div style="color:var(--mute);font-weight:600">${esc(t("fasts_kept"))}</div><button class="btn sm" data-v="tracker">${esc(t("tracker"))} →</button></div>
+   </div>
+   <div class="hero" style="margin-top:16px"><div class="salam" lang="ar">رَمَضَان مُبَارَك</div><h1>${esc(t("hero_t"))}</h1><p>${esc(t("hero_s"))}</p>
+    <div class="chips">${LANGS.map(([cc, nn]) => `<button class="chip ${lang() === cc ? "on" : ""}" data-a="lang" data-l="${cc}">${esc(nn)}</button>`).join("")}</div></div>
+   <div class="grid ${quick ? "g2" : ""}" style="margin-top:16px">${quick}<div><div class="k" style="margin:4px 0 8px">${esc(t("dua_today"))}</div>${duaCard(dua, 0)}</div></div>
+   <div class="k" style="margin:22px 0 8px">${esc(t("quick"))}</div>
+   <div class="grid g4">${[["times","🕰️"],["dhikr","📿"],["quran","📖"],["last10","✨"],["charity","💝"],["meals","🍲"],["family","🧒"],["eid","🎉"]].map(([v, e]) => `<div class="card tool" data-v="${v}" tabindex="0"><span class="e">${e}</span><b>${esc(t(v))}</b></div>`).join("")}</div>`;
+}
+function dayForm(n, compact){
+  const x = dd(n), reasons = ["r_ill", "r_travel", "r_period", "r_other"], pn = ["fajr","dhuhr","asr","maghrib","isha"];
+  return `<div class="lbl">${esc(t("fast"))}</div><div class="chips"><button class="chip ${x.f === "y" ? "ok" : ""}" data-a="fst" data-n="${n}" data-val="y">✓ ${esc(t("fasted"))}</button>${reasons.map(r => `<button class="chip ${x.f === r ? "on" : ""}" data-a="fst" data-n="${n}" data-val="${r}">${esc(t(r))}</button>`).join("")}</div>
+   <div class="lbl">${esc(t("prayers"))}</div><div class="prs">${pn.map((p, i) => `<button class="chip ${x.p[i] ? "ok" : ""}" data-a="pr" data-n="${n}" data-i="${i}">${esc(t(p))}</button>`).join("")}</div>
+   <div class="chips" style="margin-top:10px">${[["t","taraweeh","🌙"],["s","sadaqah","💝"],["g","good_deed","🌱"],["z","dhikr_t","📿"]].map(([k, lab, e]) => `<button class="chip ${x[k] ? "ok" : ""}" data-a="tg" data-n="${n}" data-k="${k}">${e} ${esc(t(lab))}</button>`).join("")}</div>
+   <div class="spread" style="margin-top:12px"><span class="lbl" style="margin:0">📖 ${esc(t("q_pages"))}</span><span class="stepper"><button class="btn ghost sm" data-a="qp" data-n="${n}" data-d="-1">−</button><b>${x.q}</b><button class="btn ghost sm" data-a="qp" data-n="${n}" data-d="1">+1</button><button class="btn ghost sm" data-a="qp" data-n="${n}" data-d="5">+5</button></span></div>
+   ${compact ? "" : `<div class="lbl">💧 ${esc(t("water"))}</div>${glasses(n)}`}`;
+}
+const glasses = n => `<div class="glass">${Array.from({length: 8}, (_, i) => `<button class="${dd(n).w > i ? "on" : ""}" data-a="wt" data-n="${n}" data-val="${i + 1}" aria-label="${i + 1}">${dd(n).w > i ? "💧" : ""}</button>`).join("")}</div>`;
+function citySelect(){ const groups = {}; CITIES.forEach(ci => (groups[ci.c] = groups[ci.c] || []).push(ci));
+  return `<select class="inp" data-sel="city"><option value="">— ${esc(t("choose_city"))} —</option>${S.loc ? `<option value="loc" ${S.city === "loc" ? "selected" : ""}>📍 ${esc(t("my_loc"))}</option>` : ""}${Object.entries(groups).map(([g, list]) => `<optgroup label="${esc(g)}">${list.map(ci => `<option value="${ci.id}" ${S.city === ci.id ? "selected" : ""}>${esc(ci.n)}</option>`).join("")}</optgroup>`).join("")}</select>`; }
+function vTimes(){
+  const c = cityObj(), citySel = citySelect();
+  const settings = `<div class="card"><h3>📍 ${esc(t("location"))}</h3>${citySel}<button class="btn ghost sm" style="margin-top:10px" data-a="geo">📡 ${esc(t("use_loc"))}</button>
+    <label class="lbl">${esc(t("method"))}</label><select class="inp" data-sel="method">${Object.entries(PT_METHODS).map(([k, m]) => `<option value="${k}" ${S.method === k ? "selected" : ""}>${esc(m.name)}</option>`).join("")}</select>${c && (c.c === "United Kingdom" || c.c === "Ireland") ? `<p style="margin:8px 0 0;font-size:13px;color:var(--mute)">🇬🇧 ${esc(t("uk_hint"))}</p>` : ""}
+    <label class="lbl">${esc(t("asr_m"))}</label><select class="inp" data-sel="asr"><option value="1" ${+S.asr === 1 ? "selected" : ""}>${esc(t("asr_std"))}</option><option value="2" ${+S.asr === 2 ? "selected" : ""}>${esc(t("asr_han"))}</option></select></div>
+   <div class="card"><h3>🌙 ${esc(t("start_date"))}</h3><input type="date" class="inp" style="border-radius:14px;width:100%" value="${esc(S.start)}" data-path="start" data-rr="1">
+    <label class="lbl">${esc(t("length"))}</label><div class="chips">${[29, 30].map(v => `<button class="chip ${S.len === v ? "on" : ""}" data-a="len" data-val="${v}">${v} ${esc(t("days"))}</button>`).join("")}</div>
+    <p class="notice" style="margin:12px 0 0">${esc(t("moon_note"))}</p></div>
+   <div class="card"><h3>⏱️ ${esc(t("adjust"))}</h3><p style="margin:0 0 10px;color:var(--mute);font-size:14px">${esc(t("adjust_s"))}</p><div class="adj">${["fajr","sunrise","dhuhr","asr","maghrib","isha"].map(k => `<div><small>${esc(t(k))}</small><div class="row" style="justify-content:center;gap:6px"><button data-a="adj" data-k="${k}" data-d="-1">−</button><b>${S.adj[k] > 0 ? "+" : ""}${S.adj[k]}</b><button data-a="adj" data-k="${k}" data-d="1">+</button></div></div>`).join("")}</div></div>`;
+  const td = dayIdx();
+  const table = c ? `<div class="card" style="margin-top:16px"><div class="spread"><h3 style="margin:0">${esc(t("timetable"))} · ${esc(c.n)}</h3><span class="pill">${esc(PT_METHODS[S.method].name)}</span></div>
+    <div class="ttw" style="margin-top:10px"><table class="tt"><thead><tr><th>${esc(t("day"))}</th><th>${esc(t("date"))}</th><th>${esc(t("imsak"))}</th><th>${esc(t("suhoor_ends"))}</th><th>${esc(t("sunrise"))}</th><th>${esc(t("dhuhr"))}</th><th>${esc(t("asr"))}</th><th>${esc(t("iftar"))}</th><th>${esc(t("isha"))}</th></tr></thead><tbody>
+    ${Array.from({length: S.len}, (_, i) => { const n = i + 1, x = times(gdate(n)); return `<tr class="${n === td ? "td" : ""} ${n >= 20 && n % 2 ? "odd" : ""}"><td>${n}</td><td>${esc(fmtD(gdate(n)))}</td><td>${esc(fmtT(x.imsak))}</td><td class="em">${esc(fmtT(x.fajr))}</td><td>${esc(fmtT(x.sunrise))}</td><td>${esc(fmtT(x.dhuhr))}</td><td>${esc(fmtT(x.asr))}</td><td class="em">${esc(fmtT(x.maghrib))}</td><td>${esc(fmtT(x.isha))}</td></tr>`; }).join("")}
+    </tbody></table></div><p style="color:var(--mute);font-size:13px;margin:10px 0 0">${esc(t("imsak_note"))} ✦ = ${esc(t("last10"))}</p></div>` :
+    `<div class="notice" style="margin-top:16px">📍 ${esc(t("set_city"))}</div>`;
+  return `<div class="top"><div><h1>${esc(t("times"))}</h1><p>${esc(t("times_sub"))}</p></div></div><div class="grid g3">${settings}</div>${table}`;
+}
+function vTracker(){
+  const n0 = curDay(); if (tday == null || tday > S.len) tday = n0;
+  const td = dayIdx();
+  const grid = `<div class="days">${Array.from({length: S.len}, (_, i) => { const n = i + 1, x = S.d[n], sc = score(n), lock = DEMO && n > DEMO_DAYS;
+    const cls = lock ? "lock" : x && x.f && x.f !== "y" ? "miss" : sc >= 9 ? "full" : sc > 0 ? "part" : "";
+    return `<button class="dbtn ${cls} ${n === tday ? "sel" : ""} ${n === td ? "today" : ""}" data-a="tday" data-n="${n}">${lock ? "🔒" : n}<small>${esc(fmtD(gdate(n), {day: "numeric", month: "short"}))}</small></button>`; }).join("")}</div>`;
+  const detail = DEMO && tday > DEMO_DAYS ? lockCard(`${t("day")} ${tday}`, t("tracker_sub")) :
+    `<div class="card"><div class="spread"><h3 style="margin:0">${esc(t("day"))} ${tday} · ${esc(fmtD(gdate(tday), {weekday: "long", day: "numeric", month: "long"}))}</h3>${ring(score(tday) / 10, `${score(tday)}/10`, 64)}</div>${dayForm(tday)}</div>`;
+  const missed = Object.values(S.d).filter(x => x.f && x.f !== "y").length, left = Math.max(0, missed - S.madeUp);
+  const tot = {fast: 0, pr: 0, tar: 0, q: 0, g: 0};
+  Object.values(S.d).forEach(x => { tot.fast += x.f === "y"; tot.pr += x.p.reduce((a, b) => a + b, 0); tot.tar += x.t; tot.q += x.q; tot.g += x.g; });
+  const dh = Object.values(S.dt).reduce((a, b) => a + b, 0), sq = S.sq.reduce((a, b) => a + num(b.a), 0), jn = Object.values(S.jr).filter(j => (j.t || "").trim() || (j.g || "").trim()).length;
+  const stats = [[tot.fast, t("fasts_kept")], [tot.pr, t("prayers_prayed")], [tot.tar, t("tar_nights")], [tot.q, t("pages_read")], [dh, t("dhikr_count")], [money(sq), t("given")], [tot.g, t("good_deeds")], [jn, t("journal")]];
+  return `<div class="top"><div><h1>${esc(t("tracker"))}</h1><p>${esc(t("tracker_sub"))}</p></div></div>
+   <div class="grid" style="grid-template-columns:minmax(0,1.2fr) minmax(0,1fr)" id="trk"><div class="card">${grid}</div>${detail}</div>
+   <div class="grid g2" style="margin-top:16px"><div class="card"><h3>🔁 ${esc(t("to_makeup"))}</h3><div class="spread"><div class="big" style="font-size:40px">${left}</div><span class="stepper"><button class="btn ghost sm" data-a="mu" data-d="-1" ${S.madeUp ? "" : "disabled"}>−</button><button class="btn sm" data-a="mu" data-d="1" ${left ? "" : "disabled"}>✓ ${esc(t("made_up"))}</button></span></div><p style="color:var(--mute);margin:8px 0 0;font-size:14px">${esc(t("makeup_s"))}</p></div>
+   <div class="card sumcard"><h3>🌙 ${esc(t("summary"))}</h3><div class="grid g4" style="gap:8px">${stats.map(([v, l]) => `<div class="stat"><b>${esc(v)}</b><span>${esc(l)}</span></div>`).join("")}</div><p style="margin:12px 0 0;color:#d8dcf0;font-size:14px">${esc(t("summary_s"))}</p></div></div>`;
+}
+function vQuran(){
+  const total = 604 * S.qGoal, read = Object.values(S.d).reduce((a, x) => a + x.q, 0), n = dayIdx();
+  const daysLeft = n < 1 ? S.len : Math.max(1, S.len - n + 1), left = Math.max(0, total - read);
+  const perDay = Math.ceil(left / daysLeft), expected = n < 1 ? 0 : Math.round(total * Math.min(n - 1, S.len) / S.len);
+  return `<div class="top"><div><h1>${esc(t("quran"))}</h1><p>${esc(t("quran_sub"))}</p></div></div>
+   <div class="grid g2"><div class="card"><h3>🎯 ${esc(t("goal"))}</h3><div class="chips">${[1, 2, 3].map(g => `<button class="chip ${S.qGoal === g ? "on" : ""}" data-a="qg" data-val="${g}">${g} ${esc(t(g > 1 ? "khatams" : "khatam"))}</button>`).join("")}</div>
+     <div class="grid g2" style="gap:8px;margin-top:14px"><div class="stat"><b>${perDay}</b><span>${esc(t("per_day"))}</span></div><div class="stat"><b>${Math.ceil(perDay / 5)}</b><span>${esc(t("per_prayer"))}</span></div><div class="stat"><b>${read}</b><span>${esc(t("pages_read"))}</span></div><div class="stat"><b>${left}</b><span>${esc(t("pages_left"))}</span></div></div>
+     <div class="bar" style="margin-top:14px"><i style="width:${Math.min(100, read / total * 100)}%"></i></div>
+     <p class="notice" style="margin:12px 0 0">${esc(t(read >= expected ? "on_track" : "behind"))}</p></div>
+    <div class="card"><h3>📗 ${esc(t("juz"))}</h3><p style="margin:0 0 10px;color:var(--mute);font-size:14px">${esc(t("juz_s"))}</p><div class="juz">${Array.from({length: 30}, (_, i) => `<button class="${S.juz[i] ? "on" : ""}" data-a="juz" data-i="${i}">${i + 1}</button>`).join("")}</div>
+     <div class="bar" style="margin-top:14px"><i style="width:${S.juz.filter(Boolean).length / 30 * 100}%"></i></div></div></div>`;
+}
+function vDuas(){
+  const list = DUAS.map((d, i) => [d, i]).filter(([d]) => (dcat === "all" || (dcat === "fav" ? S.fav.includes(d.id) : d.cat === dcat)) &&
+    (!dq || norm(L(d.title) + " " + d.title.en + " " + d.tr_ + " " + Object.values(d.pr || {}).join(" ") + " " + L(d.m) + " " + d.ar).includes(norm(dq))));
+  return `<div class="top"><div><h1>${esc(t("duas"))}</h1><p>${esc(t("scholar"))}</p></div></div>
+  <div class="row" style="margin-bottom:12px"><input id="dq" class="inp" placeholder="${esc(t("search"))}" value="${esc(dq)}" style="max-width:420px"></div>
+  <div class="chips" style="margin-bottom:16px"><button class="chip ${dcat === "all" ? "on" : ""}" data-a="cat" data-c="all">${esc(t("all"))}</button><button class="chip ${dcat === "fav" ? "on" : ""}" data-a="cat" data-c="fav">★ ${esc(t("favourites"))}</button>${Object.keys(CATS).map(c => `<button class="chip ${dcat === c ? "on" : ""}" data-a="cat" data-c="${c}">${esc(L(CATS[c]))}</button>`).join("")}</div>
+  <div class="grid g2">${list.map(([d, i]) => duaCard(d, i)).join("") || `<div class="card" style="color:var(--mute)">—</div>`}</div>`;
+}
+function vDhikr(){
+  const i = DHIKR.findIndex(x => x.id === dsel), d = DHIKR[i], c = S.dc[d.id] || 0;
+  const locked = DEMO && i >= DEMO_DHIKR;
+  return `<div class="top"><div><h1>${esc(t("dhikr"))}</h1><p>${esc(t("dhikr_sub"))}</p></div></div>
+   <div class="chips" style="margin-bottom:16px">${DHIKR.map((x, j) => `<button class="chip ${x.id === dsel ? "on" : ""}" data-a="dsel" data-id="${x.id}">${DEMO && j >= DEMO_DHIKR ? "🔒 " : ""}${esc(x.tr_)}</button>`).join("")}</div>
+   <div class="grid g2">${locked ? lockCard(d.tr_, L(d.m)) : `<div class="card center dua"><div class="ar" lang="ar" style="text-align:center;margin:0">${esc(d.ar)}</div>${S.translit ? prn(d) : ""}<div class="mn">${esc(L(d.m))}</div>
+     ${ring(c / d.n, `${c}<br><small style="font-size:12px;color:var(--mute)">/ ${d.n}</small>`, 170)}
+     ${c >= d.n ? `<div class="notice">${esc(t("target_done"))}</div>` : ""}
+     <button class="tap" data-a="dh">${esc(t("tap"))}</button>
+     <div class="row" style="justify-content:center"><button class="btn ghost sm" data-a="dhu" ${c ? "" : "disabled"}>↶ ${esc(t("undo"))}</button><button class="btn ghost sm" data-a="dhr">${esc(t("reset"))}</button></div></div>`}
+    <div class="card"><h3>${esc(t("this_month"))}</h3>${DHIKR.map(x => `<div class="it"><span lang="ar" style="font-family:var(--f-ar);font-size:20px">${esc(x.ar)}</span><b style="font-variant-numeric:tabular-nums">${(S.dt[x.id] || 0).toLocaleString(LOCALE[lang()])}</b></div>`).join("")}</div></div>`;
+}
+function lockedView(v){ return `<div class="top"><div><h1>${esc(t(v))}</h1></div></div>${lockCard(t(v), t({quran: "quran_sub", last10: "last10_sub", charity: "zakat_s", meals: "water_s", family: "kids_sub", eid: "eid_sub", journal: "journal_sub"}[v]))}`; }
+function vLast10(){
+  const td = dayIdx(), c = cityObj(), nights = [21, 23, 25, 27, 29].filter(x => x <= S.len);
+  return `<div class="top"><div><h1>${esc(t("last10"))}</h1><p>${esc(t("last10_sub"))}</p></div></div>
+   <div class="grid g2"><div class="card"><h3>🌌 ${esc(t("qadr_facts"))}</h3><ul style="margin:0;padding-inline-start:20px">${QADR_FACTS.map(f => `<li style="margin:8px 0">${esc(L(f))}</li>`).join("")}</ul></div>${duaCard(duaById("qadr"), 0)}</div>
+   <div class="grid g2" style="margin-top:16px">${nights.map(nt => { const eve = gdate(nt - 1), tonight = td === nt - 1, store = S.np[nt] || [], dn = store.filter(Boolean).length;
+     return `<div class="card night ${tonight ? "tn" : ""}"><div class="spread"><h3 style="margin:0">${tonight ? `⭐ ${esc(t("tonight"))} · ` : ""}${esc(t("night"))} ${nt}</h3><span class="pill">${dn}/${NIGHT_PLAN.length}</span></div>
+      <p style="margin:6px 0 4px;color:var(--mute)">${esc(t("begins"))} ${esc(fmtD(eve, {weekday: "long", day: "numeric", month: "long"}))}${c ? ` · ${esc(fmtT(times(eve).maghrib))}` : ""}</p>
+      ${NIGHT_PLAN.map((it, i) => { const on = !!store[i]; return `<div class="it ${on ? "on" : ""}"><button class="chk ${on ? "on" : ""}" data-a="np" data-nt="${nt}" data-i="${i}">${on ? "✓" : ""}</button><span>${esc(L(it))}</span></div>`; }).join("")}</div>`; }).join("")}
+    <div class="card"><h3>🕌 ${esc(t("itikaf"))}</h3>${checklist(ITIKAF, S.itk, "ik")}</div></div>`;
+}
+function calcRes(){
+  const z = S.zk, g = k => num(z[k]);
+  const wealth = g("cash") + g("bank") + g("gg") * g("gp") + g("sg") * g("sp") + g("inv") + g("bus") + g("owed") - g("debts");
+  const nisab = z.basis === "gold" ? 87.48 * g("gp") : 612.36 * g("sp");
+  const zr = !nisab ? `<div>${esc(t("need_price"))}</div>` : `<div class="spread"><span>${esc(t("nisab"))}</span><b style="font-size:16px">${esc(money(nisab))}</b></div><div class="spread"><span>${esc(t("wealth"))}</span><b style="font-size:16px">${esc(money(wealth))}</b></div>
+    <div class="spread" style="margin-top:6px"><span>${esc(t("zakat_due"))}</span><b>${wealth >= nisab ? esc(money(wealth * 0.025)) : "–"}</b></div>${wealth < nisab ? `<div style="margin-top:6px;color:var(--mute)">${esc(t("below_nisab"))}</div>` : ""}`;
+  return {zr, fr: `<div class="spread"><span>${esc(t("total"))}</span><b>${esc(money(num(S.fitr.n) * num(S.fitr.a)))}</b></div>`,
+          fd: `<div class="spread"><span>${esc(t("total"))}</span><b>${esc(money(num(S.fid.d) * num(S.fid.a)))}</b></div>`};
+}
+function updCalc(){ const r = calcRes(); for (const [id, k] of [["zres", "zr"], ["fres", "fr"], ["fdres", "fd"]]) { const el = document.getElementById(id); if (el) el.innerHTML = r[k]; } }
+const nIn = (path, lab, val) => `<div><label class="lbl">${esc(lab)}</label><input class="inp" type="number" inputmode="decimal" min="0" step="any" value="${esc(val ?? "")}" data-path="${path}"></div>`;
+function vCharity(){
+  const r = calcRes(), z = S.zk, sqTot = S.sq.reduce((a, b) => a + num(b.a), 0);
+  return `<div class="top"><div><h1>${esc(t("charity"))}</h1><p>${esc(t("scholar"))}</p></div><div style="max-width:420px"><label class="lbl" style="margin-top:0">${esc(t("currency"))}</label><div class="row" style="gap:6px">${CUR_CHIPS.map(cc => `<button class="chip ${S.cur === cc ? "on" : ""}" data-a="cur" data-val="${esc(cc)}">${esc(cc)}</button>`).join("")}<input class="inp" style="max-width:80px;flex:0 0 80px" maxlength="4" value="${esc(S.cur)}" data-path="cur" data-rr="1" aria-label="${esc(t("currency"))}"></div></div></div>
+   <div class="grid g2"><div class="card"><h3>🧮 ${esc(t("zakat_calc"))}</h3><p style="margin:0;color:var(--mute);font-size:14px">${esc(t("zakat_s"))}</p>
+     <div class="fgrid">${nIn("zk.cash", t("z_cash"), z.cash)}${nIn("zk.bank", t("z_bank"), z.bank)}${nIn("zk.gg", t("z_gold_g"), z.gg)}${nIn("zk.gp", t("z_gold_p"), z.gp)}${nIn("zk.sg", t("z_silver_g"), z.sg)}${nIn("zk.sp", t("z_silver_p"), z.sp)}${nIn("zk.inv", t("z_invest"), z.inv)}${nIn("zk.bus", t("z_business"), z.bus)}${nIn("zk.owed", t("z_owed"), z.owed)}${nIn("zk.debts", t("z_debts"), z.debts)}</div>
+     <label class="lbl">${esc(t("nisab_on"))}</label><div class="chips">${["silver", "gold"].map(b => `<button class="chip ${z.basis === b ? "on" : ""}" data-a="zb" data-val="${b}">${esc(t(b))}</button>`).join("")}</div>
+     <div class="res" id="zres">${r.zr}</div><p style="color:var(--mute);font-size:13px;margin:10px 0 0">${esc(t("zakat_note"))}</p></div>
+    <div><div class="card mb"><h3>🌾 ${esc(t("fitr"))}</h3><p style="margin:0;color:var(--mute);font-size:14px">${esc(t("fitr_s"))}</p><div class="fgrid">${nIn("fitr.n", t("people"), S.fitr.n)}${nIn("fitr.a", t("per_person"), S.fitr.a)}</div><div class="res" id="fres">${r.fr}</div></div>
+     <div class="card mb"><h3>🍞 ${esc(t("fidya"))}</h3><p style="margin:0;color:var(--mute);font-size:14px">${esc(t("fidya_s"))}</p><div class="fgrid">${nIn("fid.d", t("fidya_days"), S.fid.d)}${nIn("fid.a", t("per_day_amt"), S.fid.a)}</div><div class="res" id="fdres">${r.fd}</div></div>
+     <div class="card"><h3>⚖️ ${esc(t("kaffarah"))}</h3><p style="margin:0;font-size:14px">${esc(t("kaffarah_s"))}</p></div></div></div>
+   <div class="card" style="margin-top:16px"><div class="spread"><h3 style="margin:0">💝 ${esc(t("sadaqah_log"))}</h3><span class="pill">${esc(t("total"))}: ${esc(money(sqTot))}</span></div>
+    <div class="row" style="margin-top:12px"><input id="sqA" class="inp" type="number" inputmode="decimal" placeholder="${esc(t("amount"))}" style="max-width:140px"><input id="sqN" class="inp" placeholder="${esc(t("note"))}"><button class="btn" data-a="sqAdd">${esc(t("add"))}</button></div>
+    ${S.sq.map((s, i) => `<div class="it"><span><b>${esc(money(s.a))}</b> ${esc(s.n || "")} <small style="color:var(--mute)">· ${esc(s.dt || "")}</small></span><button class="x" data-a="sqDel" data-i="${i}" aria-label="${esc(t("delete"))}">✕</button></div>`).reverse().join("")}</div>`;
+}
+function vMeals(){
+  if (mday == null) mday = curDay(); const m = S.meals[mday] || {};
+  return `<div class="top"><div><h1>${esc(t("meals"))}</h1></div></div>
+   <div class="grid g2"><div class="card"><h3>🍽️ ${esc(t("meal_plan"))}</h3>${dayNav("m", mday)}
+     <label class="lbl">🌅 ${esc(t("suhoor"))}</label><textarea class="inp" style="min-height:70px" data-path="meals.${mday}.s" placeholder="${esc(t("write_here"))}">${esc(m.s || "")}</textarea>
+     <label class="lbl">🌇 ${esc(t("iftar_meal"))}</label><textarea class="inp" style="min-height:70px" data-path="meals.${mday}.i" placeholder="${esc(t("write_here"))}">${esc(m.i || "")}</textarea>
+     <label class="lbl">💧 ${esc(t("water_today"))} · ${esc(t("day"))} ${mday}</label>${glasses(mday)}<p style="color:var(--mute);font-size:13px;margin:6px 0 0">${esc(t("water_s"))}</p></div>
+    <div class="card"><h3>🛒 ${esc(t("shopping"))}</h3><div class="row"><input id="shopIn" class="inp" placeholder="${esc(t("add_item"))}"><button class="btn" data-a="shopAdd">${esc(t("add"))}</button></div>
+     ${S.shop.map((s, i) => `<div class="it ${s.on ? "on" : ""}"><button class="chk ${s.on ? "on" : ""}" data-a="shopTog" data-i="${i}">${s.on ? "✓" : ""}</button><span>${esc(s.t)}</span><button class="x" data-a="shopDel" data-i="${i}" aria-label="${esc(t("delete"))}">✕</button></div>`).join("")}</div>
+    <div class="card"><h3>🥗 ${esc(t("health"))}</h3><ul style="margin:0;padding-inline-start:20px">${HEALTH.map(h => `<li style="margin:8px 0">${esc(L(h))}</li>`).join("")}</ul></div>
+    <div class="card"><h3>🤍 ${esc(t("exempt"))}</h3><ul style="margin:0;padding-inline-start:20px">${EXEMPT.map(h => `<li style="margin:8px 0">${esc(L(h))}</li>`).join("")}</ul><p class="notice" style="margin:12px 0 0">${esc(t("scholar"))}</p></div></div>`;
+}
+const STK = [["🌙","k_fast"],["🕌","k_pray"],["📖","k_quran"],["🧹","k_help"],["💛","k_kind"],["🪙","k_give"]];
+function vFamily(){
+  if (kday == null) kday = curDay();
+  return `<div class="top"><div><h1>${esc(t("family"))}</h1><p>${esc(t("kids_sub"))}</p></div></div>
+   <div class="card mb"><div class="row"><input id="kidIn" class="inp" placeholder="${esc(t("child_name"))}" style="max-width:320px"><button class="btn" data-a="kidAdd">${esc(t("add_child"))}</button></div></div>
+   ${S.kids.length ? dayNav("k", kday) : ""}
+   <div class="grid g2">${S.kids.map((k, ci) => { const st = (k.st && k.st[kday]) || [], total = Object.values(k.st || {}).reduce((a, d) => a + d.filter(Boolean).length, 0);
+     return `<div class="card"><div class="spread"><h3 style="margin:0">⭐ ${esc(k.n)}</h3><span class="row" style="gap:6px"><span class="pill">${total} ${esc(t("stars"))}</span><button class="x" data-a="kidDel" data-i="${ci}" aria-label="${esc(t("delete"))}">✕</button></span></div>
+      <div class="sticker" style="margin-top:12px">${STK.map(([e, lab], i) => `<button class="${st[i] ? "on" : ""}" data-a="ks" data-c="${ci}" data-i="${i}"><span>${e}</span>${esc(t(lab))}</button>`).join("")}</div>
+      ${st.filter(Boolean).length >= 4 ? `<div class="notice" style="margin-top:12px">🎉 ${esc(t("great"))}</div>` : ""}</div>`; }).join("")}</div>`;
+}
+function vEid(){
+  const give = S.eidi.filter(e => e.k === "give").reduce((a, b) => a + num(b.a), 0), rec = S.eidi.filter(e => e.k === "rec").reduce((a, b) => a + num(b.a), 0);
+  return `<div class="top"><div><h1>${esc(t("eid"))}</h1><p>${esc(t("eid_sub"))}</p></div></div>
+   <div class="grid g2">${duaCard(duaById("eid_greet"), 0)}${duaCard(duaById("takbeer"), 0)}
+    <div class="card"><h3>✅ ${esc(t("eid_check"))}</h3>${checklist(EID_CHECK, S.eidc, "ec")}</div>
+    <div class="card"><h3>🕌 ${esc(t("eid_prayer"))}</h3><ol style="margin:0;padding-inline-start:20px">${EID_PRAYER.map(p => `<li style="margin:8px 0">${esc(L(p))}</li>`).join("")}</ol><p class="notice" style="margin:12px 0 0">${esc(t("scholar"))}</p></div>
+    <div class="card"><h3>💷 ${esc(t("eidi"))}</h3><p style="margin:0 0 10px;color:var(--mute);font-size:14px">${esc(t("eidi_s"))}</p>
+     <div class="row"><input id="eiN" class="inp" placeholder="${esc(t("name"))}"><input id="eiA" class="inp" type="number" inputmode="decimal" placeholder="${esc(t("amount"))}" style="max-width:110px"><select id="eiK" class="inp" style="max-width:120px;border-radius:999px"><option value="give">${esc(t("give"))}</option><option value="rec">${esc(t("receive"))}</option></select><button class="btn" data-a="eiAdd">${esc(t("add"))}</button></div>
+     ${S.eidi.map((e, i) => `<div class="it"><span>${e.k === "give" ? "🎁" : "🧧"} ${esc(e.n)}</span><b>${esc(money(e.a))}</b><button class="x" data-a="eiDel" data-i="${i}" aria-label="${esc(t("delete"))}">✕</button></div>`).join("")}
+     <div class="grid g2" style="gap:8px;margin-top:10px"><div class="stat"><b>${esc(money(give))}</b><span>${esc(t("give"))}</span></div><div class="stat"><b>${esc(money(rec))}</b><span>${esc(t("receive"))}</span></div></div></div>
+    <div class="card"><h3>🎁 ${esc(t("gifts"))}</h3><div class="row"><input id="gfN" class="inp" placeholder="${esc(t("name"))}"><input id="gfG" class="inp" placeholder="${esc(t("gift"))}"><button class="btn" data-a="gfAdd">${esc(t("add"))}</button></div>
+     ${S.gifts.map((g, i) => `<div class="it ${g.on ? "on" : ""}"><button class="chk ${g.on ? "on" : ""}" data-a="gfTog" data-i="${i}" aria-label="${esc(t("bought"))}">${g.on ? "✓" : ""}</button><span><b>${esc(g.n)}</b> · ${esc(g.g)}</span><button class="x" data-a="gfDel" data-i="${i}" aria-label="${esc(t("delete"))}">✕</button></div>`).join("")}</div></div>`;
+}
+function vJournal(){
+  if (jday == null) jday = curDay(); const j = S.jr[jday] || {};
+  return `<div class="top"><div><h1>${esc(t("journal"))}</h1><p>${esc(t("journal_sub"))}</p></div></div>
+   <div class="card" style="max-width:760px">${dayNav("j", jday)}<h3 style="font-size:24px">“${esc(L(JOURNAL[(jday - 1) % 30]))}”</h3>
+    <textarea class="inp" style="min-height:160px" data-path="jr.${jday}.t" placeholder="${esc(t("write_here"))}">${esc(j.t || "")}</textarea>
+    <label class="lbl">🤲 ${esc(t("grateful"))}</label><textarea class="inp" style="min-height:90px" data-path="jr.${jday}.g" placeholder="1.\n2.\n3.">${esc(j.g || "")}</textarea>
+    <div style="color:var(--mute);font-size:13px;margin-top:6px" id="jsaved"></div></div>`;
+}
+function vSettings(){
+  const ub = MODE !== "web" ? "" : DEMO
+    ? `<div class="card mb" style="border:2px solid var(--gold)"><h3>${esc(t("unlock_t"))}</h3><p style="color:var(--mute);margin-top:0">${esc(t("unlock_sub"))}</p><div class="row"><input id="code" class="inp" placeholder="${esc(t("code_ph"))}" autocapitalize="characters" style="text-transform:uppercase;max-width:260px"><button class="btn" data-a="unlockCode">${esc(t("unlock"))}</button></div></div>`
+    : `<div class="card mb"><b>✓ ${esc(t("unlocked_ok"))}</b> <span style="color:var(--mute)">${esc(t("a2hs"))}</span></div>`;
+  return `<div class="top"><div><h1>${esc(t("settings"))}</h1></div></div>${ub}<div class="grid g2">
+   <div class="card"><h3>${esc(t("language"))}</h3><div class="chips langpick">${LANGS.map(([c, n]) => `<button class="chip ${lang() === c ? "on" : ""}" data-a="lang" data-l="${c}">${esc(n)}</button>`).join("")}</div>
+    <h3 style="margin-top:20px">${esc(t("theme"))}</h3><div class="chips">${["auto", "light", "dark"].map(m => `<button class="chip ${S.theme === m ? "on" : ""}" data-a="theme" data-m="${m}">${esc(t(m))}</button>`).join("")}</div></div>
+   <div class="card"><h3>${esc(t("duas"))}</h3><label class="lbl" for="arSize">${esc(t("arabic_size"))}</label><input id="arSize" type="range" min="22" max="44" value="${S.ar}" data-path="ar" style="width:100%;accent-color:var(--pri)">
+    <div class="dua"><div class="ar" lang="ar">رَمَضَانُ كَرِيم</div></div>
+    <label class="row" style="margin-top:8px;cursor:pointer"><input type="checkbox" data-tog="translit" ${S.translit ? "checked" : ""}> ${esc(t("show_translit"))}</label>
+    <label class="row" style="margin-top:8px;cursor:pointer"><input type="checkbox" data-tog="english" ${S.english ? "checked" : ""}> ${esc(t("show_english"))}</label></div>
+   <div class="card"><div class="notice">${esc(t("scholar"))}</div><button class="btn ghost sm" style="margin-top:14px;color:var(--warn)" data-a="resetAll">${esc(t("reset_all"))}</button></div></div>`;
+}
+const V = {home: vHome, times: vTimes, tracker: vTracker, quran: vQuran, duas: vDuas, dhikr: vDhikr, last10: vLast10, charity: vCharity, meals: vMeals, family: vFamily, eid: vEid, journal: vJournal, settings: vSettings};
+const ICON = `<svg width="38" height="38" viewBox="0 0 100 100" aria-hidden="true"><rect x="2" y="2" width="96" height="96" rx="24" fill="#1F2A55"/><path d="M56 22a29 29 0 1 0 22 47A25 25 0 1 1 56 22z" fill="#E2BE5A"/><path d="M70 30l2.4 5 5.4.8-3.9 3.8.9 5.4-4.8-2.6-4.8 2.6.9-5.4-3.9-3.8 5.4-.8z" fill="#E2BE5A"/></svg>`;
+
+function render(){
+  const ld = LANGS.find(x => x[0] === lang());
+  document.documentElement.lang = lang(); document.documentElement.dir = ld ? ld[2] : "ltr";
+  if (S.theme === "auto") document.documentElement.removeAttribute("data-theme"); else document.documentElement.dataset.theme = S.theme;
+  document.documentElement.style.setProperty("--ar-size", S.ar + "px");
+  const nav = VIEWS.map(([k, ic, lab]) => `<a class="${view === k ? "on" : ""}" data-v="${k}" tabindex="0"><span class="ic">${ic}</span>${esc(t(lab))}${DEMO && LOCKED_VIEWS.includes(k) ? " 🔒" : ""}</a>`).join("");
+  const body = DEMO && LOCKED_VIEWS.includes(view) ? lockedView(view) : V[view]();
+  document.getElementById("root").innerHTML = `<div class="app"><nav class="side"><div class="brand">${ICON}<div><b>Ramadan Companion</b><small>THE GEEK NEXT DOOR CO.</small></div></div><div class="nav">${nav}</div></nav>
+   <main>${DEMO ? `<div class="demobar"><span>🌙 ${esc(t("demo_bar"))}</span><span class="row" style="gap:8px">${MODE === "web" ? `<button class="btn sm ghost" data-v="settings">${esc(t("have_code"))}</button>` : ""}${getFull()}</span></div>` : ""}${body}<div class="foot">${esc(t("made_by"))}</div></main></div>
+   <div class="tabs-m">${VIEWS.map(([k, ic, lab]) => `<a class="${view === k ? "on" : ""}" data-v="${k}"><span>${ic}</span>${esc(t(lab))}</a>`).join("")}</div>`;
+  if (!S.lang) langPicker();
+}
+function langPicker(){
+  if (document.querySelector(".modal-bg")) return;
+  const bg = document.createElement("div"); bg.className = "modal-bg";
+  bg.innerHTML = `<div class="modal" style="text-align:center"><div style="display:flex;justify-content:center">${ICON}</div><div lang="ar" style="font-family:var(--f-ar);font-size:28px;color:var(--gold);margin-top:8px">رَمَضَان مُبَارَك</div>
+   <h2 style="margin:6px 0 4px">Ramadan Companion</h2><p style="color:var(--mute);margin:0 0 16px">Choose your language · اپنی زبان منتخب کریں · अपनी भाषा चुनें · ভাষা নির্বাচন করুন · Pumili ng wika · Dil seçin · Pilih bahasa</p>
+   <div class="chips langpick" style="justify-content:center">${LANGS.map(([c, n]) => `<button class="chip" data-pick="${c}">${esc(n)}</button>`).join("")}</div></div>`;
+  document.body.appendChild(bg);
+  bg.addEventListener("click", e => { const c = e.target.dataset.pick; if (c) { S.lang = c; save(); bg.remove(); render(); } });
+}
+function ask(msg){ return new Promise(res => { const bg = document.createElement("div"); bg.className = "modal-bg";
+  bg.innerHTML = `<div class="modal" style="max-width:420px"><p style="margin-top:0;font-weight:600">${esc(msg)}</p><div class="row" style="justify-content:flex-end"><button class="btn ghost" data-r="0">${esc(t("cancel"))}</button><button class="btn" data-r="1">${esc(t("yes"))}</button></div></div>`;
+  document.body.appendChild(bg); bg.addEventListener("click", e => { const r = e.target.dataset.r; if (r != null) { bg.remove(); res(r === "1"); } }); }); }
+function setPath(path, val){ const ks = path.split("."); let o = S; for (let i = 0; i < ks.length - 1; i++) o = (o[ks[i]] = o[ks[i]] || {}); o[ks[ks.length - 1]] = val; }
+const val = id => (document.getElementById(id) || {}).value || "";
+const today = () => new Intl.DateTimeFormat(LOCALE[lang()], {day: "numeric", month: "short"}).format(new Date());
+
+document.addEventListener("click", async e => {
+  const v = e.target.closest("[data-v]"); if (v && V[v.dataset.v] && !e.target.closest(".modal")) { view = v.dataset.v; render(); window.scrollTo(0, 0); return; }
+  const a = e.target.closest("[data-a]"); if (!a || e.target.closest(".modal")) return; const act = a.dataset.a, n = +a.dataset.n, i = +a.dataset.i;
+  const rr = () => { save(); render(); };
+  switch (act) {
+    case "lang": S.lang = a.dataset.l; rr(); break;
+    case "theme": S.theme = a.dataset.m; rr(); break;
+    case "fav": S.fav = S.fav.includes(a.dataset.id) ? S.fav.filter(x => x !== a.dataset.id) : [...S.fav, a.dataset.id]; rr(); break;
+    case "cat": dcat = a.dataset.c; render(); break;
+    case "fst": dd(n).f = dd(n).f === a.dataset.val ? "" : a.dataset.val; rr(); break;
+    case "pr": dd(n).p[i] = dd(n).p[i] ? 0 : 1; rr(); break;
+    case "tg": dd(n)[a.dataset.k] = dd(n)[a.dataset.k] ? 0 : 1; rr(); break;
+    case "qp": dd(n).q = Math.max(0, dd(n).q + +a.dataset.d); rr(); break;
+    case "wt": dd(n).w = dd(n).w === +a.dataset.val ? +a.dataset.val - 1 : +a.dataset.val; rr(); break;
+    case "tday": tday = n; render(); break;
+    case "mu": S.madeUp = Math.max(0, S.madeUp + +a.dataset.d); rr(); break;
+    case "len": S.len = +a.dataset.val; rr(); break;
+    case "adj": S.adj[a.dataset.k] = Math.max(-30, Math.min(30, (S.adj[a.dataset.k] || 0) + +a.dataset.d)); rr(); break;
+    case "geo":
+      if (!navigator.geolocation) { toast(t("loc_fail")); break; }
+      navigator.geolocation.getCurrentPosition(p => { S.loc = {lat: p.coords.latitude, lng: p.coords.longitude, tz: Intl.DateTimeFormat().resolvedOptions().timeZone}; S.city = "loc"; rr(); }, () => toast(t("loc_fail")), {timeout: 10000}); break;
+    case "qg": S.qGoal = +a.dataset.val; rr(); break;
+    case "juz": S.juz[i] = !S.juz[i]; rr(); break;
+    case "dsel": dsel = a.dataset.id; render(); break;
+    case "dh": { S.dc[dsel] = (S.dc[dsel] || 0) + 1; S.dt[dsel] = (S.dt[dsel] || 0) + 1; const td = dayIdx(); if (inRamadan(td)) dd(td).z = 1; buzz(); rr(); break; }
+    case "dhu": if (S.dc[dsel] > 0) { S.dc[dsel]--; S.dt[dsel] = Math.max(0, (S.dt[dsel] || 0) - 1); } rr(); break;
+    case "dhr": if (!S.dc[dsel] || await ask(t("reset_count_q"))) { S.dc[dsel] = 0; rr(); } break;
+    case "np": S.np[a.dataset.nt] = S.np[a.dataset.nt] || []; S.np[a.dataset.nt][i] = !S.np[a.dataset.nt][i]; rr(); break;
+    case "ik": S.itk[i] = !S.itk[i]; rr(); break;
+    case "ec": S.eidc[i] = !S.eidc[i]; rr(); break;
+    case "zb": S.zk.basis = a.dataset.val; rr(); break;
+    case "cur": S.cur = a.dataset.val; S.curSet = true; rr(); break;
+    case "sqAdd": { const amt = num(val("sqA")); if (amt > 0) { S.sq.push({a: amt, n: val("sqN").trim(), dt: today()}); const td = dayIdx(); if (inRamadan(td)) dd(td).s = 1; rr(); } break; }
+    case "sqDel": S.sq.splice(i, 1); rr(); break;
+    case "shopAdd": { const x = val("shopIn").trim(); if (x) { S.shop.push({t: x, on: false}); rr(); document.getElementById("shopIn")?.focus(); } break; }
+    case "shopTog": S.shop[i].on = !S.shop[i].on; rr(); break;
+    case "shopDel": S.shop.splice(i, 1); rr(); break;
+    case "kidAdd": { const x = val("kidIn").trim(); if (x) { S.kids.push({n: x, st: {}}); rr(); } break; }
+    case "kidDel": if (await ask(`${t("delete")}: ${S.kids[i].n}?`)) { S.kids.splice(i, 1); rr(); } break;
+    case "ks": { const k = S.kids[+a.dataset.c]; k.st = k.st || {}; k.st[kday] = k.st[kday] || []; k.st[kday][i] = !k.st[kday][i]; if (k.st[kday][i]) buzz(); rr(); break; }
+    case "eiAdd": { const nm = val("eiN").trim(), amt = num(val("eiA")); if (nm && amt > 0) { S.eidi.push({n: nm, a: amt, k: val("eiK") || "give"}); rr(); } break; }
+    case "eiDel": S.eidi.splice(i, 1); rr(); break;
+    case "gfAdd": { const nm = val("gfN").trim(), g = val("gfG").trim(); if (nm || g) { S.gifts.push({n: nm, g, on: false}); rr(); } break; }
+    case "gfTog": S.gifts[i].on = !S.gifts[i].on; rr(); break;
+    case "gfDel": S.gifts.splice(i, 1); rr(); break;
+    case "dnav": { const d = +a.dataset.d, k = a.dataset.k, cl = x => Math.min(S.len, Math.max(1, x + d));
+      if (k === "m") mday = cl(mday); if (k === "j") jday = cl(jday); if (k === "k") kday = cl(kday); render(); break; }
+    case "unlockCode": { const c = val("code").trim().toUpperCase(); if (!c) break;
+      if (await sha256(c) === CODE_HASH) { try { localStorage.setItem("ramadan-licence", CODE_HASH); } catch(err) {} location.reload(); } else toast(t("code_bad")); break; }
+    case "resetAll": if (await ask(t("reset_q"))) { const keep = {lang: S.lang, theme: S.theme, city: S.city, loc: S.loc, method: S.method, asr: S.asr, adj: S.adj, start: S.start, len: S.len, cur: S.cur};
+      try { localStorage.setItem(KEY, JSON.stringify(keep)); } catch(err) {} location.reload(); } break;
+  }
+});
+document.addEventListener("keydown", e => { if (e.key === "Enter") { const id = e.target.id, map = {code: "unlockCode", shopIn: "shopAdd", kidIn: "kidAdd", sqN: "sqAdd", sqA: "sqAdd", eiA: "eiAdd", gfG: "gfAdd"};
+  if (map[id]) document.querySelector(`[data-a="${map[id]}"]`)?.click(); else if (e.target.matches?.(".nav a,.tool")) e.target.click(); } });
+let jt;
+document.addEventListener("input", e => {
+  const el = e.target;
+  if (el.id === "dq") { dq = el.value; const pos = el.selectionStart; render(); const n = document.getElementById("dq"); n.focus(); n.setSelectionRange(pos, pos); return; }
+  if (el.dataset.path) { const p = el.dataset.path; let v = el.value; if (p === "ar") v = +v;
+    if (p === "cur") { v = v.replace(/[0-9.,\s-]/g, ""); if (el.value !== v) el.value = v; if (!v) return; S.curSet = true; }
+    setPath(p, v); save(); if (p === "ar") document.documentElement.style.setProperty("--ar-size", v + "px"); updCalc();
+    if (p.startsWith("jr.")) { clearTimeout(jt); const s = document.getElementById("jsaved"); if (s) { s.textContent = "…"; jt = setTimeout(() => s.textContent = "✓ " + t("saved"), 500); } } }
+});
+document.addEventListener("change", e => {
+  const el = e.target;
+  if (el.dataset.sel) { const k = el.dataset.sel, v = el.value;
+    if (k === "city") { S.city = v === "" ? null : v === "loc" ? "loc" : +v; if (typeof S.city === "number") { S.method = CITIES[S.city].m; if (!S.curSet && CUR[CITIES[S.city].c]) S.cur = CUR[CITIES[S.city].c]; } }
+    else if (k === "asr") S.asr = +v; else S[k] = v; save(); render(); }
+  if (el.dataset.tog) { S[el.dataset.tog] = el.checked; save(); }
+  if (el.dataset.path && el.dataset.rr) { if (el.dataset.path === "start" && !/^\d{4}-\d{2}-\d{2}$/.test(el.value)) return; save(); render(); }
+});
+// live countdown: update the clock every second; redraw the page when a stage ends (e.g. at iftar)
+setInterval(() => { const el = document.getElementById("cd"); if (!el || document.querySelector(".modal-bg")) return;
+  const left = +el.dataset.at - Date.now(); if (left <= 0) { if (view === "home") render(); return; } el.textContent = hms(left); }, 1000);
+render();
+</script>
