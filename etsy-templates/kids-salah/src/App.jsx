@@ -1,9 +1,10 @@
 import { WUDU, WUDU_DUA, SALAH, RECITE, RECITE_ORDER, PRAYERS, QUIZ, AVATARS, BADGES } from "./content.js";
+import { Demo, WuduKid, PrayerKid, WUDU_SEQ, SALAH_SEQ } from "./anim.jsx";
 const { useState, useEffect, useMemo, useRef, useCallback } = React;
 
 /* ---------------- state ---------------- */
 const KEY = "little-salah-v1";
-const FRESH = { name: "Little Star", avatar: "🦁", wuduDone: 0, salahDone: 0, known: {}, bestQuiz: 0, orderWins: 0, log: {}, view: "home" };
+const FRESH = { name: "Little Star", avatar: "🦁", kid: "boy", wuduDone: 0, salahDone: 0, known: {}, bestQuiz: 0, orderWins: 0, log: {}, view: "home" };
 const load = () => { try { return { ...FRESH, ...JSON.parse(localStorage.getItem(KEY) || "{}") }; } catch (e) { return { ...FRESH }; } };
 const saveState = s => { try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (e) {} };
 const ymd = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
@@ -45,27 +46,6 @@ function ReciteCard({ id, compact }) {
   </div>;
 }
 
-/* Prayer position figure: simple rounded stick figure on a prayer mat */
-const POSES = {
-  stand:  { head: [100, 38], neck: [100, 56], hip: [100, 112], kneeL: [95, 148], kneeR: [105, 148], footL: [94, 184], footR: [106, 184], elbL: [89, 86], elbR: [111, 86], handL: [87, 114], handR: [113, 114], eye: [-6, -2] },
-  takbir: { head: [100, 38], neck: [100, 56], hip: [100, 112], kneeL: [95, 148], kneeR: [105, 148], footL: [94, 184], footR: [106, 184], elbL: [80, 66], elbR: [120, 66], handL: [83, 40], handR: [117, 40], eye: [-6, -2] },
-  qiyam:  { head: [100, 38], neck: [100, 56], hip: [100, 112], kneeL: [95, 148], kneeR: [105, 148], footL: [94, 184], footR: [106, 184], elbL: [86, 90], elbR: [114, 90], handL: [103, 86], handR: [97, 88], eye: [-6, -2] },
-  ruku:   { head: [56, 98], neck: [72, 100], hip: [128, 100], kneeL: [124, 142], kneeR: [130, 142], footL: [122, 184], footR: [132, 184], elbL: [96, 120], elbR: [104, 122], handL: [120, 138], handR: [126, 140], eye: [-6, 3] },
-  sujud:  { head: [58, 172], neck: [74, 162], hip: [132, 136], kneeL: [118, 180], kneeR: [124, 181], footL: [158, 182], footR: [164, 183], elbL: [74, 182], elbR: [80, 182], handL: [64, 184], handR: [70, 184], eye: [-6, 4] },
-  sit:    { head: [104, 92], neck: [104, 110], hip: [110, 164], kneeL: [72, 174], kneeR: [78, 176], footL: [126, 182], footR: [132, 183], elbL: [98, 140], elbR: [104, 142], handL: [82, 160], handR: [88, 162], eye: [-6, -2] },
-  salamR: { head: [104, 92], neck: [104, 110], hip: [110, 164], kneeL: [72, 174], kneeR: [78, 176], footL: [126, 182], footR: [132, 183], elbL: [98, 140], elbR: [104, 142], handL: [82, 160], handR: [88, 162], eye: [6, -2] },
-};
-function Figure({ pose }) {
-  const P = POSES[pose] || POSES.stand, L = (a, b, w = 11) => <line x1={P[a][0]} y1={P[a][1]} x2={P[b][0]} y2={P[b][1]} strokeWidth={w} />;
-  return <svg className="figure" viewBox="0 0 200 200" role="img" aria-label={"Prayer position: " + pose}>
-    <rect x="22" y="184" width="156" height="10" rx="5" fill="var(--mat)" />
-    <g stroke="var(--body2)" strokeLinecap="round" fill="none" className="limbs">{L("hip", "kneeL")}{L("kneeL", "footL")}{L("neck", "elbL")}{L("elbL", "handL")}</g>
-    <g stroke="var(--body)" strokeLinecap="round" fill="none" className="limbs">{L("neck", "hip", 15)}{L("hip", "kneeR")}{L("kneeR", "footR")}{L("neck", "elbR")}{L("elbR", "handR")}</g>
-    <circle cx={P.head[0]} cy={P.head[1]} r="14" fill="var(--body)" className="limbs-head" />
-    <circle cx={P.head[0] + P.eye[0]} cy={P.head[1] + P.eye[1]} r="2.4" fill="var(--bg)" />
-  </svg>;
-}
-
 /* ---------------- views ---------------- */
 function Home({ s, go, togglePrayer }) {
   const today = s.log[todayKey()] || [], known = Object.values(s.known).filter(Boolean).length, badges = BADGES.filter(b => b.test({ ...s, streak: streakOf(s.log) }));
@@ -78,7 +58,7 @@ function Home({ s, go, togglePrayer }) {
         <p className="muted">Every step you learn earns stars. Collect badges as you go!</p>
         <button className="btn primary" onClick={() => go(next.v)}>Let's go →</button>
       </div>
-      <div className="hero-figure"><Figure pose={s.salahDone ? "sujud" : "qiyam"} /></div>
+      <div className="hero-figure"><Demo seq={SALAH_SEQ.home} render={PrayerKid} kid={s.kid} label="A child praying" bare /></div>
     </section>
     <section className="grid4">
       {[["wudu", "Wudu", s.wuduDone, 5, "lessons", "var(--accent)"], ["salah", "Salah", s.salahDone, 5, "lessons", "#5B8CFF"], ["recite", "Recite", known, RECITE_ORDER.length, "learnt", "var(--coral)"], ["badges", "Badges", badges.length, BADGES.length, "earned", "var(--sun)"]].map(([v, n, val, max, sub, col]) =>
@@ -96,7 +76,7 @@ function Home({ s, go, togglePrayer }) {
   </div>;
 }
 
-function Wudu({ onDone }) {
+function Wudu({ onDone, kid }) {
   const [i, setI] = useState(0), [count, setCount] = useState(0), [ripple, setRipple] = useState(0), done = i >= WUDU.length;
   const st = WUDU[i];
   const tap = () => { if (count < st.times) { setCount(count + 1); setRipple(r => r + 1); try { navigator.vibrate && navigator.vibrate(20); } catch (e) {} } };
@@ -109,7 +89,7 @@ function Wudu({ onDone }) {
   return <div className="stack">
     <div className="steps-bar" aria-label={`Step ${i + 1} of ${WUDU.length}`}>{WUDU.map((w, k) => <span key={w.id} className={k < i ? "done" : k === i ? "now" : ""} />)}</div>
     <section className="glass lesson" key={st.id}>
-      <div className="lesson-art"><div className="bubble"><span className="lesson-emoji">{st.icon}</span>{Array.from({ length: 3 }, (_, k) => <i key={ripple + "-" + k} className="drop" style={{ animationDelay: k * 0.12 + "s" }} />)}</div></div>
+      <div className="lesson-art"><Demo seq={WUDU_SEQ[st.id]} render={WuduKid} kid={kid} label={"Animation: " + st.title} /><p className="muted small mirror-tip">Copy me like a mirror! <b className="rdot">R</b> is my right hand.</p></div>
       <div className="lesson-body">
         <p className="eyebrow">Step {i + 1} of {WUDU.length}</p>
         <h2>{st.title}</h2>
@@ -127,7 +107,7 @@ function Wudu({ onDone }) {
   </div>;
 }
 
-function Salah({ onDone }) {
+function Salah({ onDone, kid }) {
   const [i, setI] = useState(0), done = i >= SALAH.length, st = SALAH[i];
   const rakah = i < 8 ? 1 : 2;
   if (done) return <div className="stack"><section className="glass pad center pop"><div className="big-emoji">🕌</div><h2>Your salah is complete!</h2>
@@ -135,7 +115,7 @@ function Salah({ onDone }) {
   return <div className="stack">
     <div className="steps-bar">{SALAH.map((w, k) => <span key={w.id} className={k < i ? "done" : k === i ? "now" : ""} />)}</div>
     <section className="glass lesson" key={st.id}>
-      <div className="lesson-art"><Figure pose={st.pose} /><span className="chip-s">Rak'ah {rakah} of 2</span></div>
+      <div className="lesson-art"><Demo seq={SALAH_SEQ[st.id]} render={PrayerKid} kid={kid} label={"Animation: " + st.title} /><span className="chip-s">Rak'ah {rakah} of 2</span></div>
       <div className="lesson-body">
         <p className="eyebrow">Step {i + 1} of {SALAH.length}</p>
         <h2>{st.title}</h2>
@@ -227,6 +207,7 @@ function Parents({ s, set, reset }) {
   return <div className="grid2">
     <section className="glass pad"><h3>Child's profile</h3>
       <label className="lbl" htmlFor="kidName">Name</label><input id="kidName" className="inp" value={s.name} maxLength={20} onChange={e => set({ name: e.target.value })} />
+      <span className="lbl">Character in the lessons</span><div className="row" style={{ marginTop: 0 }}>{[["boy", "👦 Boy"], ["girl", "👧 Girl"]].map(([k, n]) => <button key={k} className={"btn sm " + (s.kid === k ? "primary" : "ghost")} aria-pressed={s.kid === k} onClick={() => set({ kid: k })}>{n}</button>)}</div>
       <span className="lbl">Avatar</span><div className="avatars">{AVATARS.map(a => <button key={a} className={"av lift" + (s.avatar === a ? " on" : "")} aria-pressed={s.avatar === a} onClick={() => set({ avatar: a })}>{a}</button>)}</div>
     </section>
     <section className="glass pad"><h3>A note for parents</h3>
@@ -257,13 +238,13 @@ function App() {
   const view = TITLES[s.view] !== undefined ? s.view : "home", title = TITLES[view];
   const body = {
     home: <Home s={s} go={go} togglePrayer={togglePrayer} />,
-    wudu: <Wudu onDone={() => { set({ wuduDone: s.wuduDone + 1 }); celebrate("💧 +5 stars! Wudu complete"); }} />,
-    salah: <Salah onDone={() => { set({ salahDone: s.salahDone + 1 }); celebrate("🕌 +5 stars! Salah complete"); }} />,
+    wudu: <Wudu kid={s.kid} onDone={() => { set({ wuduDone: s.wuduDone + 1 }); celebrate("💧 +5 stars! Wudu complete"); }} />,
+    salah: <Salah kid={s.kid} onDone={() => { set({ salahDone: s.salahDone + 1 }); celebrate("🕌 +5 stars! Salah complete"); }} />,
     recite: <Recite s={s} setKnown={(id, v) => { set({ known: { ...s.known, [id]: v } }); if (v) celebrate("⭐ +3 stars! Keep going"); }} />,
     play: <Play s={s} onQuiz={n => { if (n > s.bestQuiz) set({ bestQuiz: n }); if (n === QUIZ.length) celebrate("🏆 Perfect quiz!"); }} onOrder={() => { set({ orderWins: s.orderWins + 1 }); celebrate("🧩 +3 stars!"); }} />,
     tracker: <Tracker s={s} togglePrayer={togglePrayer} />,
     badges: <Badges s={s} />,
-    parents: <Parents s={s} set={set} reset={() => { const keep = { name: s.name, avatar: s.avatar }; setS({ ...FRESH, ...keep }); saveState({ ...FRESH, ...keep }); }} />,
+    parents: <Parents s={s} set={set} reset={() => { const keep = { name: s.name, avatar: s.avatar, kid: s.kid }; setS({ ...FRESH, ...keep }); saveState({ ...FRESH, ...keep }); }} />,
   }[view];
   return <div className="app">
     <div className="sky" aria-hidden="true"><i className="b1" /><i className="b2" /><i className="b3" /><i className="b4" /></div>
