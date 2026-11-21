@@ -86,7 +86,7 @@ const WUDU_SEQ = {
 function WuduKid(P, kid) {
   const u = P.ub, up = ([x, y]) => [x + u[0], y + u[1]];
   const head = up([120, 62]), neck = up([120, 98]), shR = up([156, 112]), shL = up([84, 112]), hipR = [136, 206], hipL = [104, 206];
-  const ln = (a, b, w, c) => <line x1={a[0]} y1={a[1]} x2={b[0]} y2={b[1]} stroke={c} strokeWidth={w} strokeLinecap="round" />;
+  const ln = (a, b, w, c) => <><line x1={a[0]} y1={a[1]} x2={b[0]} y2={b[1]} stroke="var(--outline)" strokeWidth={w + 3} strokeLinecap="round" /><line x1={a[0]} y1={a[1]} x2={b[0]} y2={b[1]} stroke={c} strokeWidth={w} strokeLinecap="round" /></>;
   const girl = kid === "girl", cheekR = 3 + P.cheek * 6;
   const torso = `M${shL[0] - 4},${shL[1] - 4} Q${neck[0]},${neck[1] - 6} ${shR[0] + 4},${shR[1] - 4} L${hipR[0] + 26},${hipR[1] + 4} Q120,${hipR[1] + 12} ${hipL[0] - 26},${hipL[1] + 4} Z`;
   return <svg className="kid" viewBox="0 0 240 300">
@@ -95,9 +95,9 @@ function WuduKid(P, kid) {
     {ln(hipL, P.kL, 18, "var(--pants)")}{ln(P.kL, P.fL, 16, "var(--pants)")}{ln(hipR, P.kR, 18, "var(--pants)")}{ln(P.kR, P.fR, 16, "var(--pants)")}
     <ellipse cx={P.fL[0] - 3} cy={P.fL[1] + 2} rx="12" ry="6" fill="var(--skin)" /><ellipse cx={P.fR[0] + 3} cy={P.fR[1] + 2} rx="12" ry="6" fill="var(--skin)" />
     {girl && <path d={`M${head[0] - 34},${head[1] - 4} Q${head[0] - 40},${head[1] + 46} ${head[0] - 18},${head[1] + 52} L${head[0] + 18},${head[1] + 52} Q${head[0] + 40},${head[1] + 46} ${head[0] + 34},${head[1] - 4} Z`} fill="var(--hair)" />}
-    <path d={torso} fill="var(--shirt)" />
+    <path d={torso} fill="var(--shirt)" stroke="var(--outline)" strokeWidth="2" strokeLinejoin="round" />
     {ln(neck, up([120, 108]), 16, "var(--skin)")}
-    <circle cx={head[0]} cy={head[1]} r="33" fill="var(--skin)" />
+    <circle cx={head[0]} cy={head[1]} r="33" fill="var(--skin)" stroke="var(--outline)" strokeWidth="2" />
     {girl ? <path d={`M${head[0] - 33},${head[1] - 2} Q${head[0] - 30},${head[1] - 38} ${head[0]},${head[1] - 36} Q${head[0] + 30},${head[1] - 38} ${head[0] + 33},${head[1] - 2} Q${head[0] + 12},${head[1] - 22} ${head[0] - 33},${head[1] - 2} Z`} fill="var(--hair)" />
       : <path d={`M${head[0] - 31},${head[1] - 10} Q${head[0]},${head[1] - 52} ${head[0] + 31},${head[1] - 10} Q${head[0]},${head[1] - 26} ${head[0] - 31},${head[1] - 10} Z`} fill="var(--hair)" />}
     {P.shut > .5 ? <><path d={`M${head[0] - 16},${head[1] - 2} q4,3 8,0`} stroke="var(--ink)" strokeWidth="2.6" fill="none" strokeLinecap="round" /><path d={`M${head[0] + 8},${head[1] - 2} q4,3 8,0`} stroke="var(--ink)" strokeWidth="2.6" fill="none" strokeLinecap="round" /></>
@@ -140,19 +140,22 @@ const SALAH_SEQ = {
   home: [S("qiyam", 600, 1300, ""), S("ruku", 800, 1200, ""), S("stand", 700, 600, ""), S("kneel", 600, 0, ""), S("sujud", 600, 1500, "", 1), S("sit", 700, 1300, "")],
 };
 function PrayerKid(P, kid) {
-  const L = (a, b, w, c) => <line x1={P[a][0]} y1={P[a][1]} x2={P[b][0]} y2={P[b][1]} stroke={c} strokeWidth={w} strokeLinecap="round" />, girl = kid === "girl", h = P.head;
+  const girl = kid === "girl", h = P.head;
+  // each limb is drawn twice: a slightly wider outline underneath, then the colour on top
+  const L = (a, b, w, c) => <g key={a + b}><line x1={P[a][0]} y1={P[a][1]} x2={P[b][0]} y2={P[b][1]} stroke="var(--outline)" strokeWidth={w + 3} strokeLinecap="round" />
+    <line x1={P[a][0]} y1={P[a][1]} x2={P[b][0]} y2={P[b][1]} stroke={c} strokeWidth={w} strokeLinecap="round" /></g>;
+  const cloth = girl ? "var(--dress)" : "var(--shirt)", legFar = girl ? "var(--dress2)" : "var(--pants2)", legNear = girl ? "var(--dress)" : "var(--pants)";
   return <svg className="figure" viewBox="0 0 200 200">
     <rect x="22" y="186" width="156" height="9" rx="4.5" fill="var(--mat)" />
-    <g>{L("hip", "kneeL", 12, "var(--pants2)")}{L("kneeL", "footL", 11, "var(--pants2)")}{L("neck", "elbL", 11, "var(--shirt2)")}{L("elbL", "handL", 9, "var(--skin2)")}</g>
-    {girl && <line x1={P.neck[0]} y1={P.neck[1]} x2={P.hip[0]} y2={P.hip[1]} stroke="var(--shirt)" strokeWidth="26" strokeLinecap="round" />}
-    <g>{L("neck", "hip", 17, "var(--shirt)")}{L("hip", "kneeR", girl ? 16 : 13, girl ? "var(--shirt)" : "var(--pants)")}{L("kneeR", "footR", girl ? 14 : 12, girl ? "var(--shirt)" : "var(--pants)")}</g>
-    <ellipse cx={P.footR[0] - 4} cy={P.footR[1] + 1} rx="8" ry="4" fill="var(--skin)" />
-    {girl && <circle cx={h[0]} cy={h[1] + 2} r="19" fill="var(--hijab)" />}
-    <circle cx={h[0]} cy={h[1]} r="14" fill="var(--skin)" />
+    {L("hip", "kneeL", girl ? 15 : 12, legFar)}{L("kneeL", "footL", girl ? 13 : 11, legFar)}{L("neck", "elbL", 11, girl ? "var(--dress2)" : "var(--shirt2)")}{L("elbL", "handL", 9, "var(--skin2)")}
+    {L("neck", "hip", girl ? 24 : 17, cloth)}{L("hip", "kneeR", girl ? 17 : 13, legNear)}{L("kneeR", "footR", girl ? 15 : 12, legNear)}
+    <ellipse cx={P.footR[0] - 4} cy={P.footR[1] + 1} rx="8" ry="4" fill="var(--skin)" stroke="var(--outline)" strokeWidth="1.5" />
+    {girl && <circle cx={h[0]} cy={h[1] + 2} r="19" fill="var(--hijab)" stroke="var(--outline)" strokeWidth="1.5" />}
+    <circle cx={h[0]} cy={h[1]} r="14" fill="var(--skin)" stroke={girl ? "none" : "var(--outline)"} strokeWidth="1.5" />
     {girl ? <path d={`M${h[0] - 15},${h[1] + 2} Q${h[0] - 16},${h[1] - 19} ${h[0]},${h[1] - 19} Q${h[0] + 16},${h[1] - 19} ${h[0] + 15},${h[1] + 2} Q${h[0] + 6},${h[1] - 10} ${h[0] - 15},${h[1] + 2} Z`} fill="var(--hijab)" />
-      : <path d={`M${h[0] - 13},${h[1] - 5} Q${h[0]},${h[1] - 22} ${h[0] + 13},${h[1] - 5} Z`} fill="var(--kufi)" />}
+      : <path d={`M${h[0] - 13},${h[1] - 5} Q${h[0]},${h[1] - 22} ${h[0] + 13},${h[1] - 5} Z`} fill="var(--kufi)" stroke="var(--outline)" strokeWidth="1.5" />}
     <circle cx={h[0] + P.eye[0]} cy={h[1] + P.eye[1]} r="2.3" fill="var(--ink)" />
-    <g>{L("neck", "elbR", 11, "var(--shirt2)")}{L("elbR", "handR", 9, "var(--skin)")}</g>
+    {L("neck", "elbR", 11, girl ? "var(--dress)" : "var(--shirt2)")}{L("elbR", "handR", 9, "var(--skin)")}
     <circle cx={P.handR[0]} cy={P.handR[1]} r="5.5" fill="var(--skin)" />
   </svg>;
 }

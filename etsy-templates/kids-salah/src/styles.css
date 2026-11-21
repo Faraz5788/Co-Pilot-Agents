@@ -4,7 +4,7 @@
   --glass: rgba(255, 255, 255, .46); --glass-strong: rgba(255, 255, 255, .7); --glass-line: rgba(255, 255, 255, .75); --glass-shadow: 0 10px 30px rgba(30, 80, 120, .14);
   --track: rgba(21, 50, 74, .1); --body: #0E9F8E; --body2: #67C9BD; --mat: #F2C94C;
   --blob1: #9FDBFF; --blob2: #FFD3B0; --blob3: #B8F2D9; --blob4: #CDB8FF;
-  --skin: #F1C19A; --skin2: #DDA67E; --blush: rgba(255, 120, 110, .35); --hair: #3B2A20; --shirt: #FFFFFF; --shirt2: #E9F2F7; --pants: #3C6E8F; --pants2: #2E5670; --hijab: #8E7CC3; --kufi: #FFFFFF;
+  --skin: #F1C19A; --skin2: #DDA67E; --blush: rgba(255, 120, 110, .35); --hair: #3B2A20; --shirt: #FFFFFF; --shirt2: #E9F2F7; --pants: #3C6E8F; --pants2: #2E5670; --hijab: #8E7CC3; --kufi: #FFFFFF; --dress: #D9CCF5; --dress2: #C3B2EC; --outline: rgba(21, 50, 74, .3);
   --f-display: "Baloo 2", "Nunito", system-ui, sans-serif; --f-body: "Nunito", system-ui, sans-serif; --f-ar: "Amiri", "Traditional Arabic", serif;
   --r: 22px;
 }
@@ -13,14 +13,14 @@
   --glass: rgba(18, 36, 56, .5); --glass-strong: rgba(24, 46, 70, .78); --glass-line: rgba(255, 255, 255, .13); --glass-shadow: 0 10px 30px rgba(0, 0, 0, .35);
   --track: rgba(255, 255, 255, .12); --body: #3FD7C2; --body2: #1E8C80; --mat: #B8892A;
   --blob1: #12507A; --blob2: #5A3A2A; --blob3: #0F5A4A; --blob4: #3A2E70;
-  --skin: #E6B48C; --skin2: #C99470; --blush: rgba(255, 120, 110, .3); --hair: #2A1C14; --shirt: #DCEAF2; --shirt2: #B9CCD8; --pants: #4D86AB; --pants2: #3A6A8A; --hijab: #9E8CD8; --kufi: #F2F6F8;
+  --skin: #E6B48C; --skin2: #C99470; --blush: rgba(255, 120, 110, .3); --hair: #2A1C14; --shirt: #DCEAF2; --shirt2: #B9CCD8; --pants: #4D86AB; --pants2: #3A6A8A; --hijab: #9E8CD8; --kufi: #F2F6F8; --dress: #B8A6EA; --dress2: #9A86D8; --outline: rgba(0, 0, 0, .45);
   color-scheme: dark } }
 :root[data-theme="dark"] {
   --bg: #0A1A2A; --ink: #EAF4FA; --mute: #A7BFCE; --accent: #3FD7C2; --accent-ink: #062521; --sun: #FFC54D; --coral: #FF8C7F;
   --glass: rgba(18, 36, 56, .5); --glass-strong: rgba(24, 46, 70, .78); --glass-line: rgba(255, 255, 255, .13); --glass-shadow: 0 10px 30px rgba(0, 0, 0, .35);
   --track: rgba(255, 255, 255, .12); --body: #3FD7C2; --body2: #1E8C80; --mat: #B8892A;
   --blob1: #12507A; --blob2: #5A3A2A; --blob3: #0F5A4A; --blob4: #3A2E70;
-  --skin: #E6B48C; --skin2: #C99470; --blush: rgba(255, 120, 110, .3); --hair: #2A1C14; --shirt: #DCEAF2; --shirt2: #B9CCD8; --pants: #4D86AB; --pants2: #3A6A8A; --hijab: #9E8CD8; --kufi: #F2F6F8;
+  --skin: #E6B48C; --skin2: #C99470; --blush: rgba(255, 120, 110, .3); --hair: #2A1C14; --shirt: #DCEAF2; --shirt2: #B9CCD8; --pants: #4D86AB; --pants2: #3A6A8A; --hijab: #9E8CD8; --kufi: #F2F6F8; --dress: #B8A6EA; --dress2: #9A86D8; --outline: rgba(0, 0, 0, .45);
   color-scheme: dark }
 
 * { box-sizing: border-box }
