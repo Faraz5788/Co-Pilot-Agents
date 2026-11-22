@@ -1,0 +1,78 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@500;600;700;800&family=Noto+Nastaliq+Urdu:wght@600&family=Noto+Sans+Devanagari:wght@600&display=swap" rel="stylesheet">
+<style>
+/* 1080x1080 listing video stage: caption column on the left, phone with the real app on the right */
+*{box-sizing:border-box;margin:0}
+body{width:1080px;height:1080px;overflow:hidden;font-family:Inter,sans-serif;color:#1E1C18;background:#F5EFE2;position:relative}
+.dots{position:absolute;inset:0;background-image:radial-gradient(rgba(184,144,31,.22) 2px,transparent 2px);background-size:36px 36px}
+.band{position:absolute;left:0;right:0;height:26px;background-color:#1D6B51;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='52' height='26' viewBox='0 0 24 12'%3E%3Cpath d='M12 1l1.8 3.2L17 6l-3.2 1.8L12 11l-1.8-3.2L7 6l3.2-1.8z' fill='%23D9B44A'/%3E%3C/svg%3E");background-size:52px 26px}
+.cap{position:absolute;left:70px;top:0;bottom:0;width:470px;display:flex;flex-direction:column;justify-content:center;gap:18px}
+.eyebrow{font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#B8901F;font-size:22px}
+h1{font-family:'DM Serif Display',serif;font-weight:400;font-size:76px;line-height:1.02;color:#1D6B51}
+.sub{font-size:28px;line-height:1.35;color:#4f4a40;font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.chip{padding:9px 16px;border-radius:99px;background:#fff;border:2px solid #E5DAC4;font-weight:800;font-size:21px;transition:none}
+.chip.on{background:#1D6B51;color:#fff;border-color:#1D6B51}
+.ticks{display:flex;flex-direction:column;gap:14px;font-size:30px;font-weight:700}
+.ticks div{display:flex;gap:14px;align-items:center}.ticks b{width:42px;height:42px;border-radius:50%;background:#1D6B51;color:#fff;display:grid;place-items:center;font-size:24px}
+.brandline{font-size:18px;letter-spacing:2.5px;font-weight:800;color:#8a8378}
+.logo{width:92px;height:92px}
+.phone{position:absolute;left:592px;top:90px;width:428px;height:894px;background:#141414;border-radius:62px;padding:14px;box-shadow:0 40px 80px rgba(40,30,10,.28)}
+.screen{position:relative;width:400px;height:866px;border-radius:48px;overflow:hidden;background:#F5EFE2}
+.screen img{position:absolute;left:0;top:0;width:400px}
+.notch{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:120px;height:30px;border-radius:20px;background:#141414;z-index:5}
+.ripple{position:absolute;border-radius:50%;border:5px solid rgba(29,107,81,.9);background:rgba(29,107,81,.18);z-index:4}
+.finger{position:absolute;width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,.55);border:3px solid rgba(20,20,20,.35);z-index:6;box-shadow:0 6px 16px rgba(0,0,0,.2)}
+</style></head><body>
+<div class="dots"></div><div class="band" style="top:0"></div><div class="band" style="bottom:0"></div>
+<div id="caps"></div>
+<div class="phone" id="phone"><div class="screen" id="screen"><div class="notch"></div></div></div>
+<script>
+const LOGO = `<svg class="logo" viewBox="0 0 100 100"><rect x="2" y="2" width="96" height="96" rx="24" fill="#1D6B51"/><g transform="translate(50 50)"><rect x="-22" y="-22" width="44" height="44" fill="none" stroke="#DDB94E" stroke-width="5"/><rect x="-22" y="-22" width="44" height="44" fill="none" stroke="#DDB94E" stroke-width="5" transform="rotate(45)"/><rect x="-11" y="-12" width="22" height="26" rx="2" fill="#1E1C18"/><rect x="-11" y="-5" width="22" height="4" fill="#DDB94E"/></g></svg>`;
+const LANGS = [["en","English"],["ur","اردو"],["hi","हिन्दी"],["bn","বাংলা"],["tl","Filipino"],["tr","Türkçe"],["id","Indonesia"]];
+const SCENES = [
+  {t0: 0, t1: 2.4, html: () => `${LOGO}<h1>Umrah<br>Companion</h1><div class="sub">Your step-by-step Umrah guide app</div>`},
+  {t0: 2.4, t1: 6.0, html: () => `<div class="eyebrow">Tawaf &amp; Sa'i counters</div><h1>Never lose count</h1><div class="sub">Tap after each round. The Kaaba dial shows where you are.</div>`},
+  {t0: 6.0, t1: 9.0, html: t => { const cur = ["en","ur","hi","id"][Math.min(3, Math.floor((t - 6) / .75))];
+     return `<div class="eyebrow">18 duas</div><h1>In your language</h1><div class="sub">Arabic, pronunciation &amp; meaning</div><div class="chips">${LANGS.map(([c, n]) => `<span class="chip ${c === cur ? "on" : ""}">${n}</span>`).join("")}</div>`; }},
+  {t0: 9.0, t1: 12.0, html: () => `<div class="eyebrow">Ziyarat &amp; phrases</div><h1>20 places, real history</h1><div class="sub">Plus 44 everyday Arabic phrases for taxis, shops and the hotel</div>`},
+  {t0: 12.0, t1: 15.01, html: () => `<h1>Instant download</h1><div class="ticks"><div><b>✓</b>iPhone, Android &amp; computer</div><div><b>✓</b>Works offline</div><div><b>✓</b>7 languages</div><div><b>✓</b>No subscription</div></div><div class="brandline">THE GEEK NEXT DOOR CO.</div>`},
+];
+const ease = x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2, clamp = x => Math.max(0, Math.min(1, x));
+let META = {}; const S = 400 / 390;   // app CSS px -> screen px
+function img(src, top = 0, op = 1) { return `<img src="${src}" style="top:${top}px;opacity:${op}">`; }
+function screenAt(t) {
+  let h = "";
+  if (t < 6.3) {   // tawaf: taps at 2.9, 3.5, 4.1, 4.7, 5.3 move rounds 2 -> 7
+    const taps = [2.9, 3.5, 4.1, 4.7, 5.3], n = taps.filter(x => t >= x + .12).length;
+    h += img(`tawaf-${2 + n}.png`);
+    const tx = META.tap.x * S, ty = META.tap.y * S, near = taps.find(x => t >= x - .25 && t < x + .45);
+    if (near !== undefined && t < 6.0) { const k = clamp((t - near) / .45);
+      if (t >= near) h += `<div class="ripple" style="left:${tx - 20 - k * 70}px;top:${ty - 20 - k * 70}px;width:${40 + k * 140}px;height:${40 + k * 140}px;opacity:${1 - k}"></div>`;
+      const press = t < near ? 1 - clamp((near - t) / .25) : 1 - k; h += `<div class="finger" style="left:${tx - 32}px;top:${ty - 32 + (1 - press) * 26}px;opacity:${Math.min(1, press * 1.5)}"></div>`; }
+  }
+  if (t >= 5.85 && t < 9.25) {   // duas: en -> ur -> hi -> id, crossfades
+    const fade = clamp((t - 5.85) / .3) * (t > 9.0 ? 1 - clamp((t - 9.0) / .25) : 1), langs = ["en","ur","hi","id"];
+    for (let i = 0; i < 4; i++) { const s = 6 + i * .75, op = i === 0 ? 1 : clamp((t - s + .15) / .3); if (op > 0) h += img(`duas-${langs[i]}.png`, 0, op * fade); }
+  }
+  if (t >= 9.0 && t < 12.3) {   // ziyarat then phrases, scrolling
+    const zf = clamp((t - 9.0) / .25), y1 = -ease(clamp((t - 9.2) / 1.5)) * 1500 * S;
+    if (t < 10.9) h += img("ziyarat-full.png", y1, zf);
+    if (t >= 10.6) { const pf = clamp((t - 10.6) / .3), y2 = -ease(clamp((t - 10.8) / 1.3)) * 1250 * S; h += img("phrases-full.png", y2, pf); }
+  }
+  if (t >= 12.0) { const op = clamp((t - 12.0) / .35); h += img("tawaf-7.png", 0, op); }
+  return h + `<div class="notch"></div>`;
+}
+function render(t) {
+  const caps = document.getElementById("caps"); let out = "";
+  for (const sc of SCENES) { if (t < sc.t0 - .01 || t >= sc.t1) continue;
+    const kin = clamp((t - sc.t0) / .4), kout = sc.t1 > 15 ? 1 : 1 - clamp((t - (sc.t1 - .25)) / .25), op = ease(kin) * kout;
+    out += `<div class="cap" style="opacity:${op};transform:translateY(${(1 - ease(kin)) * 26}px)">${sc.html(t)}</div>`; }
+  caps.innerHTML = out;
+  const ph = document.getElementById("phone"), enter = ease(clamp((t - 1.3) / 1.0));
+  const endScale = 1 - .06 * ease(clamp((t - 12.0) / .6));
+  ph.style.transform = `translateX(${(1 - enter) * 640}px) scale(${endScale}) rotate(${(1 - enter) * 6}deg)`;
+  document.getElementById("screen").innerHTML = screenAt(t);
+}
+window.setMeta = m => { META = m; };
+</script></body></html>
