@@ -2,7 +2,33 @@
 
 5 rounds × 5 questions. Each question has 4 options; ✅ marks the correct one.
 
-**Set-up in Mentimeter:** New slide → Quiz → **Select answer** · paste the question and 4 options · tick the ✅ answer · timer **20 seconds** · keep the leaderboard only on the last question of each round. Takes about 15–20 minutes to play.
+**Set-up in Mentimeter, for every question:** New slide → Quiz → **Select answer** · paste the question and 4 options · tick the ✅ answer · set the timer to **15 seconds** · turn on **faster answers get more points**. Keep the leaderboard only on the last question of each round (5, 10, 15, 20, 25). Takes about 12–15 minutes to play.
+
+---
+
+## 🎤 Introduction slide
+
+Add this as the first slide (**New slide → Content → Heading**, or a **Text** slide), before question 1.
+
+**Heading:**
+> 🎄 The Big Christmas Team Quiz
+
+**Text:**
+> Welcome! Grab your phone and join at **menti.com** with the code on the screen.
+>
+> **How it works**
+> • 25 questions in 5 festive rounds: Films · Songs · Traditions · Food & Drink · Quick-Fire
+> • You have **15 seconds** for each question
+> • The quicker you answer correctly, the more points you score ⚡
+> • The leaderboard appears at the end of every round
+> • No Googling, and the quizmaster's decision is final! 🎅
+>
+> Good luck, and may the most festive player win! 🏆
+
+**What to say** (about 30 seconds, while people join):
+> "Welcome to the Big Christmas Team Quiz! Get your phones out and join at menti.com using the code on the screen. There are 25 questions in 5 rounds. You've got 15 seconds for each one, and the faster you answer correctly, the more points you get, so be quick! We'll check the leaderboard after every round. No Googling! Ready? Let's go!"
+
+**Optional round title slides:** before questions 1, 6, 11, 16 and 21, add a **Heading** slide with the round name below (e.g. "🎬 Round 1: Christmas Films").
 
 ---
 
